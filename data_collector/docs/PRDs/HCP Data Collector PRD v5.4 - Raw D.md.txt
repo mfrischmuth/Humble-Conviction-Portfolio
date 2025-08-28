@@ -1,0 +1,425 @@
+HCP Data Collector PRD v5.4 - Raw Data Only Architecture.md
+13.07 KB •420 lines
+•
+Formatting may be inconsistent from source
+
+# Product Requirements Document: HCP Data Collector
+**Version:** 5.4.1  
+**File:** hcp_data_collector_prd_v5.4.1.md  
+**Last Updated:** 2025-08-25 15:20:00 UTC  
+**Current Code Version Target:** v3.9.0  
+**Status:** Architecture Clarification - Raw Data Only  
+**IPS Version:** v3.9
+
+---
+
+## 1. Product Overview
+
+### 1.1 Purpose
+The HCP Data Collector is a standalone Python tool that **fetches raw macro indicator data only**. It operates independently from the HCP Tracker and serves as the single source of truth for raw data retrieval. **All calculations, ratios, and moving averages are performed by the HCP Tracker**.
+
+**IPS v3.9 Compliance**: Aligned with the latest Investment Policy Statement specifications for indicator configuration and data requirements.
+
+### 1.2 Critical Architecture Change in v5.4
+**SEPARATION OF CONCERNS:**
+- **Data Collector**: Fetches raw data only (prices, values, percentages as published)
+- **HCP Tracker**: Performs ALL calculations (ratios, MAs, comparisons, triggers)
+
+This separation ensures:
+- Clean architecture with single responsibility
+- Easier testing and maintenance
+- Flexibility to change calculation methods without re-collecting data
+- Consistency in calculation methodology
+
+### 1.3 Scope
+**In Scope:**
+- Raw data fetching for 13 IPS indicators (dxyLevel removed)
+- Extended historical data collection for MA calculations
+- Data validation and quality scoring
+- Freshness monitoring
+- PDF parsing for SWIFT data
+- Date/timestamp tracking
+
+**Out of Scope:**
+- ANY calculations (no ratios, no MAs, no percentages)
+- Signal tier classification (Tracker responsibility)
+- Trigger comparisons (Tracker responsibility)
+- Investment decisions
+- Portfolio optimization
+
+### 1.4 Success Metrics
+- ✅ **13/13 indicators fetching raw data**
+- ✅ **Extended history for initialization mode**
+- ✅ **No calculated values in output**
+- ✅ **Sufficient data for Tracker MA calculations**
+- ✅ **Clear separation of concerns**
+
+---
+
+## 2. Indicator Configuration (13 Total - IPS v3.9)
+
+### 2.1 Indicator Changes from v5.3
+- **REMOVED**: dxyLevel (was duplication of DXY Index)
+- **ADDED**: ACWX data fetching (separate from SPY)
+- **TOTAL**: 13 indicators
+
+### 2.2 Data Collection Requirements
+
+| Indicator | Data to Fetch | Source | History Required |
+|-----------|--------------|--------|------------------|
+| **USD Dominance Theme** |
+| DXY | Daily closing prices | Yahoo (DX-Y.NYB) | 400+ daily values |
+| Reserve Share | Quarterly percentages | IMF COFER | 12 quarters |
+| Yuan SWIFT | Monthly percentages | SWIFT PDFs | 36 months |
+| Gold | ETF total assets in billions | Yahoo (GLD/IAU) | 12 quarters |
+| **AI Productivity Theme** |
+| Productivity | Quarterly index values | FRED (OPHNFB) | 24 quarters |
+| QQQ | Daily closing prices | Yahoo | 300+ daily values |
+| SPY | Daily closing prices | Yahoo | 300+ daily values |
+| Net Margins | Quarterly percentages | Manual/FactSet | 36 months (3Y MA) |
+| **P/E Reversion Theme** |
+| Forward P/E | Weekly values | Yardeni/FactSet | 36 months |
+| CAPE | Monthly ratios | multpl.com | 240 months (20 years) |
+| Risk Premium | Calculate from components | Multiple | 24 months |
+| **International Theme** |
+| ACWX | Daily closing prices | Yahoo | 90+ daily values |
+| VT | Daily closing prices | Yahoo (proxy for World) | 180 daily values |
+| US % ACWI | Monthly percentages | MSCI | 24 months |
+| TIC Flows | Monthly billions | US Treasury | 24 months |
+
+### 2.3 NO CALCULATIONS PERFORMED
+The Data Collector must NOT:
+- Calculate QQQ/SPY ratio (store both prices separately)
+- Calculate ACWX/SPY ratio (store both prices separately)
+- Calculate S&P vs World performance (store raw prices)
+- Calculate any moving averages
+- Determine trigger states
+- Compare values to thresholds
+
+---
+
+## 3. Technical Specifications
+
+### 3.1 Operating Modes
+
+#### Initialization Mode (`--mode initialize`)
+**Purpose**: First-time setup with extended historical data for MA calculations
+
+**Data Requirements by Indicator Type:**
+- **Daily indicators**: Sufficient for longest MA period
+  - DXY: 400+ daily values (for 400-day MA)
+  - QQQ/SPY: 300+ daily values each (for 200-day MA)
+  - ACWX: 90+ daily values (for 90-day MA)
+  - VT: 180+ daily values (for 6-month comparisons)
+- **Monthly indicators**: 36+ monthly values
+  - Yuan SWIFT: 36 months (for 36-month MA)
+  - Forward P/E: 36 months (for 3-year MA)
+  - US % ACWI: 24 months
+  - TIC Flows: 24 months
+- **Quarterly indicators**: 12+ quarterly values
+  - Reserve Share: 12 quarters
+  - Productivity: 24 quarters (for 6Q MA)
+  - Net Margins: 36 months/12 quarters (for 3-year MA)
+  - Gold: 12 quarters (for 12Q MA)
+- **Special cases**:
+  - CAPE: 240 monthly values (20 years for context)
+
+#### Monthly Mode (`--mode monthly`)
+**Purpose**: Regular updates with standard 6-month history
+
+**Data Requirements:**
+- All indicators: 6 months of data at their native frequency
+- Maintains backward compatibility with existing Tracker versions
+
+### 3.2 Output Format - Raw Data Only
+
+```json
+{
+  "version": "3.9.0",
+  "mode": "initialize|monthly",
+  "timestamp": "2025-08-25T15:00:00Z",
+  "data_points": {
+    "total": 2847,
+    "by_indicator": {
+      "dxy": 400,
+      "qqq": 300,
+      "spy": 300,
+      "acwx": 90
+    }
+  },
+  "indicators": {
+    "dxy": {
+      "current": 97.61,
+      "history": [97.45, 97.52, ...],  // 400+ raw daily prices
+      "dates": ["2025-08-24", "2025-08-23", ...],
+      "frequency": "daily",
+      "source": "Yahoo Finance",
+      "last_updated": "2025-08-25T14:30:00Z",
+      "data_quality": "complete"
+    },
+    "qqq": {
+      "current": 485.23,
+      "history": [484.91, 483.45, ...],  // 300+ raw prices
+      "dates": ["2025-08-24", "2025-08-23", ...],
+      "frequency": "daily",
+      "source": "Yahoo Finance"
+    },
+    "spy": {
+      "current": 561.47,
+      "history": [560.89, 559.23, ...],  // 300+ raw prices
+      "dates": ["2025-08-24", "2025-08-23", ...],
+      "frequency": "daily",
+      "source": "Yahoo Finance"
+    },
+    "acwx": {
+      "current": 52.31,
+      "history": [52.28, 52.15, ...],  // 90+ raw prices
+      "dates": ["2025-08-24", "2025-08-23", ...],
+      "frequency": "daily",
+      "source": "Yahoo Finance"
+    },
+    "yuanSwift": {
+      "current": 2.8,
+      "history": [2.7, 2.6, ...],  // 36 monthly percentages
+      "dates": ["2025-07-31", "2025-06-30", ...],
+      "frequency": "monthly",
+      "source": "SWIFT PDFs"
+    },
+    "reserveShare": {
+      "current": 58.4,
+      "history": [58.7, 58.9, ...],  // 12 quarterly percentages
+      "dates": ["2024-09-30", "2024-06-30", ...],
+      "frequency": "quarterly",
+      "source": "IMF COFER"
+    },
+    "cape": {
+      "current": 30.2,
+      "history": [30.5, 31.0, ...],  // 240 monthly values
+      "dates": ["2025-07-31", "2025-06-30", ...],
+      "frequency": "monthly",
+      "source": "multpl.com"
+    }
+  }
+}
+```
+
+### 3.3 Data Quality Indicators
+
+```python
+DATA_QUALITY = {
+    'complete': 'All expected data points present',
+    'partial': '>50% data points present',
+    'sparse': '<50% data points present',
+    'missing': 'No data retrieved'
+}
+```
+
+---
+
+## 4. Implementation Requirements
+
+### 4.1 Data Sources and Methods
+
+| Source | Indicators | Method | Fallback |
+|--------|-----------|--------|----------|
+| Yahoo Finance | DXY, QQQ, SPY, ACWX, VT, Gold ETFs | yfinance API | Manual entry |
+| FRED | Productivity | REST API | BLS website |
+| PDFs | Yuan SWIFT | pdfplumber | Manual entry |
+| Manual | Reserve Share, Net Margins, TIC Flows | JSON config | Previous values |
+| Web Scraping | CAPE, Forward P/E | requests/BS4 | Manual entry |
+
+### 4.2 Dependencies
+```python
+pandas >= 1.3.0
+numpy >= 1.21.0
+yfinance >= 0.2.0
+pdfplumber >= 0.9.0
+requests >= 2.28.0
+python-dateutil >= 2.8.0
+```
+
+### 4.3 File Structure
+```
+C:/Users/markf/OneDrive/Desktop/
+├── hcp_data_collector_v3.9.0.py
+├── data_output/
+│   ├── hcp_data_initialize_YYYYMMDD_HHMMSS.json
+│   └── hcp_data_monthly_YYYYMMDD_HHMMSS.json
+├── pdfs/
+│   └── rmb-tracker_*.pdf
+├── logs/
+│   └── collector_YYYYMMDD.log
+└── config/
+    └── manual_values.json
+```
+
+---
+
+## 5. Critical Design Decisions
+
+### 5.1 Why Raw Data Only?
+1. **Single Responsibility**: Data Collector fetches, Tracker calculates
+2. **Consistency**: All calculations use same methodology (in Tracker)
+3. **Flexibility**: Can change calculation methods without re-collecting
+4. **Testing**: Easier to validate raw data vs complex calculations
+5. **Debugging**: Clear separation makes issues easier to locate
+
+### 5.2 Extended History Rationale
+- **Tracker needs full history** to calculate various MAs accurately
+- **Initialization mode** provides one-time extensive collection
+- **Monthly mode** maintains efficiency for regular updates
+- **Storage is cheap** compared to incomplete MA calculations
+
+### 5.3 Removed Responsibilities
+The Data Collector no longer:
+- Calculates ratios (QQQ/SPY, ACWX/SPY, S&P/World)
+- Computes moving averages
+- Determines signal tiers
+- Makes trigger comparisons
+- Assigns indicator weights
+- Performs any mathematical operations beyond storage
+
+---
+
+## 6. Migration Guide
+
+### 6.1 From v3.8.x to v3.9.0
+1. **Remove calculation code**:
+   - Delete all ratio calculations
+   - Remove MA computation functions
+   - Strip signal tier assignments
+
+2. **Update data fetching**:
+   - Fetch ACWX separately (not as ratio)
+   - Store QQQ and SPY separately
+   - Remove dxyLevel fetching
+
+3. **Extend historical data**:
+   - Implement indicator-specific history lengths
+   - Add CAPE 20-year history
+   - Increase daily data to 400+ points where needed
+
+4. **Update output format**:
+   - Remove calculated fields
+   - Add frequency and source metadata
+   - Include data point counts
+
+### 6.2 Tracker Compatibility
+- Tracker v6.2+ required for v3.9.0 data format
+- Tracker must implement all ratio calculations
+- Tracker handles all MA computations
+- Backward compatibility maintained for monthly mode
+
+---
+
+## 7. Testing Requirements
+
+### 7.1 Unit Tests
+- Verify each data source returns raw values only
+- Confirm no calculations in output
+- Validate date alignment
+- Check data quality assessment
+
+### 7.2 Integration Tests
+- Initialize mode produces sufficient history
+- Monthly mode maintains 6-month standard
+- PDF parsing extracts correct values
+- Fallback mechanisms work correctly
+
+### 7.3 Validation Checklist
+- [ ] 13 indicators fetching (dxyLevel removed)
+- [ ] No ratios in output
+- [ ] No MAs calculated
+- [ ] Extended history in initialization mode
+- [ ] Raw prices for QQQ, SPY, ACWX stored separately
+- [ ] CAPE has 20-year history
+- [ ] DXY has 400+ daily values
+- [ ] Output contains only raw data
+
+---
+
+## 8. Future Enhancements
+
+### 8.1 Near-term (v3.10)
+- Add data caching for efficiency
+- Implement incremental updates
+- Add data validation checksums
+
+### 8.2 Long-term (v4.0)
+- Real-time data streaming
+- Multiple data source redundancy
+- Cloud-based collection service
+- API for Tracker integration
+
+---
+
+## 9. Version History
+
+### v5.4.1 (2025-08-25 15:20)
+- **Minor Update**: Updated references to IPS v3.9
+- Clarified IPS compliance throughout document
+- No functional changes from v5.4
+
+### v5.4 (2025-08-25)
+- **CRITICAL**: Architecture clarification - raw data only
+- **IPS v3.9 Compliance**: Updated for latest IPS specifications
+- Removed ALL calculations from Data Collector
+- Extended historical data requirements
+- Removed dxyLevel indicator
+- Added ACWX as separate indicator
+
+### v5.3 (2025-08-25 13:00)
+- IPS v3.8 compliance (superseded by v3.9)
+- Three-tier signal classification (moved to Tracker)
+- Added ACWX/SPY indicator (incorrectly as ratio)
+
+### v5.2 (2025-08-25 01:00)
+- Enhanced Forward P/E methodology
+- Dual-source approach
+
+### v5.1 (2025-08-25 00:15)
+- Month-end standardization
+- Dual-mode operation
+
+### Earlier versions
+- See previous PRD versions for details
+
+---
+
+## 10. Appendix A: Manual Data Sources
+
+For indicators requiring manual updates:
+
+| Indicator | Current Value | Source | Update Frequency |
+|-----------|--------------|--------|------------------|
+| Reserve Share | 58.4% | IMF COFER | Quarterly |
+| Net Margins | 12.1% | S&P/FactSet | Quarterly |
+| Forward P/E | ~21.5 | Yardeni | Weekly |
+| TIC Flows | 125.3B | US Treasury | Monthly |
+| US % ACWI | 60.2% | MSCI | Monthly |
+
+---
+
+## 11. Appendix B: Extended History Requirements Table
+
+| Indicator | Initialization Mode | Monthly Mode | Tracker Needs |
+|-----------|-------------------|--------------|---------------|
+| DXY | 400 daily | 180 daily | 200D & 400D MAs |
+| QQQ | 300 daily | 180 daily | 50D & 200D MAs |
+| SPY | 300 daily | 180 daily | 50D & 200D MAs |
+| ACWX | 90 daily | 90 daily | 30D & 90D MAs |
+| VT | 180 daily | 180 daily | 6M comparisons |
+| CAPE | 240 monthly | 6 monthly | 2Y MA context |
+| Yuan SWIFT | 36 monthly | 6 monthly | 12M & 36M MAs |
+| Forward P/E | 36 monthly | 6 monthly | 1Y & 3Y MAs |
+| Productivity | 24 quarterly | 6 quarterly | 2Q & 6Q MAs |
+| Net Margins | 36 monthly | 6 monthly | 3Y MA |
+| Reserve Share | 12 quarterly | 2 quarterly | YoY change |
+| Gold | 12 quarterly | 2 quarterly | 4Q & 12Q MAs |
+| Risk Premium | 24 monthly | 6 monthly | 6M & 18M MAs |
+| US % ACWI | 24 monthly | 6 monthly | 12M MA |
+| TIC Flows | 24 monthly | 6 monthly | 12M sum |
+
+---
+
+*End of Product Requirements Document v5.4.1 - HCP Data Collector*

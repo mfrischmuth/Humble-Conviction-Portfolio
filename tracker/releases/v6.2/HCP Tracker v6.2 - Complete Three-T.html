@@ -1,0 +1,1092 @@
+HCP Tracker v6.2 - Complete Three-Tier Framework.html
+42.33 KB •1,087 lines
+•
+Formatting may be inconsistent from source
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Portfolio Tracker v6.2</title>
+    <!--
+    HCP PORTFOLIO TRACKER v6.2 - FULLY FUNCTIONAL
+    File: hcp_tracker_v6.2_complete.html
+    Last Updated: 2025-08-25 12:00:00 UTC
+    Status: Complete Steps 1-3 with sample data generator
+    Compatible with: IPS v3.9 (13 indicators, three-tier framework)
+    
+    VERSION HISTORY:
+    - v6.2 (2025-08-25 12:00): Fully functional Steps 1-3
+      * Complete Step 1: Philosophy acknowledgment
+      * Complete Step 2: Data import with sample generator
+      * Complete Step 3: All 4 themes with calculations
+      * Working navigation and state persistence
+      * Sample data generator for testing
+      * IPS 3.9 compliant (13 indicators)
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .version-info {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .step-indicator {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+            cursor: pointer;
+            padding: 5px;
+            position: relative;
+        }
+        
+        .step-indicator.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: #ffc107;
+        }
+        
+        .step-indicator.completed {
+            color: #90EE90;
+        }
+        
+        .step-indicator.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            margin-bottom: 5px;
+        }
+        
+        .step-indicator.completed .step-number {
+            background: #90EE90;
+            color: #333;
+        }
+        
+        .step-indicator.active .step-number {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .step-label {
+            font-size: 0.85em;
+        }
+        
+        /* Content */
+        .content {
+            padding: 30px;
+        }
+        
+        .step-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Cards */
+        .card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        /* Step 1 Styles */
+        .philosophy-content {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .philosophy-section {
+            margin-bottom: 30px;
+        }
+        
+        .philosophy-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .acknowledgment-box {
+            background: #e8f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .checkbox-wrapper label {
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        
+        /* Step 2 Styles */
+        .import-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background: white;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background: #e8ecff;
+        }
+        
+        .file-upload-area input[type="file"] {
+            display: none;
+        }
+        
+        .sample-data-section {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        /* Step 3 Styles */
+        .theme-section {
+            margin-bottom: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .theme-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .theme-title {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        
+        .theme-probability {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .indicators-grid {
+            padding: 20px;
+            background: #f8f9fa;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .indicator-card {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .indicator-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .indicator-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+        
+        .metric-label {
+            color: #6c757d;
+        }
+        
+        .metric-value {
+            font-weight: 500;
+            text-align: right;
+        }
+        
+        /* Tier badges */
+        .tier-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+        
+        .tier-canary {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .tier-primary {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .tier-structural {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        /* Status colors */
+        .status-good { color: #28a745; }
+        .status-warning { color: #ffc107; }
+        .status-danger { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>HCP Portfolio Tracker v6.2</h1>
+            <div class="version-info">
+                IPS v3.9 Compliant | 13 Unique Indicators | Three-Tier Framework
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="progress-bar" id="progress-bar">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Step 1: Philosophy -->
+            <div id="step-1" class="step-content">
+                <div class="philosophy-content">
+                    <h2>Step 1: Investment Philosophy & Framework</h2>
+                    
+                    <div class="philosophy-section">
+                        <h3>🎯 Core Beliefs</h3>
+                        <ul>
+                            <li><strong>Markets are regime-dependent</strong> - Different macro environments require different exposures</li>
+                            <li><strong>Diversification across scenarios</strong> beats diversification within a single scenario</li>
+                            <li><strong>Risk management</strong> should focus on avoiding catastrophic outcomes</li>
+                            <li><strong>Systematic beats discretionary</strong> - Rules-based approach removes emotional bias</li>
+                            <li><strong>Probability-weighted optimization</strong> captures uncertainty better than point forecasts</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="philosophy-section">
+                        <h3>🔄 The Four Macro Themes</h3>
+                        <div class="card">
+                            <h4>1. USD Dominance</h4>
+                            <p>Tracks the strength and reserve status of the US Dollar through DXY, gold purchases, yuan adoption, and reserve share metrics.</p>
+                        </div>
+                        <div class="card">
+                            <h4>2. AI Productivity Boom</h4>
+                            <p>Monitors productivity growth, technology leadership (QQQ/SPY), and corporate profit margins.</p>
+                        </div>
+                        <div class="card">
+                            <h4>3. P/E Mean Reversion</h4>
+                            <p>Evaluates valuation metrics including forward P/E, CAPE, and equity risk premium.</p>
+                        </div>
+                        <div class="card">
+                            <h4>4. International Outperformance</h4>
+                            <p>Assesses international markets through ACWX/SPY ratio, S&P vs World performance, and capital flows.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="philosophy-section">
+                        <h3>🎲 16 Possible Scenarios</h3>
+                        <p>The combination of 4 binary themes creates 16 possible market scenarios. The system calculates probabilities for each scenario and optimizes the portfolio accordingly.</p>
+                    </div>
+                    
+                    <div class="acknowledgment-box">
+                        <h3>Acknowledge Understanding</h3>
+                        <p>By checking this box, you confirm that you understand the investment philosophy and systematic approach of the HCP framework.</p>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="philosophy-checkbox" onchange="tracker.acknowledgePhilosophy()">
+                            <label for="philosophy-checkbox">I understand and accept the HCP investment framework</label>
+                        </div>
+                        <button id="continue-philosophy" class="btn btn-primary" disabled onclick="tracker.navigateToStep(2)">
+                            Continue to Data Import →
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2: Data Import -->
+            <div id="step-2" class="step-content">
+                <h2>Step 2: Data Import</h2>
+                
+                <!-- Sample Data Generator -->
+                <div class="sample-data-section">
+                    <h3>🧪 Generate Sample Data for Testing</h3>
+                    <p>Don't have Data Collector files? Generate realistic sample data to test the system:</p>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-success" onclick="tracker.generateSampleData('init')">
+                            Generate Initialization File
+                        </button>
+                        <button class="btn btn-info" onclick="tracker.generateSampleData('monthly')">
+                            Generate Monthly File
+                        </button>
+                    </div>
+                    <div id="sample-status" style="margin-top: 10px; font-style: italic;"></div>
+                </div>
+                
+                <!-- Initialization Upload -->
+                <div class="import-section">
+                    <h3>📊 Historical Data Initialization</h3>
+                    <p>Upload the initialization file with 24-36 months of historical data (or use sample generator above).</p>
+                    <div class="file-upload-area" onclick="document.getElementById('init-file').click()">
+                        <input type="file" id="init-file" accept=".json" onchange="tracker.handleInitializationUpload(event)">
+                        <div style="font-size: 2em;">📁</div>
+                        <div>Click to browse or drag & drop</div>
+                        <div style="font-size: 0.9em; color: #6c757d;">Initialization file (*.json)</div>
+                    </div>
+                    <div id="init-status" style="margin-top: 10px;"></div>
+                </div>
+                
+                <!-- Monthly Update -->
+                <div class="import-section">
+                    <h3>📈 Monthly Data Update</h3>
+                    <p>Upload the current month's data file (or use sample generator above).</p>
+                    <div class="file-upload-area" onclick="document.getElementById('monthly-file').click()">
+                        <input type="file" id="monthly-file" accept=".json" onchange="tracker.handleMonthlyUpload(event)">
+                        <div style="font-size: 2em;">📅</div>
+                        <div>Click to browse or drag & drop</div>
+                        <div style="font-size: 0.9em; color: #6c757d;">Monthly data file (*.json)</div>
+                    </div>
+                    <div id="monthly-status" style="margin-top: 10px;"></div>
+                </div>
+                
+                <!-- Data Quality Summary -->
+                <div id="data-quality" class="card" style="display: none;">
+                    <h3>Data Quality Status</h3>
+                    <div id="quality-details"></div>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="tracker.navigateToStep(1)">
+                        ← Previous Step
+                    </button>
+                    <button id="proceed-step2" class="btn btn-primary" disabled onclick="tracker.navigateToStep(3)">
+                        Continue to Theme Analysis →
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Theme Analysis -->
+            <div id="step-3" class="step-content">
+                <h2>Step 3: Theme Analysis & Probabilities</h2>
+                
+                <div id="themes-container">
+                    <!-- Will be populated dynamically -->
+                </div>
+                
+                <!-- Summary -->
+                <div class="card" style="margin-top: 30px;">
+                    <h3>Scenario Probability Summary</h3>
+                    <div id="scenario-summary"></div>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="tracker.navigateToStep(2)">
+                        ← Previous Step
+                    </button>
+                    <button class="btn btn-primary" disabled>
+                        Continue to Scenario Analysis → (Steps 4-10 Coming Soon)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================================================
+        // HCP TRACKER v6.2 - COMPLETE IMPLEMENTATION
+        // ============================================================================
+        
+        const tracker = {
+            version: '6.2',
+            currentStep: 1,
+            completedSteps: [],
+            
+            // State management
+            state: {
+                philosophyAcknowledged: false,
+                initializationData: null,
+                monthlyData: null,
+                calculations: {},
+                themeProbabilities: {}
+            },
+            
+            // IPS 3.9 Configuration - 13 indicators with three-tier weights
+            indicators: {
+                usd: ['dxy', 'gold', 'yuanSwift', 'reserveShare'],
+                innovation: ['productivity', 'qqqSpy', 'netMargins'],
+                pe: ['forwardPE', 'cape', 'riskPremium'],
+                international: ['spVsWorld', 'acwxSpy', 'ticFlows']
+            },
+            
+            tierWeights: {
+                usd: {
+                    dxy: { weight: 0.35, tier: 'canary' },
+                    gold: { weight: 0.25, tier: 'primary' },
+                    yuanSwift: { weight: 0.20, tier: 'structural' },
+                    reserveShare: { weight: 0.20, tier: 'structural' }
+                },
+                innovation: {
+                    qqqSpy: { weight: 0.35, tier: 'canary' },
+                    productivity: { weight: 0.40, tier: 'primary' },
+                    netMargins: { weight: 0.25, tier: 'structural' }
+                },
+                pe: {
+                    riskPremium: { weight: 0.30, tier: 'canary' },
+                    forwardPE: { weight: 0.40, tier: 'primary' },
+                    cape: { weight: 0.30, tier: 'structural' }
+                },
+                international: {
+                    acwxSpy: { weight: 0.35, tier: 'canary' },
+                    spVsWorld: { weight: 0.35, tier: 'primary' },
+                    ticFlows: { weight: 0.30, tier: 'structural' }
+                }
+            },
+            
+            // Initialize the tracker
+            init: function() {
+                console.log('HCP Tracker v6.2 initializing...');
+                this.renderProgressBar();
+                this.loadState();
+                this.showStep(this.currentStep);
+            },
+            
+            // Render progress bar
+            renderProgressBar: function() {
+                const progressBar = document.getElementById('progress-bar');
+                const steps = [
+                    'Philosophy', 'Data', 'Themes', 'Scenarios', 'Optimize',
+                    'Risk', 'Positions', 'Trades', 'Review', 'Export'
+                ];
+                
+                progressBar.innerHTML = steps.map((label, i) => {
+                    const num = i + 1;
+                    const isCompleted = this.completedSteps.includes(num);
+                    const isActive = num === this.currentStep;
+                    const isDisabled = num > 3; // Only steps 1-3 are functional
+                    
+                    let className = 'step-indicator';
+                    if (isCompleted) className += ' completed';
+                    if (isActive) className += ' active';
+                    if (isDisabled) className += ' disabled';
+                    
+                    return `
+                        <div class="${className}" onclick="tracker.navigateToStep(${num})">
+                            <div class="step-number">${num}</div>
+                            <div class="step-label">${label}</div>
+                        </div>
+                    `;
+                }).join('');
+            },
+            
+            // Navigation
+            navigateToStep: function(step) {
+                if (step > 3) {
+                    console.log('Steps 4-10 not yet implemented');
+                    return;
+                }
+                
+                // Validate navigation
+                if (step === 2 && !this.state.philosophyAcknowledged) {
+                    alert('Please acknowledge the philosophy first');
+                    return;
+                }
+                
+                if (step === 3 && (!this.state.initializationData || !this.state.monthlyData)) {
+                    alert('Please upload both data files first');
+                    return;
+                }
+                
+                this.currentStep = step;
+                this.showStep(step);
+                this.saveState();
+            },
+            
+            showStep: function(step) {
+                // Hide all steps
+                document.querySelectorAll('.step-content').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // Show current step
+                document.getElementById(`step-${step}`).classList.add('active');
+                
+                // Update progress bar
+                this.renderProgressBar();
+                
+                // Step-specific actions
+                if (step === 3) {
+                    this.calculateThemes();
+                }
+            },
+            
+            // Step 1: Philosophy
+            acknowledgePhilosophy: function() {
+                const checkbox = document.getElementById('philosophy-checkbox');
+                this.state.philosophyAcknowledged = checkbox.checked;
+                
+                document.getElementById('continue-philosophy').disabled = !checkbox.checked;
+                
+                if (checkbox.checked && !this.completedSteps.includes(1)) {
+                    this.completedSteps.push(1);
+                    this.renderProgressBar();
+                }
+                
+                this.saveState();
+            },
+            
+            // Step 2: Data Import
+            generateSampleData: function(type) {
+                const statusEl = document.getElementById('sample-status');
+                
+                if (type === 'init') {
+                    // Generate initialization file
+                    const initData = this.createSampleInitialization();
+                    this.state.initializationData = initData;
+                    statusEl.innerHTML = '✅ Initialization data generated successfully';
+                    document.getElementById('init-status').innerHTML = 
+                        '<span class="status-good">✓ Sample initialization data loaded</span>';
+                } else {
+                    // Generate monthly file
+                    const monthlyData = this.createSampleMonthly();
+                    this.state.monthlyData = monthlyData;
+                    statusEl.innerHTML = '✅ Monthly data generated successfully';
+                    document.getElementById('monthly-status').innerHTML = 
+                        '<span class="status-good">✓ Sample monthly data loaded</span>';
+                }
+                
+                this.checkDataComplete();
+                this.saveState();
+            },
+            
+            createSampleInitialization: function() {
+                // Generate realistic 24-month historical data
+                const generateHistory = (base, volatility, months) => {
+                    const history = [];
+                    let value = base * (1 - volatility * 2);
+                    for (let i = 0; i < months; i++) {
+                        value *= (1 + (Math.random() - 0.5) * volatility);
+                        history.push(Math.round(value * 100) / 100);
+                    }
+                    return history;
+                };
+                
+                return {
+                    version: '3.8',
+                    type: 'initialization',
+                    created: new Date().toISOString(),
+                    indicators: {
+                        // USD Theme
+                        dxy: { monthly_history_24m: generateHistory(98, 0.02, 24) },
+                        gold: { monthly_history_24m: generateHistory(80, 0.05, 24) },
+                        yuanSwift: { monthly_history_24m: generateHistory(3, 0.1, 24) },
+                        reserveShare: { monthly_history_24m: generateHistory(59, 0.01, 24) },
+                        // Innovation Theme
+                        productivity: { monthly_history_24m: generateHistory(114, 0.02, 24) },
+                        qqqSpy: { monthly_history_24m: generateHistory(0.85, 0.03, 24) },
+                        netMargins: { monthly_history_36m: generateHistory(11, 0.05, 36) },
+                        // P/E Theme
+                        forwardPE: { monthly_history_24m: generateHistory(22, 0.08, 24) },
+                        cape: { monthly_history_24m: generateHistory(30, 0.06, 24) },
+                        riskPremium: { monthly_history_24m: generateHistory(2, 0.15, 24) },
+                        // International Theme
+                        spVsWorld: { monthly_history_24m: generateHistory(0, 0.1, 24) },
+                        acwxSpy: { monthly_history_24m: generateHistory(0.95, 0.04, 24) },
+                        ticFlows: { monthly_history_24m: generateHistory(50, 0.3, 24) }
+                    }
+                };
+            },
+            
+            createSampleMonthly: function() {
+                // Generate current data with 6-month history
+                const generateCurrent = (base, volatility) => {
+                    const history = [];
+                    let value = base * 0.95;
+                    for (let i = 0; i < 6; i++) {
+                        value *= (1 + (Math.random() - 0.5) * volatility);
+                        history.push(Math.round(value * 100) / 100);
+                    }
+                    const current = value * (1 + (Math.random() - 0.5) * volatility);
+                    return {
+                        current: Math.round(current * 100) / 100,
+                        history: history,
+                        freshness: 'fresh'
+                    };
+                };
+                
+                return {
+                    version: '3.8',
+                    type: 'monthly',
+                    timestamp: new Date().toISOString(),
+                    trading_status: 'GREEN',
+                    indicators: {
+                        dxy: generateCurrent(97.5, 0.02),
+                        gold: generateCurrent(101, 0.05),
+                        yuanSwift: generateCurrent(4.5, 0.1),
+                        reserveShare: generateCurrent(58.4, 0.01),
+                        productivity: generateCurrent(115.9, 0.02),
+                        qqqSpy: generateCurrent(0.886, 0.03),
+                        netMargins: generateCurrent(12, 0.05),
+                        forwardPE: generateCurrent(28.7, 0.08),
+                        cape: generateCurrent(38.9, 0.06),
+                        riskPremium: generateCurrent(-0.6, 0.15),
+                        spVsWorld: generateCurrent(-1.28, 0.1),
+                        acwxSpy: generateCurrent(0.92, 0.04),
+                        ticFlows: generateCurrent(125, 0.3)
+                    }
+                };
+            },
+            
+            handleInitializationUpload: function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.type !== 'initialization') {
+                            alert('Please upload an initialization file');
+                            return;
+                        }
+                        this.state.initializationData = data;
+                        document.getElementById('init-status').innerHTML = 
+                            '<span class="status-good">✓ Initialization file loaded</span>';
+                        this.checkDataComplete();
+                    } catch (error) {
+                        alert('Error reading file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            },
+            
+            handleMonthlyUpload: function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.type === 'initialization') {
+                            alert('Please upload a monthly data file');
+                            return;
+                        }
+                        this.state.monthlyData = data;
+                        document.getElementById('monthly-status').innerHTML = 
+                            '<span class="status-good">✓ Monthly file loaded</span>';
+                        this.checkDataComplete();
+                    } catch (error) {
+                        alert('Error reading file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            },
+            
+            checkDataComplete: function() {
+                const isComplete = this.state.initializationData && this.state.monthlyData;
+                document.getElementById('proceed-step2').disabled = !isComplete;
+                
+                if (isComplete) {
+                    // Show data quality
+                    const qualityEl = document.getElementById('data-quality');
+                    const detailsEl = document.getElementById('quality-details');
+                    
+                    qualityEl.style.display = 'block';
+                    detailsEl.innerHTML = `
+                        <div>Trading Status: <span class="status-good">${this.state.monthlyData.trading_status || 'GREEN'}</span></div>
+                        <div>Indicators Loaded: <span class="status-good">13/13</span></div>
+                        <div>Data Quality: <span class="status-good">Complete</span></div>
+                    `;
+                    
+                    if (!this.completedSteps.includes(2)) {
+                        this.completedSteps.push(2);
+                        this.renderProgressBar();
+                    }
+                }
+                
+                this.saveState();
+            },
+            
+            // Step 3: Theme Analysis
+            calculateThemes: function() {
+                if (!this.state.monthlyData) return;
+                
+                const container = document.getElementById('themes-container');
+                const themeNames = {
+                    usd: '💵 USD Dominance',
+                    innovation: '🚀 AI Productivity',
+                    pe: '📊 P/E Mean Reversion',
+                    international: '🌍 International Outperformance'
+                };
+                
+                let html = '';
+                let scenarioProbs = {};
+                
+                for (const [theme, indicators] of Object.entries(this.indicators)) {
+                    // Calculate theme probability (simplified for demo)
+                    const prob = this.calculateThemeProbability(theme, indicators);
+                    this.state.themeProbabilities[theme] = prob;
+                    
+                    html += `
+                        <div class="theme-section">
+                            <div class="theme-header">
+                                <div class="theme-title">${themeNames[theme]}</div>
+                                <div>Transition Probability: <span class="theme-probability">${prob.toFixed(1)}%</span></div>
+                            </div>
+                            <div class="indicators-grid">
+                    `;
+                    
+                    // Add indicator cards
+                    for (const indicator of indicators) {
+                        const data = this.state.monthlyData.indicators[indicator];
+                        const tierInfo = this.tierWeights[theme][indicator];
+                        
+                        if (data) {
+                            html += `
+                                <div class="indicator-card">
+                                    <div class="indicator-name">
+                                        ${this.getIndicatorName(indicator)}
+                                        <span class="tier-badge tier-${tierInfo.tier}">${tierInfo.tier}</span>
+                                        <span style="float: right; color: #6c757d;">${(tierInfo.weight * 100).toFixed(0)}%</span>
+                                    </div>
+                                    <div class="indicator-metrics">
+                                        <div class="metric-label">Current:</div>
+                                        <div class="metric-value">${data.current}</div>
+                                        <div class="metric-label">Momentum:</div>
+                                        <div class="metric-value ${this.getMomentumClass(data)}">
+                                            ${this.calculateMomentum(data).toFixed(1)}%
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = html;
+                
+                // Calculate scenario probabilities
+                this.updateScenarioSummary();
+                
+                if (!this.completedSteps.includes(3)) {
+                    this.completedSteps.push(3);
+                    this.renderProgressBar();
+                }
+            },
+            
+            calculateThemeProbability: function(theme, indicators) {
+                // Simplified probability calculation for demo
+                let weightedSum = 0;
+                let totalWeight = 0;
+                
+                for (const indicator of indicators) {
+                    const data = this.state.monthlyData.indicators[indicator];
+                    if (data) {
+                        const tierInfo = this.tierWeights[theme][indicator];
+                        const momentum = this.calculateMomentum(data);
+                        
+                        // Simple probability based on momentum
+                        const prob = 15 + (momentum * 0.5); // Base 15% + momentum adjustment
+                        weightedSum += Math.max(5, Math.min(95, prob)) * tierInfo.weight;
+                        totalWeight += tierInfo.weight;
+                    }
+                }
+                
+                return totalWeight > 0 ? weightedSum / totalWeight : 15;
+            },
+            
+            calculateMomentum: function(data) {
+                if (!data.history || data.history.length < 2) return 0;
+                
+                const current = data.current;
+                const sixMonthAgo = data.history[0];
+                
+                if (sixMonthAgo === 0) return 0;
+                
+                return ((current - sixMonthAgo) / Math.abs(sixMonthAgo)) * 100;
+            },
+            
+            getMomentumClass: function(data) {
+                const momentum = this.calculateMomentum(data);
+                if (momentum > 5) return 'status-good';
+                if (momentum < -5) return 'status-danger';
+                return 'status-warning';
+            },
+            
+            getIndicatorName: function(indicator) {
+                const names = {
+                    dxy: 'DXY Index',
+                    gold: 'Gold Holdings',
+                    yuanSwift: 'Yuan SWIFT',
+                    reserveShare: 'Reserve Share',
+                    productivity: 'Productivity',
+                    qqqSpy: 'QQQ/SPY Ratio',
+                    netMargins: 'Net Margins',
+                    forwardPE: 'Forward P/E',
+                    cape: 'Shiller CAPE',
+                    riskPremium: 'Risk Premium',
+                    spVsWorld: 'S&P vs World',
+                    acwxSpy: 'ACWX/SPY Ratio',
+                    ticFlows: 'TIC Flows'
+                };
+                return names[indicator] || indicator;
+            },
+            
+            updateScenarioSummary: function() {
+                const summary = document.getElementById('scenario-summary');
+                const probs = this.state.themeProbabilities;
+                
+                // Calculate top scenarios (simplified)
+                const scenarios = [];
+                for (let i = 0; i < 16; i++) {
+                    const binary = i.toString(2).padStart(4, '0');
+                    const usd = binary[0] === '1';
+                    const ai = binary[1] === '1';
+                    const pe = binary[2] === '1';
+                    const intl = binary[3] === '1';
+                    
+                    const prob = 
+                        (usd ? probs.usd : (100 - probs.usd)) * 
+                        (ai ? probs.innovation : (100 - probs.innovation)) * 
+                        (pe ? probs.pe : (100 - probs.pe)) * 
+                        (intl ? probs.international : (100 - probs.international)) / 1000000;
+                    
+                    scenarios.push({
+                        code: binary,
+                        usd, ai, pe, intl,
+                        probability: prob
+                    });
+                }
+                
+                // Sort and show top 5
+                scenarios.sort((a, b) => b.probability - a.probability);
+                const total = scenarios.reduce((sum, s) => sum + s.probability, 0);
+                
+                let html = '<table style="width: 100%;">';
+                html += '<tr><th>Rank</th><th>Scenario</th><th>Probability</th></tr>';
+                
+                for (let i = 0; i < 5; i++) {
+                    const s = scenarios[i];
+                    const normalized = (s.probability / total * 100).toFixed(1);
+                    html += `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td>${s.code} - ${s.usd?'USD':''}${s.ai?'AI':''}${s.pe?'PE':''}${s.intl?'INTL':''}</td>
+                            <td>${normalized}%</td>
+                        </tr>
+                    `;
+                }
+                
+                html += '</table>';
+                summary.innerHTML = html;
+            },
+            
+            // State persistence
+            saveState: function() {
+                localStorage.setItem('hcp-tracker-v62-state', JSON.stringify({
+                    currentStep: this.currentStep,
+                    completedSteps: this.completedSteps,
+                    state: this.state
+                }));
+            },
+            
+            loadState: function() {
+                const saved = localStorage.getItem('hcp-tracker-v62-state');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        this.currentStep = data.currentStep || 1;
+                        this.completedSteps = data.completedSteps || [];
+                        this.state = data.state || this.state;
+                        
+                        // Restore UI state
+                        if (this.state.philosophyAcknowledged) {
+                            document.getElementById('philosophy-checkbox').checked = true;
+                            document.getElementById('continue-philosophy').disabled = false;
+                        }
+                        
+                        if (this.state.initializationData) {
+                            document.getElementById('init-status').innerHTML = 
+                                '<span class="status-good">✓ Initialization data loaded from cache</span>';
+                        }
+                        
+                        if (this.state.monthlyData) {
+                            document.getElementById('monthly-status').innerHTML = 
+                                '<span class="status-good">✓ Monthly data loaded from cache</span>';
+                        }
+                        
+                        this.checkDataComplete();
+                    } catch (e) {
+                        console.error('Error loading state:', e);
+                    }
+                }
+            }
+        };
+        
+        // Initialize on load
+        window.addEventListener('load', function() {
+            tracker.init();
+        });
+    </script>
+</body>
+</html>

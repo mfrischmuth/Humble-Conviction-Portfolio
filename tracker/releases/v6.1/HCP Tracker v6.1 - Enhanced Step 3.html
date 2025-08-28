@@ -1,0 +1,823 @@
+HCP Tracker v6.1 - Enhanced Step 3 Theme Analysis.html
+32.99 KB •818 lines
+•
+Formatting may be inconsistent from source
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Tracker v6.1 - Theme Analysis</title>
+    <!--
+    HCP PORTFOLIO TRACKER v6.1 - STEP 3 THEME ANALYSIS
+    File: hcp_tracker_v6.1_step3.html
+    Last Updated: 2025-08-25 02:30:00 UTC
+    Status: Enhanced theme analysis with distance-to-trigger visualization
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        /* Content */
+        .content {
+            padding: 30px;
+        }
+        
+        /* Theme Sections */
+        .theme-section {
+            margin-bottom: 40px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .theme-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .theme-title {
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+        
+        .theme-probability {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .prob-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .prob-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .prob-change {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Indicator Cards */
+        .indicators-grid {
+            padding: 20px;
+            background: #f8f9fa;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+        
+        .indicator-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .indicator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f3f5;
+        }
+        
+        .indicator-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .indicator-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .status-triggered {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .status-approaching {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .status-diverging {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .status-stable {
+            background: #28a745;
+            color: white;
+        }
+        
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .metric {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .metric-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 2px;
+        }
+        
+        .metric-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .metric-value.positive {
+            color: #28a745;
+        }
+        
+        .metric-value.negative {
+            color: #dc3545;
+        }
+        
+        /* Distance Gauge */
+        .distance-gauge {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .gauge-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .gauge-container {
+            position: relative;
+            height: 40px;
+            background: linear-gradient(90deg, 
+                #dc3545 0%, 
+                #ffc107 35%, 
+                #28a745 45%, 
+                #28a745 55%, 
+                #ffc107 65%, 
+                #dc3545 100%);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .gauge-track {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 80%;
+            background: #333;
+            z-index: 2;
+        }
+        
+        .gauge-marker {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 15px solid #333;
+            z-index: 3;
+            transition: left 0.5s ease;
+        }
+        
+        .gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.8em;
+            color: #6c757d;
+        }
+        
+        /* Probability Comparison */
+        .probability-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .prob-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .prob-item.enhanced {
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border: 1px solid #667eea40;
+        }
+        
+        .prob-type {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .prob-percent {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .confidence-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-top: 5px;
+        }
+        
+        .confidence-high {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .confidence-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .confidence-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Time to Trigger */
+        .time-estimate {
+            text-align: center;
+            padding: 12px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        
+        .time-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .time-value {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>HCP Portfolio Tracker v6.1</h1>
+            <div class="version-info">
+                Step 3: Enhanced Theme Analysis with Distance-to-Trigger
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <h2 style="margin-bottom: 30px; color: #333;">Theme Analysis & Scenario Probabilities</h2>
+            
+            <!-- USD Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <div class="theme-title">💵 USD Dominance Theme</div>
+                    <div class="theme-probability">
+                        <span class="prob-label">Transition Probability:</span>
+                        <span class="prob-value">24.8%</span>
+                        <span class="prob-change">Enhanced: -18.2%</span>
+                    </div>
+                </div>
+                
+                <div class="indicators-grid">
+                    <!-- DXY Indicator -->
+                    <div class="indicator-card">
+                        <div class="indicator-header">
+                            <span class="indicator-name">DXY Index</span>
+                            <span class="indicator-status status-approaching">Approaching</span>
+                        </div>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-label">Current</span>
+                                <span class="metric-value">97.66</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">MA Trigger</span>
+                                <span class="metric-value">100.00</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Distance</span>
+                                <span class="metric-value negative">-2.34%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Momentum</span>
+                                <span class="metric-value positive">+12.3%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="distance-gauge">
+                            <div class="gauge-label">Distance to Trigger (below 100)</div>
+                            <div class="gauge-container">
+                                <div class="gauge-track"></div>
+                                <div class="gauge-marker" style="left: 47.66%;"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>Far Below</span>
+                                <span>Trigger</span>
+                                <span>Far Above</span>
+                            </div>
+                        </div>
+                        
+                        <div class="time-estimate">
+                            <div class="time-label">Estimated Time to Trigger</div>
+                            <div class="time-value">~6 months</div>
+                        </div>
+                        
+                        <div class="probability-comparison">
+                            <div class="prob-item">
+                                <div class="prob-type">Simple Momentum</div>
+                                <div class="prob-percent">42%</div>
+                            </div>
+                            <div class="prob-item enhanced">
+                                <div class="prob-type">Enhanced Probability</div>
+                                <div class="prob-percent">35%</div>
+                                <div class="confidence-badge confidence-medium">Medium Confidence</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gold Indicator -->
+                    <div class="indicator-card">
+                        <div class="indicator-header">
+                            <span class="indicator-name">Central Bank Gold</span>
+                            <span class="indicator-status status-triggered">Triggered</span>
+                        </div>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-label">Current</span>
+                                <span class="metric-value">101.2B</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">MA Trigger</span>
+                                <span class="metric-value">50.0B</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Distance</span>
+                                <span class="metric-value positive">+102.4%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Momentum</span>
+                                <span class="metric-value positive">+8.5%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="distance-gauge">
+                            <div class="gauge-label">Distance to Trigger (above 50B)</div>
+                            <div class="gauge-container">
+                                <div class="gauge-track"></div>
+                                <div class="gauge-marker" style="left: 85%;"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>Far Below</span>
+                                <span>Trigger</span>
+                                <span>Far Above</span>
+                            </div>
+                        </div>
+                        
+                        <div class="time-estimate">
+                            <div class="time-label">Already Triggered</div>
+                            <div class="time-value">Active</div>
+                        </div>
+                        
+                        <div class="probability-comparison">
+                            <div class="prob-item">
+                                <div class="prob-type">Simple Momentum</div>
+                                <div class="prob-percent">28%</div>
+                            </div>
+                            <div class="prob-item enhanced">
+                                <div class="prob-type">Enhanced Probability</div>
+                                <div class="prob-percent">15%</div>
+                                <div class="confidence-badge confidence-high">High Confidence</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Innovation Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <div class="theme-title">🚀 AI Productivity Theme</div>
+                    <div class="theme-probability">
+                        <span class="prob-label">Transition Probability:</span>
+                        <span class="prob-value">38.5%</span>
+                        <span class="prob-change">Enhanced: -5.5%</span>
+                    </div>
+                </div>
+                
+                <div class="indicators-grid">
+                    <!-- Productivity Indicator -->
+                    <div class="indicator-card">
+                        <div class="indicator-header">
+                            <span class="indicator-name">Productivity Growth</span>
+                            <span class="indicator-status status-diverging">Diverging</span>
+                        </div>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-label">Current</span>
+                                <span class="metric-value">115.9</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">2Q vs 6Q</span>
+                                <span class="metric-value">-0.8%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Distance</span>
+                                <span class="metric-value negative">-12.3%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Momentum</span>
+                                <span class="metric-value negative">-5.2%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="distance-gauge">
+                            <div class="gauge-label">Distance to Trigger (2Q > 6Q)</div>
+                            <div class="gauge-container">
+                                <div class="gauge-track"></div>
+                                <div class="gauge-marker" style="left: 38%;"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>Declining</span>
+                                <span>Trigger</span>
+                                <span>Accelerating</span>
+                            </div>
+                        </div>
+                        
+                        <div class="time-estimate">
+                            <div class="time-label">Estimated Time to Trigger</div>
+                            <div class="time-value">Distant (24+ months)</div>
+                        </div>
+                        
+                        <div class="probability-comparison">
+                            <div class="prob-item">
+                                <div class="prob-type">Simple Momentum</div>
+                                <div class="prob-percent">18%</div>
+                            </div>
+                            <div class="prob-item enhanced">
+                                <div class="prob-type">Enhanced Probability</div>
+                                <div class="prob-percent">8%</div>
+                                <div class="confidence-badge confidence-low">Low Confidence</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- QQQ/SPY Ratio -->
+                    <div class="indicator-card">
+                        <div class="indicator-header">
+                            <span class="indicator-name">QQQ/SPY Ratio</span>
+                            <span class="indicator-status status-triggered">Triggered</span>
+                        </div>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-label">Current</span>
+                                <span class="metric-value">0.886</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">MA Trigger</span>
+                                <span class="metric-value">0.850</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Distance</span>
+                                <span class="metric-value positive">+4.2%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Momentum</span>
+                                <span class="metric-value positive">+15.8%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="distance-gauge">
+                            <div class="gauge-label">Distance to Trigger (above 0.85)</div>
+                            <div class="gauge-container">
+                                <div class="gauge-track"></div>
+                                <div class="gauge-marker" style="left: 54%;"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>Tech Lagging</span>
+                                <span>Trigger</span>
+                                <span>Tech Leading</span>
+                            </div>
+                        </div>
+                        
+                        <div class="time-estimate">
+                            <div class="time-label">Already Triggered</div>
+                            <div class="time-value">Active</div>
+                        </div>
+                        
+                        <div class="probability-comparison">
+                            <div class="prob-item">
+                                <div class="prob-type">Simple Momentum</div>
+                                <div class="prob-percent">65%</div>
+                            </div>
+                            <div class="prob-item enhanced">
+                                <div class="prob-type">Enhanced Probability</div>
+                                <div class="prob-percent">70%</div>
+                                <div class="confidence-badge confidence-high">High Confidence</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- P/E Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <div class="theme-title">📊 P/E Mean Reversion Theme</div>
+                    <div class="theme-probability">
+                        <span class="prob-label">Transition Probability:</span>
+                        <span class="prob-value">18.2%</span>
+                        <span class="prob-change">Enhanced: -24.8%</span>
+                    </div>
+                </div>
+                
+                <div class="indicators-grid">
+                    <!-- Forward P/E -->
+                    <div class="indicator-card">
+                        <div class="indicator-header">
+                            <span class="indicator-name">Forward P/E</span>
+                            <span class="indicator-status status-triggered">Triggered</span>
+                        </div>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-label">Current</span>
+                                <span class="metric-value">28.77</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">MA Trigger</span>
+                                <span class="metric-value">21.50</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Distance</span>
+                                <span class="metric-value positive">+33.8%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Momentum</span>
+                                <span class="metric-value negative">-8.2%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="distance-gauge">
+                            <div class="gauge-label">Distance to Trigger (above 21.5)</div>
+                            <div class="gauge-container">
+                                <div class="gauge-track"></div>
+                                <div class="gauge-marker" style="left: 78%;"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>Undervalued</span>
+                                <span>Trigger</span>
+                                <span>Overvalued</span>
+                            </div>
+                        </div>
+                        
+                        <div class="time-estimate">
+                            <div class="time-label">Estimated Time to Reversion</div>
+                            <div class="time-value">~20 months</div>
+                        </div>
+                        
+                        <div class="probability-comparison">
+                            <div class="prob-item">
+                                <div class="prob-type">Simple Momentum</div>
+                                <div class="prob-percent">45%</div>
+                            </div>
+                            <div class="prob-item enhanced">
+                                <div class="prob-type">Enhanced Probability</div>
+                                <div class="prob-percent">12%</div>
+                                <div class="confidence-badge confidence-low">Low Confidence</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CAPE -->
+                    <div class="indicator-card">
+                        <div class="indicator-header">
+                            <span class="indicator-name">Shiller CAPE</span>
+                            <span class="indicator-status status-triggered">Triggered</span>
+                        </div>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <span class="metric-label">Current</span>
+                                <span class="metric-value">38.96</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">MA Trigger</span>
+                                <span class="metric-value">28.00</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Distance</span>
+                                <span class="metric-value positive">+39.1%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Momentum</span>
+                                <span class="metric-value negative">-6.5%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="distance-gauge">
+                            <div class="gauge-label">Distance to Trigger (above 28)</div>
+                            <div class="gauge-container">
+                                <div class="gauge-track"></div>
+                                <div class="gauge-marker" style="left: 82%;"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>Undervalued</span>
+                                <span>Trigger</span>
+                                <span>Overvalued</span>
+                            </div>
+                        </div>
+                        
+                        <div class="time-estimate">
+                            <div class="time-label">Estimated Time to Reversion</div>
+                            <div class="time-value">Distant (30+ months)</div>
+                        </div>
+                        
+                        <div class="probability-comparison">
+                            <div class="prob-item">
+                                <div class="prob-type">Simple Momentum</div>
+                                <div class="prob-percent">38%</div>
+                            </div>
+                            <div class="prob-item enhanced">
+                                <div class="prob-type">Enhanced Probability</div>
+                                <div class="prob-percent">10%</div>
+                                <div class="confidence-badge confidence-low">Low Confidence</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Summary Section -->
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin-top: 30px;">
+                <h3 style="margin-bottom: 20px; color: #333;">Enhanced Analysis Summary</h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <h4 style="color: #667eea; margin-bottom: 15px;">Key Findings</h4>
+                        <ul style="color: #495057; line-height: 1.8;">
+                            <li><strong>Distance matters:</strong> P/E indicators show strong negative momentum but remain 30%+ above triggers</li>
+                            <li><strong>Time estimates:</strong> Most regime changes estimated at 12+ months away</li>
+                            <li><strong>Triggered indicators:</strong> Gold purchases and QQQ/SPY already in regime-change territory</li>
+                            <li><strong>Confidence varies:</strong> Near-trigger indicators have high confidence, distant ones are speculative</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #667eea; margin-bottom: 15px;">Probability Adjustments</h4>
+                        <div style="background: white; padding: 15px; border-radius: 8px;">
+                            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; font-size: 0.95em;">
+                                <div style="font-weight: 600; color: #6c757d;">Theme</div>
+                                <div style="font-weight: 600; color: #6c757d; text-align: right;">Simple</div>
+                                <div style="font-weight: 600; color: #6c757d; text-align: right;">Enhanced</div>
+                                
+                                <div>USD Dominance</div>
+                                <div style="text-align: right;">43.0%</div>
+                                <div style="text-align: right; font-weight: 600;">24.8%</div>
+                                
+                                <div>AI Productivity</div>
+                                <div style="text-align: right;">44.0%</div>
+                                <div style="text-align: right; font-weight: 600;">38.5%</div>
+                                
+                                <div>P/E Reversion</div>
+                                <div style="text-align: right;">43.0%</div>
+                                <div style="text-align: right; font-weight: 600;">18.2%</div>
+                                
+                                <div>International</div>
+                                <div style="text-align: right;">35.0%</div>
+                                <div style="text-align: right; font-weight: 600;">28.5%</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.9em; color: #6c757d;">
+                            Enhanced probabilities account for distance-to-trigger, reducing overconfidence in distant regime changes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="tracker.navigateToStep(2)">
+                    ← Previous Step
+                </button>
+                <button class="btn btn-primary" onclick="tracker.navigateToStep(4)">
+                    Continue to Scenario Analysis →
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Navigation placeholder
+        const tracker = {
+            navigateToStep: function(step) {
+                console.log('Navigate to step:', step);
+                alert(`Would navigate to Step ${step}\n\nThis enhanced analysis shows how distance-to-trigger calculations prevent premature regime change signals.`);
+            }
+        };
+    </script>
+</body>
+</html>

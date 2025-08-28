@@ -1,0 +1,2135 @@
+HCP Portfolio Tracker v6.0 - Enhanced Momentum Analysis.html
+83.45 KB •2,130 lines
+•
+Formatting may be inconsistent from source
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Portfolio Tracker v6.0</title>
+    <!--
+    HCP PORTFOLIO TRACKER v6.0
+    File: hcp_tracker_v6.0.html
+    Last Updated: 2025-08-25 00:45:00 UTC
+    Status: Enhanced momentum analysis with transparency
+    Compatible with: Data Collector v3.7.3+ (with complete historical data)
+    
+    VERSION HISTORY:
+    - v6.0 (2025-08-25 00:45): Major momentum analysis upgrade
+      * Dual display format (narrative + dashboard)
+      * Manual data entry with visual tracking
+      * Status & Direction framework
+      * Component transparency with mini charts
+      * Single confidence score per theme
+      * Full calculation transparency
+    - v5.9 (2025-08-25 00:15): Full v3.7.3 compatibility
+    - v5.8 (2025-08-24 23:50): Critical data validation
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .version-info {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .step-indicator {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .step-indicator.active .step-number {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .step-indicator.completed .step-number {
+            background: white;
+            color: #667eea;
+        }
+        
+        .step-label {
+            font-size: 0.75em;
+            color: white;
+        }
+        
+        /* Navigation */
+        .navigation {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+        
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Content Area */
+        .content {
+            padding: 30px;
+            min-height: 400px;
+        }
+        
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        .step-title {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .step-description {
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        
+        /* Cards */
+        .card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        
+        /* Messages */
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* Data Display */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .data-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .data-item:hover {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .data-item.manual-entry {
+            background: #fff8dc;
+            border-color: #ffc107;
+        }
+        
+        .data-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .data-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .data-history {
+            font-size: 0.75em;
+            color: #868e96;
+            margin-top: 5px;
+        }
+        
+        /* Status Indicators */
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-green { background: #28a745; }
+        .status-yellow { background: #ffc107; }
+        .status-red { background: #dc3545; }
+        
+        /* Quality Badge */
+        .quality-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .quality-complete { background: #28a745; color: white; }
+        .quality-partial { background: #ffc107; color: white; }
+        .quality-poor { background: #fd7e14; color: white; }
+        .quality-missing { background: #dc3545; color: white; }
+        
+        /* Manual Entry Icon */
+        .manual-icon {
+            color: #ffc107;
+            font-size: 0.9em;
+        }
+        
+        /* Freshness Badge */
+        .freshness-badge {
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 5px;
+        }
+        
+        .freshness-fresh { background: #d4edda; color: #155724; }
+        .freshness-stale { background: #fff3cd; color: #856404; }
+        .freshness-very-stale { background: #f8d7da; color: #721c24; }
+        
+        /* Theme Analysis Styles */
+        .theme-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .theme-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .theme-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .theme-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .theme-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .status-label {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .status-positive { background: #d4edda; color: #155724; }
+        .status-negative { background: #f8d7da; color: #721c24; }
+        .status-neutral { background: #f8f9fa; color: #495057; }
+        
+        .direction-indicator {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .direction-up { color: #28a745; }
+        .direction-down { color: #dc3545; }
+        .direction-flat { color: #6c757d; }
+        
+        .theme-narrative {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .theme-metrics {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .metric-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .metric-label {
+            font-size: 0.75em;
+            color: #6c757d;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        /* Dashboard Details */
+        .theme-dashboard {
+            padding: 20px;
+            background: #fafbfc;
+            display: none;
+        }
+        
+        .theme-dashboard.expanded {
+            display: block;
+        }
+        
+        .indicator-row {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 200px 100px 1fr 150px;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .indicator-row.manual-data {
+            background: #fff8dc;
+            border-color: #ffc107;
+        }
+        
+        .indicator-name {
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .indicator-sparkline {
+            height: 30px;
+            position: relative;
+        }
+        
+        .sparkline-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .indicator-change {
+            text-align: center;
+        }
+        
+        .change-value {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .change-positive { color: #28a745; }
+        .change-negative { color: #dc3545; }
+        .change-neutral { color: #6c757d; }
+        
+        .indicator-impact {
+            text-align: right;
+            padding-right: 10px;
+        }
+        
+        .impact-bar {
+            background: #e9ecef;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .impact-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+        }
+        
+        /* Toggle Button */
+        .toggle-details {
+            background: none;
+            border: 1px solid #dee2e6;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+        }
+        
+        .toggle-details:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* Edit Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5em;
+            color: #333;
+        }
+        
+        .modal-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* Confidence Meter */
+        .confidence-meter {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .confidence-high { background: linear-gradient(90deg, #28a745, #20c997); }
+        .confidence-medium { background: linear-gradient(90deg, #ffc107, #fd7e14); }
+        .confidence-low { background: linear-gradient(90deg, #dc3545, #c82333); }
+        
+        /* Footer */
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9em;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>HCP Portfolio Tracker v6.0</h1>
+            <div class="version-info">
+                Enhanced Momentum Analysis | IPS v3.5 Compliant | Data Collector v3.7.3+ Compatible
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="step-indicator active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Philosophy</div>
+                </div>
+                <div class="step-indicator" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Data</div>
+                </div>
+                <div class="step-indicator" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Themes</div>
+                </div>
+                <div class="step-indicator" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Scenarios</div>
+                </div>
+                <div class="step-indicator" data-step="5">
+                    <div class="step-number">5</div>
+                    <div class="step-label">Optimize</div>
+                </div>
+                <div class="step-indicator" data-step="6">
+                    <div class="step-number">6</div>
+                    <div class="step-label">Positions</div>
+                </div>
+                <div class="step-indicator" data-step="7">
+                    <div class="step-number">7</div>
+                    <div class="step-label">Trades</div>
+                </div>
+                <div class="step-indicator" data-step="8">
+                    <div class="step-number">8</div>
+                    <div class="step-label">History</div>
+                </div>
+                <div class="step-indicator" data-step="9">
+                    <div class="step-number">9</div>
+                    <div class="step-label">Reports</div>
+                </div>
+                <div class="step-indicator" data-step="10">
+                    <div class="step-number">10</div>
+                    <div class="step-label">Export</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <div class="nav-buttons">
+                <button id="btn-prev" class="btn-secondary" disabled>← Previous</button>
+                <button id="btn-next" class="btn-primary">Next →</button>
+            </div>
+            <div class="status">
+                <span class="status-dot status-red" id="status-indicator"></span>
+                <span id="data-status">No Data Loaded</span>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Step 1: Philosophy -->
+            <div id="step-1" class="step-content active">
+                <h2 class="step-title">Step 1: Philosophy & Principles</h2>
+                <p class="step-description">
+                    Welcome to the HCP Portfolio Tracker v6.0 with enhanced momentum analysis.
+                    This version provides transparent, understandable calculations with manual override capabilities.
+                </p>
+                
+                <div class="card">
+                    <h3>Core Principles</h3>
+                    <ul>
+                        <li>Data-driven decision making using 14 macro indicators</li>
+                        <li>Probabilistic thinking - no certainties, only probabilities</li>
+                        <li>Risk minimization through regret-based optimization</li>
+                        <li>Monthly review and rebalancing discipline</li>
+                        <li>Four macro themes: USD Erosion, AI Productivity, P/E Reversion, International Resurgence</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>Important Disclaimers</h3>
+                    <ul>
+                        <li>This tool implements IPS v3.5 specifications</li>
+                        <li>Requires Data Collector v3.7.3+ for proper historical data</li>
+                        <li>Past performance does not guarantee future results</li>
+                        <li>All investments carry risk of loss</li>
+                        <li>This is not personalized investment advice</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="philosophy-acknowledge">
+                        I understand and accept the HCP principles and risks
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Step 2: Data Import -->
+            <div id="step-2" class="step-content">
+                <h2 class="step-title">Step 2: Import & Manage Data</h2>
+                <p class="step-description">
+                    Upload data from HCP Data Collector v3.7.3+ or manually enter/override values.
+                    Click any indicator to edit its value.
+                </p>
+                
+                <div class="card">
+                    <h3>Upload Data File</h3>
+                    <input type="file" id="file-input" accept=".json">
+                    <div style="margin-top: 20px;">
+                        <button class="btn-success" onclick="tracker.generateV373SampleData()">
+                            Generate v3.7.3 Sample Data (Complete History)
+                        </button>
+                        <button class="btn-secondary" onclick="tracker.generatePoorSampleData()">
+                            Generate Poor Quality Data (Testing)
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="data-display"></div>
+            </div>
+            
+            <!-- Step 3: Theme Momentum -->
+            <div id="step-3" class="step-content">
+                <h2 class="step-title">Step 3: Theme Momentum Analysis</h2>
+                <p class="step-description">
+                    Transparent momentum calculations for each macro theme. 
+                    Click "Show Details" to see component indicators and calculations.
+                </p>
+                
+                <div id="theme-results"></div>
+            </div>
+            
+            <!-- Step 4: Scenario Probabilities -->
+            <div id="step-4" class="step-content">
+                <h2 class="step-title">Step 4: Scenario Probability Calculation</h2>
+                <p class="step-description">
+                    Combining theme probabilities to generate 16 scenario probabilities.
+                </p>
+                
+                <div id="scenario-results"></div>
+            </div>
+            
+            <!-- Step 5: Portfolio Optimization -->
+            <div id="step-5" class="step-content">
+                <h2 class="step-title">Step 5: Portfolio Optimization</h2>
+                <p class="step-description">
+                    Optimizing allocations using regret minimization per IPS v3.5.
+                </p>
+                
+                <div id="optimization-results"></div>
+            </div>
+            
+            <!-- Step 6: Current Positions -->
+            <div id="step-6" class="step-content">
+                <h2 class="step-title">Step 6: Current Positions</h2>
+                <p class="step-description">
+                    Enter your current portfolio holdings.
+                </p>
+                
+                <div id="positions-form"></div>
+            </div>
+            
+            <!-- Step 7: Rebalancing -->
+            <div id="step-7" class="step-content">
+                <h2 class="step-title">Step 7: Generate Rebalancing Trades</h2>
+                <p class="step-description">
+                    Generate prioritized trades to rebalance your portfolio.
+                </p>
+                
+                <div id="trades-results"></div>
+            </div>
+            
+            <!-- Step 8: History -->
+            <div id="step-8" class="step-content">
+                <h2 class="step-title">Step 8: Historical Log</h2>
+                <p class="step-description">
+                    Track your decisions and performance over time.
+                </p>
+                
+                <div id="history-log"></div>
+            </div>
+            
+            <!-- Step 9: Reports -->
+            <div id="step-9" class="step-content">
+                <h2 class="step-title">Step 9: Generate Reports</h2>
+                <p class="step-description">
+                    Create formatted reports for review and documentation.
+                </p>
+                
+                <div id="reports-section"></div>
+            </div>
+            
+            <!-- Step 10: Export -->
+            <div id="step-10" class="step-content">
+                <h2 class="step-title">Step 10: Export & Backup</h2>
+                <p class="step-description">
+                    Export your data for backup or analysis.
+                </p>
+                
+                <div class="card">
+                    <h3>Export Options</h3>
+                    <div class="nav-buttons">
+                        <button class="btn-primary" onclick="tracker.exportState()">Export State</button>
+                        <button class="btn-primary" onclick="tracker.exportTrades()">Export Trades</button>
+                        <button class="btn-primary" onclick="tracker.exportHistory()">Export History</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            HCP Tracker v6.0 | © 2025 | Enhanced Momentum Analysis | IPS v3.5 Compliant
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Indicator Value</h2>
+            </div>
+            <div id="modal-body">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="tracker.closeEditModal()">Cancel</button>
+                <button class="btn-primary" onclick="tracker.saveIndicatorEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================================================
+        // HCP TRACKER v6.0 - ENHANCED MOMENTUM ANALYSIS
+        // ============================================================================
+        
+        const tracker = {
+            version: '6.0',
+            currentStep: 1,
+            completedSteps: [],
+            editingIndicator: null,
+            
+            // State object
+            state: {
+                philosophyAcknowledged: false,
+                data: null,
+                dataQuality: null,
+                themeProbabilities: {},
+                themeAnalysis: {},
+                scenarioProbabilities: [],
+                optimization: null,
+                positions: {},
+                trades: [],
+                history: [],
+                manualOverrides: {} // Track manual data entries
+            },
+            
+            // Theme configurations
+            themeConfigs: {
+                usd: {
+                    name: 'USD Erosion',
+                    indicators: [
+                        { key: 'dxy', name: 'Dollar Index', weight: 0.25, inverse: true },
+                        { key: 'gold', name: 'Gold Reserves', weight: 0.25, inverse: false },
+                        { key: 'yuanSwift', name: 'Yuan SWIFT Share', weight: 0.25, inverse: false },
+                        { key: 'reserveShare', name: 'USD Reserve Share', weight: 0.25, inverse: true }
+                    ]
+                },
+                ai: {
+                    name: 'AI Productivity Boom',
+                    indicators: [
+                        { key: 'productivity', name: 'Labor Productivity', weight: 0.40, inverse: false },
+                        { key: 'qqqSpy', name: 'QQQ/SPY Ratio', weight: 0.35, inverse: false },
+                        { key: 'netMargins', name: 'Net Profit Margins', weight: 0.25, inverse: false }
+                    ]
+                },
+                pe: {
+                    name: 'P/E Reversion',
+                    indicators: [
+                        { key: 'forwardPE', name: 'Forward P/E', weight: 0.40, inverse: true },
+                        { key: 'cape', name: 'CAPE Ratio', weight: 0.35, inverse: true },
+                        { key: 'riskPremium', name: 'Equity Risk Premium', weight: 0.25, inverse: false }
+                    ]
+                },
+                intl: {
+                    name: 'International Resurgence',
+                    indicators: [
+                        { key: 'spVsWorld', name: 'S&P vs World', weight: 0.25, inverse: true },
+                        { key: 'dxyLevel', name: 'Dollar Strength', weight: 0.25, inverse: true },
+                        { key: 'usAcwi', name: 'US % of ACWI', weight: 0.25, inverse: true },
+                        { key: 'ticFlows', name: 'TIC Flows', weight: 0.25, inverse: true }
+                    ]
+                }
+            },
+            
+            // Initialize
+            init: function() {
+                console.log('HCP Tracker v6.0 initializing...');
+                console.log('Enhanced momentum analysis with transparency');
+                this.setupEventListeners();
+                this.loadState();
+                console.log('HCP Tracker v6.0 ready');
+            },
+            
+            // Setup event listeners
+            setupEventListeners: function() {
+                // Navigation buttons
+                document.getElementById('btn-prev').addEventListener('click', () => {
+                    this.navigateStep(this.currentStep - 1);
+                });
+                
+                document.getElementById('btn-next').addEventListener('click', () => {
+                    this.navigateStep(this.currentStep + 1);
+                });
+                
+                // Step indicators
+                document.querySelectorAll('.step-indicator').forEach(indicator => {
+                    indicator.addEventListener('click', (e) => {
+                        const step = parseInt(e.currentTarget.dataset.step);
+                        if (step <= this.currentStep || this.completedSteps.includes(step)) {
+                            this.navigateStep(step);
+                        }
+                    });
+                });
+                
+                // Philosophy checkbox
+                document.getElementById('philosophy-acknowledge').addEventListener('change', (e) => {
+                    this.state.philosophyAcknowledged = e.target.checked;
+                    this.saveState();
+                });
+                
+                // File input
+                document.getElementById('file-input').addEventListener('change', (e) => {
+                    this.handleFileUpload(e);
+                });
+                
+                // Close modal on background click
+                document.getElementById('edit-modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'edit-modal') {
+                        this.closeEditModal();
+                    }
+                });
+            },
+            
+            // Navigate to step
+            navigateStep: function(step) {
+                if (step < 1 || step > 10) return;
+                
+                // Validate before moving forward
+                if (step > this.currentStep && !this.validateStep(this.currentStep)) {
+                    return;
+                }
+                
+                // Update UI
+                document.querySelectorAll('.step-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById('step-' + step).classList.add('active');
+                
+                // Update progress bar
+                document.querySelectorAll('.step-indicator').forEach(indicator => {
+                    const indicatorStep = parseInt(indicator.dataset.step);
+                    indicator.classList.remove('active');
+                    if (indicatorStep < step) {
+                        indicator.classList.add('completed');
+                    }
+                    if (indicatorStep === step) {
+                        indicator.classList.add('active');
+                    }
+                });
+                
+                // Update navigation buttons
+                document.getElementById('btn-prev').disabled = (step === 1);
+                document.getElementById('btn-next').disabled = (step === 10);
+                
+                this.currentStep = step;
+                
+                // Mark completed
+                if (!this.completedSteps.includes(step - 1) && step > 1) {
+                    this.completedSteps.push(step - 1);
+                }
+                
+                // Execute step logic
+                this.executeStep(step);
+                this.saveState();
+            },
+            
+            // Validate step
+            validateStep: function(step) {
+                switch(step) {
+                    case 1:
+                        if (!this.state.philosophyAcknowledged) {
+                            alert('Please acknowledge the HCP principles before proceeding.');
+                            return false;
+                        }
+                        return true;
+                    case 2:
+                        if (!this.state.data) {
+                            alert('Please upload data before proceeding.');
+                            return false;
+                        }
+                        // Check data quality
+                        if (!this.state.dataQuality) {
+                            alert('Data quality assessment failed. Please reload data.');
+                            return false;
+                        }
+                        if (this.state.dataQuality.overallScore < 50) {
+                            alert('❌ Cannot proceed: Data quality too poor (' + this.state.dataQuality.overallScore + '%).\n\n' +
+                                  'Please add more data manually or run Data Collector v3.7.3+.');
+                            return false;
+                        }
+                        return true;
+                    default:
+                        return true;
+                }
+            },
+            
+            // Execute step-specific logic
+            executeStep: function(step) {
+                switch(step) {
+                    case 3:
+                        this.calculateThemes();
+                        break;
+                    case 4:
+                        this.calculateScenarios();
+                        break;
+                    case 5:
+                        this.runOptimization();
+                        break;
+                    case 6:
+                        this.showPositionsForm();
+                        break;
+                    case 7:
+                        this.generateTrades();
+                        break;
+                }
+            },
+            
+            // Handle file upload
+            handleFileUpload: function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        this.loadData(data);
+                    } catch (error) {
+                        alert('Invalid JSON file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            },
+            
+            // Load data
+            loadData: function(data) {
+                console.log('Loading data from Data Collector:', data.version);
+                this.state.data = data;
+                
+                // Apply any manual overrides
+                if (this.state.manualOverrides) {
+                    Object.keys(this.state.manualOverrides).forEach(key => {
+                        if (data.indicators[key]) {
+                            const override = this.state.manualOverrides[key];
+                            data.indicators[key].originalValue = data.indicators[key].current;
+                            data.indicators[key].current = override.value;
+                            data.indicators[key].source = 'manual';
+                            data.indicators[key].enteredBy = override.enteredBy;
+                            data.indicators[key].enteredAt = override.enteredAt;
+                        }
+                    });
+                }
+                
+                // Validate data structure and quality
+                const dataQuality = this.validateDataQuality(data);
+                this.state.dataQuality = dataQuality;
+                
+                // Update status display
+                this.updateDataStatus(data.trading_status || 'UNKNOWN', dataQuality);
+                
+                // Display data with quality indicators and edit capability
+                this.displayEditableData(dataQuality);
+                this.saveState();
+            },
+            
+            // Update data status display
+            updateDataStatus: function(status, quality) {
+                const statusText = document.getElementById('data-status');
+                const statusDot = document.getElementById('status-indicator');
+                
+                let text = `Status: ${status}`;
+                if (quality) {
+                    text += ` | Quality: ${quality.overallScore}%`;
+                    text += ` (${quality.complete}/${quality.total} complete)`;
+                }
+                
+                statusText.innerHTML = text;
+                statusDot.className = 'status-dot status-' + status.toLowerCase();
+            },
+            
+            // Validate data quality
+            validateDataQuality: function(data) {
+                const quality = {
+                    complete: 0,
+                    partial: 0,
+                    poor: 0,
+                    missing: 0,
+                    total: 0,
+                    overallScore: 0,
+                    indicators: {},
+                    issues: []
+                };
+                
+                // Check for v3.7.3 data_quality field
+                if (data.data_quality) {
+                    quality.complete = data.data_quality.complete_indicators || 0;
+                    quality.partial = data.data_quality.partial_indicators || 0;
+                    quality.poor = data.data_quality.poor_indicators || 0;
+                    quality.missing = data.data_quality.missing_indicators || 0;
+                    quality.total = data.data_quality.total_indicators || 14;
+                }
+                
+                // Validate each indicator
+                const indicators = data.indicators || {};
+                Object.keys(indicators).forEach(key => {
+                    const indicator = indicators[key];
+                    if (!quality.total) quality.total++;
+                    
+                    let indicatorQuality = indicator.data_quality || '';
+                    
+                    if (!indicatorQuality) {
+                        const hasCurrent = indicator.current !== null && indicator.current !== undefined;
+                        const history = indicator.history || [];
+                        const validHistory = history.filter(v => v !== null && v !== undefined).length;
+                        
+                        if (!hasCurrent) {
+                            indicatorQuality = 'missing';
+                        } else if (validHistory === 0) {
+                            indicatorQuality = 'missing';
+                        } else if (validHistory < 3) {
+                            indicatorQuality = 'poor';
+                        } else if (validHistory < 6) {
+                            indicatorQuality = 'partial';
+                        } else {
+                            indicatorQuality = 'complete';
+                        }
+                    }
+                    
+                    quality.indicators[key] = indicatorQuality;
+                    
+                    if (!data.data_quality) {
+                        switch(indicatorQuality) {
+                            case 'complete': quality.complete++; break;
+                            case 'partial': quality.partial++; break;
+                            case 'poor': quality.poor++; break;
+                            case 'missing': quality.missing++; break;
+                        }
+                    }
+                });
+                
+                // Calculate overall score
+                if (quality.total > 0) {
+                    quality.overallScore = Math.round(
+                        (quality.complete * 100 + quality.partial * 50 + quality.poor * 25) / quality.total
+                    );
+                }
+                
+                return quality;
+            },
+            
+            // Display editable data
+            displayEditableData: function(quality) {
+                if (!this.state.data) return;
+                
+                let html = '<div class="card"><h3>Loaded Indicators (Click to Edit)</h3>';
+                
+                // Add quality summary
+                const msgClass = quality.overallScore >= 75 ? 'success' : 
+                                quality.overallScore >= 50 ? 'warning' : 'error';
+                
+                html += `
+                    <div class="message ${msgClass}">
+                        <strong>Data Quality: ${quality.overallScore}%</strong><br>
+                        Complete: ${quality.complete}, Partial: ${quality.partial}, 
+                        Poor: ${quality.poor}, Missing: ${quality.missing}
+                    </div>
+                `;
+                
+                html += '<div class="data-grid">';
+                
+                const indicators = this.state.data.indicators || {};
+                Object.keys(indicators).forEach(key => {
+                    const indicator = indicators[key];
+                    const indicatorQuality = quality.indicators[key] || 'unknown';
+                    const isManual = indicator.source === 'manual';
+                    
+                    // Calculate freshness
+                    const freshness = this.calculateFreshness(indicator.last_updated);
+                    
+                    const history = indicator.history || [];
+                    const validCount = history.filter(v => v !== null && v !== undefined).length;
+                    
+                    html += `
+                        <div class="data-item ${isManual ? 'manual-entry' : ''}" 
+                             onclick="tracker.openEditModal('${key}')"
+                             title="Click to edit">
+                            <div class="quality-badge quality-${indicatorQuality}">${indicatorQuality}</div>
+                            <div class="data-label">
+                                ${key}
+                                ${isManual ? '<span class="manual-icon">✏️</span>' : ''}
+                                <span class="freshness-badge freshness-${freshness}">${freshness}</span>
+                            </div>
+                            <div class="data-value">${indicator.current || 'N/A'}</div>
+                            <div class="data-history">History: ${validCount}/6 values</div>
+                            ${isManual ? '<div style="font-size: 0.7em; color: #ffc107;">Manual entry</div>' : ''}
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                html += `
+                    <div class="message info" style="margin-top: 20px;">
+                        💡 Click any indicator to manually edit its value. 
+                        Manual entries are highlighted in yellow and tracked for audit purposes.
+                    </div>
+                `;
+                html += '</div>';
+                
+                document.getElementById('data-display').innerHTML = html;
+            },
+            
+            // Calculate freshness
+            calculateFreshness: function(lastUpdated) {
+                if (!lastUpdated) return 'unknown';
+                
+                const now = new Date();
+                const updated = new Date(lastUpdated);
+                const daysDiff = Math.floor((now - updated) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff <= 7) return 'fresh';
+                if (daysDiff <= 30) return 'stale';
+                return 'very-stale';
+            },
+            
+            // Open edit modal
+            openEditModal: function(indicatorKey) {
+                const indicator = this.state.data.indicators[indicatorKey];
+                if (!indicator) return;
+                
+                this.editingIndicator = indicatorKey;
+                
+                let html = `
+                    <div class="form-group">
+                        <label>Indicator: <strong>${indicatorKey}</strong></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Value (from API):</label>
+                        <input type="text" value="${indicator.originalValue || indicator.current || ''}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>New Value:</label>
+                        <input type="number" id="edit-value" value="${indicator.current || ''}" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label>Historical Values (oldest to newest):</label>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                `;
+                
+                const history = indicator.history || [];
+                for (let i = 0; i < 6; i++) {
+                    html += `
+                        <input type="number" id="edit-history-${i}" 
+                               value="${history[i] !== null && history[i] !== undefined ? history[i] : ''}" 
+                               placeholder="Month -${6-i}" step="any">
+                    `;
+                }
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+                
+                if (indicator.source === 'manual') {
+                    html += `
+                        <div class="message warning">
+                            ⚠️ This value was manually entered on ${new Date(indicator.enteredAt).toLocaleString()}
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('modal-body').innerHTML = html;
+                document.getElementById('edit-modal').classList.add('active');
+            },
+            
+            // Close edit modal
+            closeEditModal: function() {
+                document.getElementById('edit-modal').classList.remove('active');
+                this.editingIndicator = null;
+            },
+            
+            // Save indicator edit
+            saveIndicatorEdit: function() {
+                if (!this.editingIndicator) return;
+                
+                const newValue = parseFloat(document.getElementById('edit-value').value);
+                if (isNaN(newValue)) {
+                    alert('Please enter a valid number');
+                    return;
+                }
+                
+                // Update history
+                const newHistory = [];
+                for (let i = 0; i < 6; i++) {
+                    const val = document.getElementById(`edit-history-${i}`).value;
+                    newHistory.push(val ? parseFloat(val) : null);
+                }
+                
+                // Store original value if not already stored
+                const indicator = this.state.data.indicators[this.editingIndicator];
+                if (!indicator.originalValue && indicator.source !== 'manual') {
+                    indicator.originalValue = indicator.current;
+                }
+                
+                // Update indicator
+                indicator.current = newValue;
+                indicator.history = newHistory;
+                indicator.source = 'manual';
+                indicator.enteredBy = 'user';
+                indicator.enteredAt = new Date().toISOString();
+                
+                // Track in manual overrides
+                this.state.manualOverrides[this.editingIndicator] = {
+                    value: newValue,
+                    history: newHistory,
+                    enteredBy: 'user',
+                    enteredAt: indicator.enteredAt
+                };
+                
+                // Recalculate data quality
+                const dataQuality = this.validateDataQuality(this.state.data);
+                this.state.dataQuality = dataQuality;
+                
+                // Update display
+                this.displayEditableData(dataQuality);
+                this.updateDataStatus(this.state.data.trading_status || 'YELLOW', dataQuality);
+                
+                // Close modal
+                this.closeEditModal();
+                this.saveState();
+                
+                // Show confirmation
+                alert(`✅ ${this.editingIndicator} updated to ${newValue}`);
+            },
+            
+            // Calculate themes with enhanced transparency
+            calculateThemes: function() {
+                if (!this.state.data || !this.state.data.indicators) return;
+                
+                const indicators = this.state.data.indicators;
+                const analysis = {};
+                
+                console.log('\n=== ENHANCED THEME MOMENTUM CALCULATION ===');
+                
+                // Calculate each theme
+                Object.keys(this.themeConfigs).forEach(themeKey => {
+                    const config = this.themeConfigs[themeKey];
+                    const themeAnalysis = this.analyzeTheme(themeKey, config, indicators);
+                    analysis[themeKey] = themeAnalysis;
+                    this.state.themeProbabilities[themeKey] = themeAnalysis.probability;
+                });
+                
+                this.state.themeAnalysis = analysis;
+                
+                // Display enhanced results
+                this.displayEnhancedThemes(analysis);
+            },
+            
+            // Analyze individual theme
+            analyzeTheme: function(themeKey, config, indicators) {
+                const analysis = {
+                    name: config.name,
+                    indicators: [],
+                    totalMomentum: 0,
+                    weightedMomentum: 0,
+                    totalWeight: 0,
+                    confidence: 0,
+                    status: '',
+                    direction: '',
+                    probability: 0.15, // Base rate
+                    narrative: ''
+                };
+                
+                // Analyze each indicator
+                config.indicators.forEach(ind => {
+                    const indicator = indicators[ind.key];
+                    if (!indicator) {
+                        analysis.indicators.push({
+                            key: ind.key,
+                            name: ind.name,
+                            weight: ind.weight,
+                            momentum: 0,
+                            impact: 0,
+                            status: 'missing'
+                        });
+                        return;
+                    }
+                    
+                    const momentum = this.calculateIndicatorMomentum(indicator);
+                    const adjustedMomentum = ind.inverse ? -momentum : momentum;
+                    const impact = adjustedMomentum * ind.weight;
+                    
+                    analysis.indicators.push({
+                        key: ind.key,
+                        name: ind.name,
+                        weight: ind.weight,
+                        current: indicator.current,
+                        history: indicator.history,
+                        sixMonthAgo: this.getSixMonthValue(indicator),
+                        change: this.getPercentChange(indicator),
+                        momentum: momentum,
+                        adjustedMomentum: adjustedMomentum,
+                        impact: impact,
+                        inverse: ind.inverse,
+                        source: indicator.source || 'api',
+                        freshness: this.calculateFreshness(indicator.last_updated)
+                    });
+                    
+                    analysis.weightedMomentum += impact;
+                    analysis.totalWeight += ind.weight;
+                });
+                
+                // Calculate overall momentum
+                if (analysis.totalWeight > 0) {
+                    analysis.totalMomentum = analysis.weightedMomentum / analysis.totalWeight;
+                }
+                
+                // Calculate confidence
+                analysis.confidence = this.calculateThemeConfidence(analysis);
+                
+                // Determine status
+                analysis.status = this.getThemeStatus(analysis.totalMomentum);
+                
+                // Determine direction
+                analysis.direction = this.getThemeDirection(analysis.indicators);
+                
+                // Calculate probability
+                analysis.probability = this.momentumToProbability(analysis.totalMomentum);
+                
+                // Generate narrative
+                analysis.narrative = this.generateThemeNarrative(analysis);
+                
+                return analysis;
+            },
+            
+            // Get six month value
+            getSixMonthValue: function(indicator) {
+                if (!indicator.history) return null;
+                for (let i = 0; i < indicator.history.length && i < 6; i++) {
+                    if (indicator.history[i] !== null && indicator.history[i] !== undefined) {
+                        return indicator.history[i];
+                    }
+                }
+                return null;
+            },
+            
+            // Get percent change
+            getPercentChange: function(indicator) {
+                const sixMonth = this.getSixMonthValue(indicator);
+                if (sixMonth === null || !indicator.current) return 0;
+                return ((indicator.current - sixMonth) / Math.abs(sixMonth)) * 100;
+            },
+            
+            // Calculate indicator momentum
+            calculateIndicatorMomentum: function(indicator) {
+                if (!indicator || !indicator.history || indicator.current === null) {
+                    return 0;
+                }
+                
+                const sixMonth = this.getSixMonthValue(indicator);
+                if (sixMonth === null) return 0;
+                
+                const change = indicator.current - sixMonth;
+                const percentChange = sixMonth !== 0 ? (change / Math.abs(sixMonth)) : 0;
+                
+                // Scale to -1 to 1 range
+                return Math.max(-1, Math.min(1, percentChange));
+            },
+            
+            // Calculate theme confidence
+            calculateThemeConfidence: function(analysis) {
+                let dataCompleteness = 0;
+                let dataFreshness = 0;
+                let indicatorCount = 0;
+                
+                analysis.indicators.forEach(ind => {
+                    if (ind.status !== 'missing') {
+                        indicatorCount++;
+                        
+                        // Completeness (has history?)
+                        if (ind.history) {
+                            const validHistory = ind.history.filter(v => v !== null).length;
+                            dataCompleteness += validHistory / 6;
+                        }
+                        
+                        // Freshness
+                        if (ind.freshness === 'fresh') dataFreshness += 1;
+                        else if (ind.freshness === 'stale') dataFreshness += 0.5;
+                        else dataFreshness += 0;
+                    }
+                });
+                
+                if (indicatorCount === 0) return 0;
+                
+                dataCompleteness = dataCompleteness / indicatorCount;
+                dataFreshness = dataFreshness / indicatorCount;
+                
+                // Weight: 50% completeness, 30% freshness, 20% indicator coverage
+                const coverage = indicatorCount / analysis.indicators.length;
+                const confidence = (dataCompleteness * 0.5 + dataFreshness * 0.3 + coverage * 0.2) * 100;
+                
+                return Math.round(confidence);
+            },
+            
+            // Get theme status
+            getThemeStatus: function(momentum) {
+                if (momentum > 0.5) return 'strongly-positive';
+                if (momentum > 0.2) return 'positive';
+                if (momentum > -0.2) return 'neutral';
+                if (momentum > -0.5) return 'negative';
+                return 'strongly-negative';
+            },
+            
+            // Get theme direction
+            getThemeDirection: function(indicators) {
+                // Compare recent 3 months to prior 3 months
+                let recentMomentum = 0;
+                let priorMomentum = 0;
+                let validIndicators = 0;
+                
+                indicators.forEach(ind => {
+                    if (ind.history && ind.history.length >= 6) {
+                        const recent = ind.history.slice(3, 6);
+                        const prior = ind.history.slice(0, 3);
+                        
+                        const recentAvg = recent.filter(v => v !== null).reduce((a, b) => a + b, 0) / recent.filter(v => v !== null).length;
+                        const priorAvg = prior.filter(v => v !== null).reduce((a, b) => a + b, 0) / prior.filter(v => v !== null).length;
+                        
+                        if (!isNaN(recentAvg) && !isNaN(priorAvg)) {
+                            recentMomentum += recentAvg;
+                            priorMomentum += priorAvg;
+                            validIndicators++;
+                        }
+                    }
+                });
+                
+                if (validIndicators === 0) return 'flat';
+                
+                const recentAvg = recentMomentum / validIndicators;
+                const priorAvg = priorMomentum / validIndicators;
+                const diff = recentAvg - priorAvg;
+                const percentDiff = priorAvg !== 0 ? (diff / Math.abs(priorAvg)) * 100 : 0;
+                
+                if (percentDiff > 10) return 'accelerating-up';
+                if (percentDiff > 2) return 'rising';
+                if (percentDiff < -10) return 'accelerating-down';
+                if (percentDiff < -2) return 'falling';
+                return 'flat';
+            },
+            
+            // Convert momentum to probability
+            momentumToProbability: function(momentum) {
+                const baseRate = 0.15;
+                const adjustment = momentum * 0.35;
+                const probability = baseRate + adjustment;
+                return Math.max(0.05, Math.min(0.95, probability));
+            },
+            
+            // Generate theme narrative
+            generateThemeNarrative: function(analysis) {
+                const statusText = {
+                    'strongly-positive': 'STRONG POSITIVE',
+                    'positive': 'POSITIVE',
+                    'neutral': 'NEUTRAL',
+                    'negative': 'NEGATIVE',
+                    'strongly-negative': 'STRONG NEGATIVE'
+                }[analysis.status];
+                
+                const directionText = {
+                    'accelerating-up': 'ACCELERATING UPWARD',
+                    'rising': 'RISING',
+                    'flat': 'FLAT',
+                    'falling': 'FALLING',
+                    'accelerating-down': 'ACCELERATING DOWNWARD'
+                }[analysis.direction];
+                
+                // Find primary drivers
+                const drivers = analysis.indicators
+                    .filter(ind => Math.abs(ind.impact) > 0.05)
+                    .sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact))
+                    .slice(0, 2);
+                
+                let narrative = `The theme shows ${statusText} momentum, currently ${directionText}. `;
+                
+                if (drivers.length > 0) {
+                    narrative += 'Primary drivers: ';
+                    drivers.forEach((d, i) => {
+                        if (i > 0) narrative += ', ';
+                        const changeDir = d.change > 0 ? 'up' : 'down';
+                        narrative += `${d.name} ${changeDir} ${Math.abs(d.change).toFixed(1)}%`;
+                    });
+                    narrative += '. ';
+                }
+                
+                const confLevel = analysis.confidence >= 80 ? 'HIGH' : 
+                                 analysis.confidence >= 50 ? 'MEDIUM' : 'LOW';
+                narrative += `Confidence: ${confLevel} (${analysis.confidence}%).`;
+                
+                return narrative;
+            },
+            
+            // Display enhanced themes
+            displayEnhancedThemes: function(analysis) {
+                let html = '';
+                
+                Object.keys(analysis).forEach(themeKey => {
+                    const theme = analysis[themeKey];
+                    
+                    // Status classes
+                    const statusClass = theme.status.replace('-', '_');
+                    const dirClass = theme.direction.includes('up') ? 'up' : 
+                                    theme.direction.includes('down') ? 'down' : 'flat';
+                    const confClass = theme.confidence >= 80 ? 'high' : 
+                                     theme.confidence >= 50 ? 'medium' : 'low';
+                    
+                    html += `
+                        <div class="theme-card">
+                            <div class="theme-header">
+                                <div class="theme-title">
+                                    <div class="theme-name">${theme.name}</div>
+                                    <button class="toggle-details" onclick="tracker.toggleThemeDetails('${themeKey}')">
+                                        Show Details
+                                    </button>
+                                </div>
+                                
+                                <div class="theme-status">
+                                    <span class="status-label status-${statusClass.includes('positive') ? 'positive' : 
+                                                                         statusClass.includes('negative') ? 'negative' : 'neutral'}">
+                                        ${theme.status.toUpperCase().replace('-', ' ')}
+                                    </span>
+                                    <span class="direction-indicator direction-${dirClass}">
+                                        ${theme.direction.includes('accelerating-up') ? '↑↑' :
+                                          theme.direction.includes('rising') ? '↑' :
+                                          theme.direction.includes('accelerating-down') ? '↓↓' :
+                                          theme.direction.includes('falling') ? '↓' : '→'}
+                                        ${theme.direction.toUpperCase().replace('-', ' ')}
+                                    </span>
+                                </div>
+                                
+                                <div class="theme-narrative">${theme.narrative}</div>
+                                
+                                <div class="theme-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-label">Probability</div>
+                                        <div class="metric-value">${(theme.probability * 100).toFixed(1)}%</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-label">Momentum</div>
+                                        <div class="metric-value">${(theme.totalMomentum * 100).toFixed(1)}%</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-label">Confidence</div>
+                                        <div class="metric-value">${theme.confidence}%</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="confidence-meter">
+                                    <div class="confidence-fill confidence-${confClass}" 
+                                         style="width: ${theme.confidence}%">
+                                        ${theme.confidence}% Confidence
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="dashboard-${themeKey}" class="theme-dashboard">
+                                ${this.generateThemeDashboard(theme)}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('theme-results').innerHTML = html;
+            },
+            
+            // Generate theme dashboard
+            generateThemeDashboard: function(theme) {
+                let html = '';
+                
+                theme.indicators.forEach(ind => {
+                    const changeClass = ind.change > 0 ? 'positive' : 
+                                      ind.change < 0 ? 'negative' : 'neutral';
+                    const isManual = ind.source === 'manual';
+                    
+                    html += `
+                        <div class="indicator-row ${isManual ? 'manual-data' : ''}">
+                            <div class="indicator-name">
+                                ${ind.name}
+                                ${ind.inverse ? ' (inv)' : ''}
+                                ${isManual ? '<span class="manual-icon">✏️</span>' : ''}
+                            </div>
+                            
+                            <div class="indicator-sparkline">
+                                ${this.generateSparkline(ind.history)}
+                            </div>
+                            
+                            <div class="indicator-change">
+                                <div class="change-value change-${changeClass}">
+                                    ${ind.change > 0 ? '+' : ''}${ind.change.toFixed(1)}%
+                                </div>
+                                <div style="font-size: 0.75em; color: #6c757d;">
+                                    ${ind.sixMonthAgo?.toFixed(2) || 'N/A'} → ${ind.current?.toFixed(2) || 'N/A'}
+                                </div>
+                            </div>
+                            
+                            <div class="indicator-impact">
+                                <div style="font-size: 0.85em; color: #6c757d;">
+                                    Impact: ${ind.impact > 0 ? '+' : ''}${(ind.impact * 100).toFixed(1)}%
+                                </div>
+                                <div class="impact-bar">
+                                    <div class="impact-fill" style="width: ${Math.abs(ind.impact) * 100}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                return html;
+            },
+            
+            // Generate sparkline
+            generateSparkline: function(history) {
+                if (!history || history.length === 0) {
+                    return '<span style="color: #6c757d;">No data</span>';
+                }
+                
+                // Simple text-based sparkline
+                const spark = history.map(v => {
+                    if (v === null || v === undefined) return '·';
+                    return '▪';
+                }).join('');
+                
+                return `<span style="font-family: monospace; letter-spacing: 2px;">${spark}</span>`;
+            },
+            
+            // Toggle theme details
+            toggleThemeDetails: function(themeKey) {
+                const dashboard = document.getElementById(`dashboard-${themeKey}`);
+                if (dashboard) {
+                    dashboard.classList.toggle('expanded');
+                    const button = dashboard.parentElement.querySelector('.toggle-details');
+                    if (button) {
+                        button.textContent = dashboard.classList.contains('expanded') ? 
+                                           'Hide Details' : 'Show Details';
+                    }
+                }
+            },
+            
+            // Calculate scenarios
+            calculateScenarios: function() {
+                if (!this.state.themeProbabilities) return;
+                
+                const themes = this.state.themeProbabilities;
+                const scenarios = [];
+                
+                // Generate all 16 scenarios
+                for (let i = 0; i < 16; i++) {
+                    const hasUSD = (i & 8) > 0;
+                    const hasAI = (i & 4) > 0;
+                    const hasPE = (i & 2) > 0;
+                    const hasINTL = (i & 1) > 0;
+                    
+                    const prob = 
+                        (hasUSD ? themes.usd : (1 - themes.usd)) *
+                        (hasAI ? themes.ai : (1 - themes.ai)) *
+                        (hasPE ? themes.pe : (1 - themes.pe)) *
+                        (hasINTL ? themes.intl : (1 - themes.intl));
+                    
+                    scenarios.push({
+                        id: i + 1,
+                        probability: prob,
+                        hasUSD, hasAI, hasPE, hasINTL
+                    });
+                }
+                
+                // Normalize to 100%
+                const sum = scenarios.reduce((a, b) => a + b.probability, 0);
+                scenarios.forEach(s => s.probability = (s.probability / sum) * 100);
+                
+                // Sort by probability
+                scenarios.sort((a, b) => b.probability - a.probability);
+                
+                this.state.scenarioProbabilities = scenarios;
+                
+                // Display results
+                let html = '<div class="card"><h3>Scenario Probabilities</h3>';
+                html += '<div style="max-height: 400px; overflow-y: auto;">';
+                
+                scenarios.forEach(s => {
+                    const themes = [];
+                    if (s.hasUSD) themes.push('USD↓');
+                    if (s.hasAI) themes.push('AI');
+                    if (s.hasPE) themes.push('PE↓');
+                    if (s.hasINTL) themes.push('Intl');
+                    
+                    const name = themes.length ? themes.join('+') : 'Status Quo';
+                    const style = s.probability > 20 ? 'background: #fff3cd;' : '';
+                    
+                    html += `
+                        <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #dee2e6; ${style}">
+                            <span>S${s.id}: ${name}</span>
+                            <strong>${s.probability.toFixed(2)}%</strong>
+                        </div>
+                    `;
+                });
+                
+                html += '</div></div>';
+                document.getElementById('scenario-results').innerHTML = html;
+            },
+            
+            // Generate sample data functions
+            generateV373SampleData: function() {
+                const data = {
+                    "version": "3.7.3",
+                    "timestamp": new Date().toISOString(),
+                    "trading_status": "GREEN",
+                    "data_quality": {
+                        "complete_indicators": 14,
+                        "partial_indicators": 0,
+                        "poor_indicators": 0,
+                        "missing_indicators": 0,
+                        "total_indicators": 14,
+                        "overall": "GOOD",
+                        "trading_status": "GREEN"
+                    },
+                    "indicators": {
+                        "dxy": {
+                            "current": 95.5,
+                            "history": [102.3, 100.8, 99.2, 97.6, 96.4, 95.9],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "gold": {
+                            "current": 195.2,
+                            "history": [165.3, 172.5, 178.8, 184.2, 189.6, 192.8],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "yuanSwift": {
+                            "current": 4.8,
+                            "history": [2.1, 2.5, 3.0, 3.5, 4.1, 4.5],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "reserveShare": {
+                            "current": 56.2,
+                            "history": [59.5, 59.0, 58.4, 57.8, 57.1, 56.6],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "productivity": {
+                            "current": 3.2,
+                            "history": [1.5, 1.8, 2.1, 2.4, 2.7, 2.9],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "qqqSpy": {
+                            "current": 1.28,
+                            "history": [1.05, 1.10, 1.15, 1.19, 1.23, 1.26],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "netMargins": {
+                            "current": 14.2,
+                            "history": [11.5, 12.0, 12.5, 13.0, 13.5, 13.9],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "forwardPE": {
+                            "current": 17.2,
+                            "history": [23.5, 22.0, 20.5, 19.3, 18.4, 17.8],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "cape": {
+                            "current": 26.8,
+                            "history": [32.5, 31.2, 29.8, 28.5, 27.6, 27.2],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "riskPremium": {
+                            "current": 5.2,
+                            "history": [2.5, 3.0, 3.5, 4.0, 4.5, 4.9],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "spVsWorld": {
+                            "current": -3.5,
+                            "history": [8.2, 6.5, 4.3, 2.1, 0.5, -1.8],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "usAcwi": {
+                            "current": 57.8,
+                            "history": [62.5, 61.3, 60.2, 59.3, 58.6, 58.2],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "dxyLevel": {
+                            "current": 95.5,
+                            "history": [102.3, 100.8, 99.2, 97.6, 96.4, 95.9],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        },
+                        "ticFlows": {
+                            "current": -52.3,
+                            "history": [45.2, 28.5, 12.3, -5.8, -24.6, -38.9],
+                            "freshness": "fresh",
+                            "last_updated": new Date().toISOString(),
+                            "data_quality": "complete"
+                        }
+                    },
+                    "alerts": []
+                };
+                
+                this.loadData(data);
+                alert('✅ Loaded v3.7.3 sample data with COMPLETE history and clear trends');
+            },
+            
+            generatePoorSampleData: function() {
+                const data = {
+                    "version": "3.7.2",
+                    "timestamp": new Date().toISOString(),
+                    "trading_status": "YELLOW",
+                    "indicators": {
+                        "dxy": { "current": 97.66, "history": [null, null, null, 99.27, 99.26, 99.74] },
+                        "gold": { "current": 101.2, "history": [null, null, null, null, null, null] },
+                        "yuanSwift": { "current": 2.12, "history": [2.7, 3.04, 2.85, 2.38, 2.09, 2.12] },
+                        "reserveShare": { "current": 58.4, "history": [null, null, null, null, null, null] },
+                        "productivity": { "current": 115.877, "history": [null, null, null, null, null, null] },
+                        "qqqSpy": { "current": 0.8863, "history": [null, null, null, null, null, null] },
+                        "netMargins": { "current": 12, "history": [null, null, null, null, null, null] },
+                        "forwardPE": { "current": 28.77, "history": [null, null, null, null, null, null] },
+                        "cape": { "current": 38.96, "history": [null, null, null, null, null, null] },
+                        "riskPremium": { "current": -0.61, "history": [null, null, null, null, null, null] },
+                        "spVsWorld": { "current": -1.28, "history": [null, null, null, null, null, null] },
+                        "usAcwi": { "current": 60, "history": [null, null, null, null, null, null] },
+                        "dxyLevel": { "current": 97.66, "history": [null, null, null, 99.27, 99.26, 99.74] },
+                        "ticFlows": { "current": 125.3, "history": [null, null, null, null, null, null] }
+                    }
+                };
+                
+                this.loadData(data);
+                alert('❌ Loaded POOR quality data - use manual entry to fix missing values');
+            },
+            
+            // Placeholder functions
+            runOptimization: function() {
+                this.state.optimization = {
+                    allocations: {
+                        VTI: 30, VEA: 15, VWO: 5, PIMIX: 15, PYLD: 5,
+                        COM: 5, IGF: 5, GLD: 5, SMH: 5, SRVR: 5,
+                        DBMF: 5, SWVXX: 0
+                    }
+                };
+                
+                document.getElementById('optimization-results').innerHTML = `
+                    <div class="card">
+                        <h3>Optimization Complete</h3>
+                        <p>Target allocations calculated using regret minimization.</p>
+                    </div>
+                `;
+            },
+            
+            showPositionsForm: function() {
+                document.getElementById('positions-form').innerHTML = `
+                    <div class="card">
+                        <h3>Enter Current Positions</h3>
+                        <p>Position entry form will appear here.</p>
+                    </div>
+                `;
+            },
+            
+            generateTrades: function() {
+                document.getElementById('trades-results').innerHTML = `
+                    <div class="card">
+                        <h3>Rebalancing Trades</h3>
+                        <p>Trade generation will appear here.</p>
+                    </div>
+                `;
+            },
+            
+            // Export functions
+            exportState: function() {
+                const data = JSON.stringify(this.state, null, 2);
+                this.downloadFile(data, `hcp_state_${this.getTimestamp()}.json`, 'application/json');
+            },
+            
+            exportTrades: function() {
+                alert('Trade export will be implemented in next version');
+            },
+            
+            exportHistory: function() {
+                alert('History export will be implemented in next version');
+            },
+            
+            // Helper functions
+            getTimestamp: function() {
+                const now = new Date();
+                return now.getFullYear() +
+                       String(now.getMonth() + 1).padStart(2, '0') +
+                       String(now.getDate()).padStart(2, '0') + '_' +
+                       String(now.getHours()).padStart(2, '0') +
+                       String(now.getMinutes()).padStart(2, '0') +
+                       String(now.getSeconds()).padStart(2, '0');
+            },
+            
+            downloadFile: function(content, filename, type) {
+                const blob = new Blob([content], { type: type });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            },
+            
+            // Save/Load state
+            saveState: function() {
+                localStorage.setItem('hcp-tracker-v60', JSON.stringify({
+                    version: this.version,
+                    currentStep: this.currentStep,
+                    completedSteps: this.completedSteps,
+                    state: this.state
+                }));
+            },
+            
+            loadState: function() {
+                const saved = localStorage.getItem('hcp-tracker-v60');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        this.currentStep = data.currentStep || 1;
+                        this.completedSteps = data.completedSteps || [];
+                        this.state = data.state || this.state;
+                        
+                        if (this.currentStep !== 1) {
+                            this.navigateStep(this.currentStep);
+                        }
+                        
+                        if (this.state.philosophyAcknowledged) {
+                            document.getElementById('philosophy-acknowledge').checked = true;
+                        }
+                        
+                        console.log('State restored from localStorage');
+                    } catch (error) {
+                        console.error('Failed to restore state:', error);
+                    }
+                }
+            }
+        };
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            tracker.init();
+        });
+    </script>
+</body>
+</html>

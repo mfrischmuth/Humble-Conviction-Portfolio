@@ -1,0 +1,1103 @@
+HCP Portfolio Tracker v6.3 - Enhanced Visualization.html
+40.13 KB •1,098 lines
+•
+Formatting may be inconsistent from source
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Portfolio Tracker v6.3</title>
+    <!--
+    HCP PORTFOLIO TRACKER v6.3 - ENHANCED VISUALIZATION
+    File: hcp_tracker_v6.3_enhanced.html
+    Last Updated: 2025-08-25 14:00:00 UTC
+    Status: Enhanced Theme Analysis with arrow-based momentum visualization
+    Compatible with: IPS v3.9 (13 indicators, three-tier framework)
+    
+    VERSION HISTORY:
+    - v6.3 (2025-08-25 14:00): Major UI improvements
+      * Philosophy section narrative introduction
+      * Data import simplified instructions
+      * USD Dominance renamed to USD Erosion
+      * New arrow-based indicator visualization
+      * Clear tier labeling and weights
+      * Improved scenario probability display
+      * Time-to-trigger calculations
+    - v6.2 (2025-08-25 12:00): Fully functional Steps 1-3
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .version-info {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .step-indicator {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .step-indicator.active {
+            transform: scale(1.1);
+        }
+        
+        .step-indicator.completed .step-number {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .step-indicator.current .step-number {
+            background: white;
+            color: #667eea;
+            border: 3px solid #667eea;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            font-weight: bold;
+        }
+        
+        .step-label {
+            font-size: 0.75em;
+            color: white;
+            white-space: nowrap;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 30px;
+        }
+        
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Common Elements */
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e1e4e8;
+        }
+        
+        h3 {
+            color: #764ba2;
+            margin: 20px 0 15px;
+        }
+        
+        .narrative {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+        
+        .belief-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .belief-list li {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+        }
+        
+        .belief-list li strong {
+            color: #667eea;
+        }
+        
+        /* Data Import Section */
+        .data-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .file-upload {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px dashed #cbd5e0;
+        }
+        
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        
+        .file-upload label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .file-upload label:hover {
+            background: #5a67d8;
+        }
+        
+        .status-good {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        
+        .status-bad {
+            color: #f44336;
+            font-weight: bold;
+        }
+        
+        .status-warning {
+            color: #ff9800;
+            font-weight: bold;
+        }
+        
+        /* Theme Analysis */
+        .theme-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid #e1e4e8;
+        }
+        
+        .theme-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e1e4e8;
+        }
+        
+        .theme-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .theme-probability {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        /* Indicator Display */
+        .indicator-group {
+            margin: 20px 0;
+        }
+        
+        .tier-label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tier-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .indicator {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e1e4e8;
+        }
+        
+        .indicator-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .indicator-name {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .indicator-tier {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        /* Arrow Visualization */
+        .indicator-viz {
+            position: relative;
+            height: 40px;
+            margin: 15px 0;
+        }
+        
+        .indicator-bar {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 8px;
+            background: #e1e4e8;
+            border-radius: 4px;
+        }
+        
+        .trigger-marker {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #333;
+        }
+        
+        .momentum-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 4px;
+            background: #666;
+            transition: all 0.3s ease;
+        }
+        
+        .arrow-tip {
+            position: absolute;
+            width: 0;
+            height: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .arrow-tip.right {
+            right: -8px;
+            border-left: 8px solid #666;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+        
+        .arrow-tip.left {
+            left: -8px;
+            border-right: 8px solid #666;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+        
+        .indicator-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .time-to-trigger {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        /* Scenario Probability */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .scenario-card {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e1e4e8;
+            text-align: center;
+        }
+        
+        .scenario-prob {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .scenario-name {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Acknowledgment Box */
+        .acknowledgment {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 HCP Portfolio Tracker</h1>
+            <div class="version-info">Version 6.3 | Enhanced Visualization | IPS v3.9 Compliant</div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar" id="progress-bar">
+            <!-- Will be populated by JavaScript -->
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Philosophy (No longer Step 1) -->
+            <div id="step-1" class="step-content">
+                <h2>Investment Philosophy</h2>
+                
+                <div class="narrative">
+                    <p><strong>The Humble Conviction Portfolio</strong> represents a systematic approach to navigating market uncertainty. Rather than pretending to know the future with certainty, we acknowledge multiple possible scenarios and position ourselves to avoid catastrophic outcomes while capturing upside opportunities.</p>
+                    <br>
+                    <p>This framework monitors macro themes through quantitative indicators, allowing data-driven decisions while maintaining humility about our predictive abilities. We track potential problems before they become crises, adjusting our portfolio based on the probability-weighted outcomes across different scenarios.</p>
+                </div>
+                
+                <h3>Core Beliefs</h3>
+                <ul class="belief-list">
+                    <li><strong>Markets are regime-dependent:</strong> Different macro environments require different exposures</li>
+                    <li><strong>Diversification across scenarios</strong> beats diversification within a single scenario</li>
+                    <li><strong>Risk management</strong> should focus on avoiding catastrophic outcomes in any probable scenario</li>
+                    <li><strong>Systematic beats discretionary:</strong> Rules-based approach removes emotional bias</li>
+                    <li><strong>Probability-weighted optimization</strong> captures uncertainty better than point forecasts</li>
+                </ul>
+                
+                <h3>Investment Objectives</h3>
+                <ul class="belief-list">
+                    <li><strong>Primary:</strong> Achieve 8-12% annual returns across market cycles</li>
+                    <li><strong>Secondary:</strong> Limit maximum drawdown to 15% in any 12-month period</li>
+                    <li><strong>Tertiary:</strong> Maintain liquidity for opportunistic investments</li>
+                </ul>
+                
+                <div class="acknowledgment">
+                    <h3>Ready to Begin?</h3>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="philosophy-checkbox" onchange="tracker.acknowledgePhilosophy()">
+                        <label for="philosophy-checkbox">I understand the Humble Conviction Portfolio philosophy</label>
+                    </div>
+                    <button id="continue-philosophy" class="btn btn-primary" onclick="tracker.navigateToStep(2)" disabled>
+                        Continue to Data Import
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Data Import -->
+            <div id="step-2" class="step-content">
+                <h2>📊 Data Import</h2>
+                
+                <div class="data-section">
+                    <h3>Historical Data Initialization</h3>
+                    <p>Run the Data Collector in Initialization mode to generate historical baseline data. This will provide the necessary historical context for moving average calculations.</p>
+                    
+                    <div class="file-upload">
+                        <label for="init-file">
+                            📁 Upload Initialization File
+                        </label>
+                        <input type="file" id="init-file" accept=".json" onchange="tracker.handleInitializationUpload(event)">
+                        <div id="init-status" style="margin-top: 10px;">
+                            <span class="status-warning">⏳ Waiting for initialization data...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="data-section">
+                    <h3>Monthly Data Update</h3>
+                    <p>Upload the latest monthly data file from the Data Collector:</p>
+                    
+                    <div class="file-upload">
+                        <label for="monthly-file">
+                            📁 Upload Monthly Data
+                        </label>
+                        <input type="file" id="monthly-file" accept=".json" onchange="tracker.handleMonthlyUpload(event)">
+                        <div id="monthly-status" style="margin-top: 10px;">
+                            <span class="status-warning">⏳ Waiting for monthly data...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="data-section">
+                    <h3>Or Use Sample Data (Testing)</h3>
+                    <p>Generate sample data for testing the tracker:</p>
+                    <button class="btn btn-secondary" onclick="tracker.generateSampleData('both')">
+                        🔬 Generate Sample Data
+                    </button>
+                    <div id="sample-status" style="margin-top: 10px;"></div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="tracker.navigateToStep(1)">
+                        ← Back
+                    </button>
+                    <button id="continue-to-analysis" class="btn btn-primary" onclick="tracker.navigateToStep(3)" disabled>
+                        Continue to Analysis →
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Theme Analysis -->
+            <div id="step-3" class="step-content">
+                <h2>🎯 Theme Momentum Analysis</h2>
+                
+                <!-- USD Erosion Theme -->
+                <div class="theme-card">
+                    <div class="theme-header">
+                        <div class="theme-title">💵 USD Erosion Theme</div>
+                        <div class="theme-probability" id="usd-probability">--.--%</div>
+                    </div>
+                    <div id="usd-indicators"></div>
+                </div>
+                
+                <!-- AI Productivity Theme -->
+                <div class="theme-card">
+                    <div class="theme-header">
+                        <div class="theme-title">🤖 AI Productivity Theme</div>
+                        <div class="theme-probability" id="ai-probability">--.--%</div>
+                    </div>
+                    <div id="ai-indicators"></div>
+                </div>
+                
+                <!-- P/E Reversion Theme -->
+                <div class="theme-card">
+                    <div class="theme-header">
+                        <div class="theme-title">📉 P/E Reversion Theme</div>
+                        <div class="theme-probability" id="pe-probability">--.--%</div>
+                    </div>
+                    <div id="pe-indicators"></div>
+                </div>
+                
+                <!-- International Theme -->
+                <div class="theme-card">
+                    <div class="theme-header">
+                        <div class="theme-title">🌍 International Outperformance Theme</div>
+                        <div class="theme-probability" id="intl-probability">--.--%</div>
+                    </div>
+                    <div id="intl-indicators"></div>
+                </div>
+                
+                <!-- Scenario Probabilities -->
+                <div class="theme-card">
+                    <h3>📊 Scenario Probability Summary</h3>
+                    <div id="scenario-grid" class="scenario-grid">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="tracker.navigateToStep(2)">
+                        ← Back to Data
+                    </button>
+                    <button class="btn btn-primary" onclick="alert('Steps 4-10 coming soon!')">
+                        Continue to Scenarios →
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Steps 4-10: Placeholder -->
+            <div id="step-4" class="step-content">
+                <h2>🔮 Scenario Analysis</h2>
+                <p>Step 4 implementation coming soon...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // HCP Tracker v6.3 - Enhanced Visualization
+        const tracker = {
+            version: '6.3',
+            currentStep: 1,
+            completedSteps: [],
+            
+            state: {
+                philosophyAcknowledged: false,
+                initializationData: null,
+                monthlyData: null,
+                themeProbabilities: {
+                    USD: 0.25,
+                    AI: 0.25,
+                    PE: 0.25,
+                    INTL: 0.25
+                },
+                scenarioProbabilities: []
+            },
+            
+            // Indicator Configuration
+            indicators: {
+                USD: {
+                    canary: [
+                        { name: 'DXY Index', id: 'dxy', weight: 0.35, trigger: 100, inverse: false }
+                    ],
+                    primary: [
+                        { name: 'Yuan SWIFT', id: 'yuanSwift', weight: 0.25, trigger: 5, inverse: true }
+                    ],
+                    structural: [
+                        { name: 'Central Bank Gold', id: 'goldPurchases', weight: 0.25, trigger: 50, inverse: true },
+                        { name: 'Reserve Share', id: 'reserveShare', weight: 0.15, trigger: 55, inverse: false }
+                    ]
+                },
+                AI: {
+                    canary: [
+                        { name: 'QQQ/SPY Ratio', id: 'qqqSpy', weight: 0.35, trigger: 0.9, inverse: false }
+                    ],
+                    primary: [
+                        { name: 'Productivity', id: 'productivity', weight: 0.40, trigger: 110, inverse: false }
+                    ],
+                    structural: [
+                        { name: 'Net Margins', id: 'netMargins', weight: 0.25, trigger: 11, inverse: false }
+                    ]
+                },
+                PE: {
+                    canary: [
+                        { name: 'Risk Premium', id: 'riskPremium', weight: 0.30, trigger: 0, inverse: false }
+                    ],
+                    primary: [
+                        { name: 'Forward P/E', id: 'forwardPE', weight: 0.40, trigger: 22, inverse: false }
+                    ],
+                    structural: [
+                        { name: 'CAPE', id: 'cape', weight: 0.30, trigger: 28, inverse: false }
+                    ]
+                },
+                INTL: {
+                    canary: [
+                        { name: 'ACWX/SPY', id: 'acwxSpy', weight: 0.35, trigger: 1, inverse: true }
+                    ],
+                    primary: [
+                        { name: 'S&P vs World', id: 'spVsWorld', weight: 0.50, trigger: 0, inverse: false }
+                    ],
+                    structural: [
+                        { name: 'TIC Flows', id: 'ticFlows', weight: 0.15, trigger: 0, inverse: false }
+                    ]
+                }
+            },
+            
+            // Initialize
+            init: function() {
+                this.renderProgressBar();
+                this.showStep(1);
+                this.loadState();
+            },
+            
+            // Progress Bar
+            renderProgressBar: function() {
+                const steps = [
+                    'Philosophy',
+                    'Data Import',
+                    'Theme Analysis',
+                    'Scenarios',
+                    'Optimization',
+                    'Risk Check',
+                    'Positions',
+                    'Rebalancing',
+                    'History',
+                    'Report'
+                ];
+                
+                const bar = document.getElementById('progress-bar');
+                bar.innerHTML = steps.map((label, i) => {
+                    const num = i + 1;
+                    let className = 'step-indicator';
+                    if (this.completedSteps.includes(num)) className += ' completed';
+                    if (this.currentStep === num) className += ' current';
+                    
+                    return `
+                        <div class="${className}" onclick="tracker.navigateToStep(${num})">
+                            <div class="step-number">${num}</div>
+                            <div class="step-label">${label}</div>
+                        </div>
+                    `;
+                }).join('');
+            },
+            
+            // Navigation
+            navigateToStep: function(step) {
+                if (step > 3) {
+                    console.log('Steps 4-10 not yet implemented');
+                    return;
+                }
+                
+                // Validate navigation
+                if (step === 2 && !this.state.philosophyAcknowledged) {
+                    alert('Please acknowledge the philosophy first');
+                    return;
+                }
+                
+                if (step === 3 && (!this.state.initializationData || !this.state.monthlyData)) {
+                    alert('Please upload both data files first');
+                    return;
+                }
+                
+                this.currentStep = step;
+                this.showStep(step);
+                this.saveState();
+            },
+            
+            showStep: function(step) {
+                // Hide all steps
+                document.querySelectorAll('.step-content').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // Show current step
+                document.getElementById(`step-${step}`).classList.add('active');
+                
+                // Update progress bar
+                this.renderProgressBar();
+                
+                // Step-specific actions
+                if (step === 3) {
+                    this.calculateThemes();
+                }
+            },
+            
+            // Philosophy acknowledgment
+            acknowledgePhilosophy: function() {
+                const checkbox = document.getElementById('philosophy-checkbox');
+                this.state.philosophyAcknowledged = checkbox.checked;
+                
+                document.getElementById('continue-philosophy').disabled = !checkbox.checked;
+                
+                if (checkbox.checked && !this.completedSteps.includes(1)) {
+                    this.completedSteps.push(1);
+                    this.renderProgressBar();
+                }
+                
+                this.saveState();
+            },
+            
+            // Data handling
+            handleInitializationUpload: function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        this.state.initializationData = data;
+                        
+                        document.getElementById('init-status').innerHTML = 
+                            '<span class="status-good">✅ Initialization data loaded successfully</span>';
+                        
+                        this.checkDataComplete();
+                        this.saveState();
+                    } catch (err) {
+                        document.getElementById('init-status').innerHTML = 
+                            '<span class="status-bad">❌ Error loading file: ' + err.message + '</span>';
+                    }
+                };
+                reader.readAsText(file);
+            },
+            
+            handleMonthlyUpload: function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        this.state.monthlyData = data;
+                        
+                        document.getElementById('monthly-status').innerHTML = 
+                            '<span class="status-good">✅ Monthly data loaded successfully</span>';
+                        
+                        this.checkDataComplete();
+                        this.saveState();
+                    } catch (err) {
+                        document.getElementById('monthly-status').innerHTML = 
+                            '<span class="status-bad">❌ Error loading file: ' + err.message + '</span>';
+                    }
+                };
+                reader.readAsText(file);
+            },
+            
+            checkDataComplete: function() {
+                const complete = this.state.initializationData && this.state.monthlyData;
+                document.getElementById('continue-to-analysis').disabled = !complete;
+                
+                if (complete && !this.completedSteps.includes(2)) {
+                    this.completedSteps.push(2);
+                    this.renderProgressBar();
+                }
+            },
+            
+            // Generate sample data
+            generateSampleData: function(type) {
+                // Sample data generator
+                const generateIndicatorData = (value, momentum, history = 6) => {
+                    const historyData = [];
+                    let current = value;
+                    for (let i = 0; i < history; i++) {
+                        current = current * (1 - momentum/100 + (Math.random() - 0.5) * 0.02);
+                        historyData.unshift(current);
+                    }
+                    return {
+                        current: value,
+                        history: historyData,
+                        momentum: momentum
+                    };
+                };
+                
+                this.state.initializationData = {
+                    type: 'initialization',
+                    created: new Date().toISOString(),
+                    historicalData: {} // Would contain 24-36 months
+                };
+                
+                this.state.monthlyData = {
+                    indicators: {
+                        dxy: generateIndicatorData(97.66, 2.3),
+                        goldPurchases: generateIndicatorData(101.2, 8.5),
+                        yuanSwift: generateIndicatorData(2.5, -3.1),
+                        reserveShare: generateIndicatorData(58.4, -1.2),
+                        qqqSpy: generateIndicatorData(0.88, 5.2),
+                        productivity: generateIndicatorData(112, 2.1),
+                        netMargins: generateIndicatorData(11.5, -1.5),
+                        riskPremium: generateIndicatorData(-0.5, -4.2),
+                        forwardPE: generateIndicatorData(21.5, 3.8),
+                        cape: generateIndicatorData(32, 2.5),
+                        acwxSpy: generateIndicatorData(0.95, -2.8),
+                        spVsWorld: generateIndicatorData(-1.2, -3.5),
+                        ticFlows: generateIndicatorData(50, 15)
+                    }
+                };
+                
+                document.getElementById('sample-status').innerHTML = 
+                    '<span class="status-good">✅ Sample data generated successfully</span>';
+                
+                this.checkDataComplete();
+                this.saveState();
+            },
+            
+            // Theme calculations
+            calculateThemes: function() {
+                if (!this.state.monthlyData) return;
+                
+                // Display each theme
+                this.displayTheme('USD', 'usd');
+                this.displayTheme('AI', 'ai');
+                this.displayTheme('PE', 'pe');
+                this.displayTheme('INTL', 'intl');
+                
+                // Calculate scenario probabilities
+                this.calculateScenarios();
+            },
+            
+            displayTheme: function(theme, elementPrefix) {
+                const container = document.getElementById(`${elementPrefix}-indicators`);
+                let html = '';
+                
+                // Group by tier
+                ['canary', 'primary', 'structural'].forEach(tier => {
+                    const indicators = this.indicators[theme][tier];
+                    if (!indicators || indicators.length === 0) return;
+                    
+                    const tierEmoji = {
+                        canary: '🔥',
+                        primary: '📊',
+                        structural: '🏛️'
+                    };
+                    
+                    const tierWeight = indicators.reduce((sum, ind) => sum + ind.weight, 0);
+                    
+                    html += `
+                        <div class="indicator-group">
+                            <div class="tier-label">
+                                ${tierEmoji[tier]} ${tier.charAt(0).toUpperCase() + tier.slice(1)} Indicators
+                                <span class="tier-badge">${Math.round(tierWeight * 100)}% weight</span>
+                            </div>
+                    `;
+                    
+                    indicators.forEach(indicator => {
+                        html += this.renderIndicator(indicator);
+                    });
+                    
+                    html += '</div>';
+                });
+                
+                container.innerHTML = html;
+                
+                // Update probability
+                const prob = Math.round(Math.random() * 40 + 10); // Placeholder
+                document.getElementById(`${elementPrefix}-probability`).textContent = `${prob}%`;
+            },
+            
+            renderIndicator: function(indicator) {
+                const data = this.state.monthlyData?.indicators[indicator.id];
+                if (!data) return '';
+                
+                const current = data.current;
+                const trigger = indicator.trigger;
+                const momentum = data.momentum || 5;
+                
+                // Calculate position and arrow
+                const range = Math.abs(trigger * 0.5); // ±50% range
+                const position = ((current - trigger) / range + 1) / 2 * 100; // 0-100%
+                const triggerPos = 50; // Always centered
+                
+                // Arrow properties
+                const arrowLength = Math.min(Math.abs(momentum) * 3, 30); // Max 30% width
+                const direction = momentum > 0 ? 'right' : 'left';
+                const arrowStart = position - (direction === 'left' ? arrowLength : 0);
+                
+                // Time to trigger calculation
+                const distance = Math.abs(current - trigger) / trigger * 100;
+                const timeToTrigger = distance < 5 ? 'Imminent' : 
+                                     distance < 10 ? '~3 months' :
+                                     distance < 20 ? '~6 months' :
+                                     distance < 30 ? '~12 months' : '>1 year';
+                
+                const triggered = indicator.inverse ? 
+                    current < trigger : current > trigger;
+                
+                return `
+                    <div class="indicator">
+                        <div class="indicator-header">
+                            <span class="indicator-name">${indicator.name}</span>
+                            <span class="indicator-tier">[${Math.round(indicator.weight * 100)}%]</span>
+                        </div>
+                        
+                        <div class="indicator-viz">
+                            <div class="indicator-bar"></div>
+                            <div class="trigger-marker" style="left: ${triggerPos}%"></div>
+                            <div class="momentum-arrow" style="left: ${arrowStart}%; width: ${arrowLength}%;">
+                                <div class="arrow-tip ${direction}"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="indicator-values">
+                            <span>Current: ${current.toFixed(2)}</span>
+                            <span>Trigger: ${trigger.toFixed(2)}</span>
+                        </div>
+                        
+                        <div class="time-to-trigger">
+                            ${triggered ? '⚡ Already Triggered' : `⏱️ ${timeToTrigger} to trigger`}
+                        </div>
+                    </div>
+                `;
+            },
+            
+            calculateScenarios: function() {
+                // Generate 16 scenarios
+                const scenarios = [];
+                for (let i = 0; i < 16; i++) {
+                    const binary = i.toString(2).padStart(4, '0');
+                    const scenario = {
+                        usd: binary[0] === '1',
+                        ai: binary[1] === '1',
+                        pe: binary[2] === '1',
+                        intl: binary[3] === '1',
+                        probability: Math.random() * 20 + 2 // 2-22% each
+                    };
+                    scenarios.push(scenario);
+                }
+                
+                // Normalize to 100%
+                const total = scenarios.reduce((sum, s) => sum + s.probability, 0);
+                scenarios.forEach(s => s.probability = s.probability / total * 100);
+                
+                // Sort by probability
+                scenarios.sort((a, b) => b.probability - a.probability);
+                
+                // Display top scenarios
+                const grid = document.getElementById('scenario-grid');
+                grid.innerHTML = scenarios.slice(0, 6).map(scenario => {
+                    const name = [
+                        scenario.usd ? 'USD↓' : '',
+                        scenario.ai ? 'AI↑' : '',
+                        scenario.pe ? 'P/E↓' : '',
+                        scenario.intl ? 'INTL↑' : ''
+                    ].filter(x => x).join(' + ') || 'Base Case';
+                    
+                    return `
+                        <div class="scenario-card">
+                            <div class="scenario-prob">${scenario.probability.toFixed(1)}%</div>
+                            <div class="scenario-name">${name}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                this.state.scenarioProbabilities = scenarios;
+            },
+            
+            // State persistence
+            saveState: function() {
+                localStorage.setItem('hcp-tracker-v63-state', JSON.stringify({
+                    currentStep: this.currentStep,
+                    completedSteps: this.completedSteps,
+                    state: this.state
+                }));
+            },
+            
+            loadState: function() {
+                const saved = localStorage.getItem('hcp-tracker-v63-state');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        this.currentStep = data.currentStep || 1;
+                        this.completedSteps = data.completedSteps || [];
+                        this.state = data.state || this.state;
+                        
+                        // Restore UI state
+                        if (this.state.philosophyAcknowledged) {
+                            document.getElementById('philosophy-checkbox').checked = true;
+                            document.getElementById('continue-philosophy').disabled = false;
+                        }
+                        
+                        if (this.state.initializationData) {
+                            document.getElementById('init-status').innerHTML = 
+                                '<span class="status-good">✅ Initialization data loaded from cache</span>';
+                        }
+                        
+                        if (this.state.monthlyData) {
+                            document.getElementById('monthly-status').innerHTML = 
+                                '<span class="status-good">✅ Monthly data loaded from cache</span>';
+                        }
+                        
+                        this.checkDataComplete();
+                    } catch (e) {
+                        console.error('Error loading state:', e);
+                    }
+                }
+            }
+        };
+        
+        // Initialize on load
+        window.addEventListener('load', function() {
+            tracker.init();
+        });
+    </script>
+</body>
+</html>
