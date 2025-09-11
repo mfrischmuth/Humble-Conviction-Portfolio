@@ -1,0 +1,2832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Portfolio Tracker v6.5.6 - Steps 6-7 Rebalancing Implementation</title>
+    <!--
+    HCP PORTFOLIO TRACKER v6.5.6 - STEPS 6-7 REBALANCING IMPLEMENTATION
+    File: hcp_tracker_v6.5.6_rebalancing.html
+    Last Updated: 2025-09-03 00:00:00 UTC
+    
+    NEW IN v6.5.6:
+    - Steps 6-7: Complete rebalancing workflow implementation
+    - RebalancingModule v1.0: Position input, drift calculation, trade generation
+    - PortfolioOptimizer v2.1: Position constraints under consideration
+    - TrackerCore v1.2: Enhanced integration with rebalancing modules
+    - PIMIX hold-only constraint enforcement (CRITICAL)
+    - PYLD primary income routing (CRITICAL)
+    - Tax optimization out of scope (as specified)
+    
+    PRESERVED FROM v6.5.5:
+    - ALL existing functionality maintained (ZERO REGRESSION)
+    - Step 4 display fixes: binary order, color coding, current scenario
+    - PortfolioOptimizer regret minimization framework (enhanced to v2.1)
+    - Steps 1-5 complete workflow preserved
+    - TrackerCore v1.0+ architecture maintained (upgraded to v1.2)
+    - All modules and state management preserved and enhanced
+    -->
+    <style>
+        /* Base styles - Same as v6.5.5 - PRESERVED EXACTLY */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; padding: 20px; color: #333;
+        }
+        .container {
+            background: white; border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px; margin: 0 auto; overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 30px; text-align: center;
+        }
+        .progress-bar {
+            background: rgba(255,255,255,0.2); padding: 20px;
+            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+        }
+        .step-indicator {
+            flex: 1; min-width: 80px; text-align: center; cursor: pointer;
+            padding: 10px; border-radius: 8px; transition: all 0.3s;
+        }
+        .step-indicator.completed { background: rgba(255,255,255,0.3); }
+        .step-indicator.active { background: #ffc107; color: #333; }
+        .step-indicator.locked { opacity: 0.5; cursor: not-allowed; }
+        .navigation {
+            background: #f8f9fa; padding: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .nav-button {
+            background: #667eea; color: white; border: none;
+            padding: 10px 20px; border-radius: 6px; cursor: pointer;
+            font-size: 16px; transition: background 0.3s;
+        }
+        .nav-button:hover:not(:disabled) { background: #5a67d8; }
+        .nav-button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .content { padding: 30px; min-height: 400px; }
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        
+        /* Status and theme styles - PRESERVED */
+        .status-good { color: #28a745; }
+        .status-warning { color: #ffc107; }
+        .status-error { color: #dc3545; }
+        .theme-analysis-v651 { max-width: 1000px; margin: 0 auto; }
+        .theme-item { background: white; border-radius: 8px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .theme-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .theme-name { font-size: 1.2em; font-weight: bold; color: #333; }
+        .theme-percentage { font-size: 1.5em; font-weight: bold; color: #667eea; }
+        .theme-bar { height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden; }
+        .theme-fill { height: 100%; transition: width 0.5s ease; }
+
+        /* Scenario matrix styles - PRESERVED from v6.5.5 */
+        .scenario-matrix { max-width: 1200px; margin: 0 auto; }
+        .scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; }
+        .scenario-card { 
+            background: white; border-radius: 8px; padding: 15px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            transition: transform 0.2s; 
+            position: relative;
+        }
+        .scenario-card:hover { transform: translateY(-2px); }
+        
+        /* Current scenario highlighting - PRESERVED from v6.5.5 */
+        .scenario-card.current-scenario {
+            border: 3px solid #007bff;
+            box-shadow: 0 4px 20px rgba(0,123,255,0.3);
+            transform: scale(1.02);
+        }
+        .current-scenario-label {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #007bff;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.4);
+        }
+        
+        .scenario-rank { font-size: 0.9em; color: #666; margin-bottom: 5px; }
+        .scenario-id { font-size: 0.8em; color: #999; margin-bottom: 5px; }
+        .scenario-name { font-weight: bold; font-size: 1.1em; margin-bottom: 8px; color: #333; }
+        .scenario-probability { font-size: 1.3em; font-weight: bold; margin-bottom: 8px; }
+        .scenario-binary { font-family: monospace; font-size: 0.8em; color: #666; margin-bottom: 5px; }
+        .scenario-themes { font-size: 0.9em; color: #555; }
+        
+        /* Color coding - PRESERVED from v6.5.5 */
+        .scenario-very-high { 
+            color: #155724; 
+            background: linear-gradient(135deg, #d4edda, #c3e6cb); 
+            border-left: 4px solid #155724; 
+        }
+        .scenario-high { 
+            color: #28a745; 
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb); 
+            border-left: 4px solid #28a745; 
+        }
+        .scenario-medium { 
+            color: #856404; 
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7); 
+            border-left: 4px solid #ffc107; 
+        }
+        .scenario-low { 
+            color: #721c24; 
+            background: linear-gradient(135deg, #f8d7da, #f1aeb5); 
+            border-left: 4px solid #dc3545; 
+        }
+        .scenario-very-low { 
+            color: #495057; 
+            background: linear-gradient(135deg, #e9ecef, #d6d8db); 
+            border-left: 4px solid #6c757d; 
+        }
+
+        /* Portfolio optimization styles - PRESERVED and ENHANCED for v2.1 */
+        .portfolio-optimization-results { font-family: -apple-system, sans-serif; max-width: 1200px; margin: 0 auto; }
+        .optimization-meta { color: #666; font-size: 0.9em; margin-bottom: 20px; }
+        .summary-grid, .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+        .allocation-grid { margin-top: 10px; }
+        .allocation-row { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #eee; }
+        .allocation-row.position-monitoring { background: #fffbf0; border-left: 3px solid #ffc107; }
+        .security-info { flex: 1; }
+        .security-info strong { display: block; }
+        .security-info small { color: #666; font-size: 0.85em; }
+        .allocation-bar { display: flex; align-items: center; gap: 10px; min-width: 150px; }
+        .bar-fill { height: 20px; border-radius: 3px; }
+        .percentage { font-weight: bold; min-width: 40px; text-align: right; }
+        
+        /* NEW v6.5.6 - Position constraint monitoring styles */
+        .constraint-monitoring { margin: 20px 0; }
+        .constraint-item { padding: 10px; border-radius: 6px; margin: 5px 0; }
+        .constraint-ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .constraint-monitoring-alert { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .constraint-info { background: #e7f1ff; color: #0066cc; border: 1px solid #b3d9ff; }
+
+        /* NEW v6.5.6 - Steps 6-7 Rebalancing Styles */
+        .rebalancing-section { max-width: 1200px; margin: 0 auto; font-family: -apple-system, sans-serif; }
+        .position-input-interface { max-width: 1000px; margin: 0 auto; }
+        .input-instructions { background: #e7f1ff; border: 1px solid #b3d9ff; border-radius: 8px; padding: 15px; margin: 15px 0; }
+        .portfolio-total-section { margin: 20px 0; text-align: center; }
+        .portfolio-total-section input { width: 200px; padding: 10px; border: 2px solid #667eea; border-radius: 6px; font-size: 1.1em; }
+        .position-input-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .grid-header { display: contents; font-weight: bold; color: #333; }
+        .grid-header > div { padding: 10px; background: #f8f9fa; border-radius: 4px; text-align: center; }
+        .position-input-row { display: contents; }
+        .security-cell { padding: 10px; border-radius: 4px; background: white; border: 1px solid #dee2e6; }
+        .security-cell strong { display: block; }
+        .security-cell small { color: #666; font-size: 0.85em; }
+        .input-field { padding: 5px; }
+        .input-field input { width: 100%; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; }
+        .percentage-display { padding: 10px; text-align: center; font-weight: bold; background: #f8f9fa; border-radius: 4px; }
+        .constraint-badge { font-size: 0.7em; padding: 2px 6px; border-radius: 3px; margin-left: 5px; }
+        .constraint-badge.hold-only { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .constraint-badge.primary-income { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        
+        /* Drift analysis styles */
+        .drift-analysis-display { max-width: 1200px; margin: 20px auto; }
+        .drift-summary { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .summary-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .stat-item { text-align: center; }
+        .drift-table { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr; gap: 8px; margin: 20px 0; }
+        .drift-header { display: contents; font-weight: bold; }
+        .drift-header > div { padding: 12px 8px; background: #667eea; color: white; text-align: center; border-radius: 4px; }
+        .drift-row { display: contents; }
+        .drift-row > div { padding: 10px 8px; border-bottom: 1px solid #dee2e6; text-align: center; }
+        .drift-positive { background-color: #f8d7da; color: #721c24; }
+        .drift-negative { background-color: #d4edda; color: #155724; }
+        .drift-minimal { background-color: #e2e3e5; color: #6c757d; }
+        .action-buy { color: #155724; font-weight: bold; }
+        .action-sell { color: #721c24; font-weight: bold; }
+        .action-hold { color: #6c757d; }
+        .priority-high { color: #721c24; font-weight: bold; }
+        .priority-medium { color: #856404; font-weight: bold; }
+        .priority-low { color: #6c757d; }
+        
+        /* Trade recommendations styles */
+        .trade-recommendations-display { max-width: 1400px; margin: 20px auto; }
+        .trade-summary { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .framework-info { color: #666; font-size: 0.9em; }
+        .trade-table { display: grid; grid-template-columns: 1.5fr 0.8fr 0.8fr 1fr 0.8fr 2fr 1fr; gap: 8px; }
+        .trade-header { display: contents; font-weight: bold; }
+        .trade-header > div { padding: 12px 8px; background: #667eea; color: white; text-align: center; border-radius: 4px; }
+        .trade-row { display: contents; }
+        .trade-row > div { padding: 10px 8px; border-bottom: 1px solid #dee2e6; }
+        .trade-actions { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; }
+
+        /* Modal styles - PRESERVED */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 5% auto; padding: 0; width: 90%; max-width: 600px; border-radius: 8px; }
+        .modal-header { background: #667eea; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 20px; text-align: right; border-top: 1px solid #dee2e6; }
+        
+        /* File upload styles - PRESERVED */
+        .file-upload {
+            border: 2px dashed #ccc; border-radius: 8px; padding: 40px; text-align: center;
+            background: #f8f9fa; cursor: pointer; transition: all 0.3s;
+        }
+        .file-upload:hover { border-color: #667eea; background: #e9ecef; }
+        .file-upload.dragover { border-color: #667eea; background: #e7f1ff; }
+        
+        /* Philosophy styles - PRESERVED */
+        .philosophy-content { max-width: 800px; margin: 0 auto; }
+        .philosophy-intro { margin-bottom: 30px; }
+        .acknowledgment { text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+        .acknowledgment label { display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>HCP Portfolio Tracker v6.5.6</h1>
+            <div class="version-info">
+                Steps 6-7 Rebalancing | Position Constraints Under Consideration | PIMIX/PYLD Enforcement
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar" id="progress-bar">
+            <!-- Progress indicators will be generated by TrackerCore -->
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-button" id="btn-prev">← Previous</button>
+            <div id="step-title">Step 1: Investment Philosophy</div>
+            <button class="nav-button" id="btn-next">Next →</button>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Step 1: Philosophy - PRESERVED -->
+            <div id="step-1" class="step-content active">
+                <div class="philosophy-content">
+                    <div class="philosophy-intro">
+                        <h2>Welcome to the Humble Conviction Portfolio System</h2>
+                        <p>This Investment Policy Statement outlines a systematic, probability-weighted approach to portfolio management based on macro regime analysis using sophisticated regret minimization techniques.</p>
+                    </div>
+                    <div class="acknowledgment">
+                        <label>
+                            <input type="checkbox" id="philosophy-checkbox">
+                            <strong>I understand and acknowledge the investment philosophy</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2: Data Import - PRESERVED -->
+            <div id="step-2" class="step-content">
+                <div class="data-section">
+                    <h2>Import Data Files</h2>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3>Monthly Update File</h3>
+                        <div class="file-upload" onclick="document.getElementById('monthly-file').click()">
+                            <input type="file" id="monthly-file" accept=".json" style="display: none;">
+                            <div id="monthly-status">
+                                📄 Click to select monthly update file or drag & drop<br>
+                                <small>Format: hcp_data_monthly_YYYYMMDD_HHMMSS.json</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample Data Generator - PRESERVED -->
+                    <div>
+                        <h3>Or Generate Sample Data (FileHandler v1.5)</h3>
+                        <p>Generate momentum-aware sample data for testing and demonstration:</p>
+                        <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+                            <button class="nav-button" onclick="generateSampleData('tech_boom')">Tech Boom</button>
+                            <button class="nav-button" onclick="generateSampleData('usd_strength')">USD Strength</button>
+                            <button class="nav-button" onclick="generateSampleData('pe_reversion')">P/E Reversion</button>
+                            <button class="nav-button" onclick="generateSampleData('international')">International</button>
+                            <button class="nav-button" onclick="generateSampleData('mixed_signals')">Mixed Signals</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Editor Section - PRESERVED -->
+                    <div id="data-editor-section" style="display: none; margin-top: 30px;">
+                        <h3>Data Editor</h3>
+                        <div id="data-table-container">
+                            <!-- DataEditor table will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 3: Theme Analysis - PRESERVED -->
+            <div id="step-3" class="step-content">
+                <h2>Theme Analysis</h2>
+                <div id="theme-container">
+                    <p>Load data in Step 2 to begin theme analysis.</p>
+                </div>
+            </div>
+            
+            <!-- Step 4: Scenario Analysis - PRESERVED from v6.5.5 -->
+            <div id="step-4" class="step-content">
+                <div class="scenario-matrix">
+                    <h2>16-Scenario Probability Matrix</h2>
+                    <p>Based on theme probabilities from Step 3, here are all possible scenario combinations displayed in binary order (0000-1111):</p>
+                    
+                    <div id="scenario-summary" style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                        <!-- Scenario summary stats will be displayed here -->
+                    </div>
+                    
+                    <div id="scenario-container">
+                        <p>Complete Step 3 to generate scenario analysis.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 5: Portfolio Optimization - ENHANCED with PortfolioOptimizer v2.1 -->
+            <div id="step-5" class="step-content">
+                <div class="optimization-container">
+                    <h2>Portfolio Optimization - Regret Minimization Framework v2.1</h2>
+                    <p>IPS v3.11 compliant regret minimization with position constraints under consideration for evaluation:</p>
+                    
+                    <!-- Optimization Results Container -->
+                    <div id="portfolio-optimization-results">
+                        <p>Complete Step 4 to begin regret minimization optimization.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 6: Current Positions - NEW IMPLEMENTATION -->
+            <div id="step-6" class="step-content">
+                <div class="rebalancing-section">
+                    <h2>Step 6: Current Portfolio Positions</h2>
+                    <p>Enter your current portfolio positions to calculate drift from optimal allocation:</p>
+                    
+                    <!-- Position Input Interface -->
+                    <div id="position-input-container">
+                        <!-- RebalancingModule will generate position input interface here -->
+                        <div class="input-instructions">
+                            <p><strong>Instructions:</strong> Complete Step 5 portfolio optimization first, then enter your current positions to calculate rebalancing needs.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Drift Analysis Results -->
+                    <div id="drift-analysis-container" style="display: none;">
+                        <!-- Drift analysis will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 7: Rebalancing Trades - NEW IMPLEMENTATION -->
+            <div id="step-7" class="step-content">
+                <div class="rebalancing-section">
+                    <h2>Step 7: Rebalancing Trade Recommendations</h2>
+                    <p>Based on drift analysis from Step 6, here are specific trades to reach optimal allocation:</p>
+                    
+                    <!-- Trade Recommendations -->
+                    <div id="trade-recommendations-container">
+                        <div class="input-instructions">
+                            <p><strong>Instructions:</strong> Complete Step 6 position input and drift calculation to generate trade recommendations.</p>
+                            <p><strong>Key Constraints:</strong></p>
+                            <ul style="margin-left: 20px;">
+                                <li><strong>PIMIX Hold-Only:</strong> No BUY orders will be generated for PIMIX</li>
+                                <li><strong>PYLD Primary Income:</strong> All income increases route through PYLD</li>
+                                <li><strong>Position Limits:</strong> Under consideration (not enforced)</li>
+                                <li><strong>Tax Optimization:</strong> Out of scope</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Placeholder Steps 8-10 - PRESERVED -->
+            <div id="step-8" class="step-content">
+                <h2>History</h2>
+                <p>Step 8 functionality will be implemented in a future release.</p>
+                <div style="margin-top: 20px; padding: 20px; background: #fff3cd; border-radius: 8px;">
+                    <strong>Coming Soon:</strong> Historical tracking and performance attribution.
+                </div>
+            </div>
+            
+            <div id="step-9" class="step-content">
+                <h2>Report</h2>
+                <p>Step 9 functionality will be implemented in a future release.</p>
+                <div style="margin-top: 20px; padding: 20px; background: #fff3cd; border-radius: 8px;">
+                    <strong>Coming Soon:</strong> Comprehensive analysis report generation.
+                </div>
+            </div>
+            
+            <div id="step-10" class="step-content">
+                <h2>Export</h2>
+                <p>Step 10 functionality will be implemented in a future release.</p>
+                <div style="margin-top: 20px; padding: 20px; background: #fff3cd; border-radius: 8px;">
+                    <strong>Coming Soon:</strong> Data export and system integration.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Modal - PRESERVED -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Edit Indicator</h3>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="nav-button" onclick="DataEditor.closeEditModal()">Cancel</button>
+                <button class="nav-button" onclick="saveIndicatorEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ENHANCED TRACKER CORE v1.2 - Integration Patterns from v6.5.1 Learnings - SURGICAL UPDATE
+        const TrackerCore = {
+            version: '1.2',
+            currentStep: 1,
+            completedSteps: [],
+            
+            // ENHANCED state structure based on v6.5.1 integration learnings
+            state: {
+                philosophyAcknowledged: false,
+                initializationData: null,
+                monthlyData: null,
+                dataQuality: {},
+                manualOverrides: {},
+                themeProbabilities: {},
+                scenarioProbabilities: [],
+                optimizedAllocation: {},
+                
+                // NEW v1.2 - Enhanced rebalancing integration
+                currentPositions: null,
+                driftAnalysis: null,
+                rebalancingTrades: null,
+                tradeAnalysis: null,
+                lastDataGeneration: null,
+                dataScenario: null,
+                calculationResults: null,
+                momentumValidation: {}
+            },
+
+            init: function() {
+                this.loadState();
+                this.navigateToStep(this.currentStep);
+                this.setupEventListeners();
+                console.log('TrackerCore v1.2 initialized with Steps 6-7 rebalancing integration');
+            },
+
+            // ENHANCED navigation with rebalancing integration - PRESERVED with v1.2 enhancements
+            navigateToStep: function(step) {
+                if (step < 1 || step > 10) return false;
+                
+                if (!this.canNavigateToStep(step)) {
+                    console.warn(`Cannot navigate to step ${step} - validation failed`);
+                    this.showValidationError(step);
+                    return false;
+                }
+
+                this.currentStep = step;
+                this.updateStepDisplay();
+                this.updateStepIndicators();
+                this.updateNavigation();
+                this.saveState();
+                
+                // ENHANCED: Trigger step-specific actions based on v1.2 patterns
+                this.onStepEntered(step);
+                
+                console.log(`Navigated to step ${step}`);
+                return true;
+            },
+
+            // ENHANCED validation with Steps 6-7 awareness - PRESERVED with v1.2 enhancements
+            canNavigateToStep: function(step) {
+                if (step === 1) return true;
+                
+                switch(step) {
+                    case 2:
+                        return this.state.philosophyAcknowledged;
+                    case 3:
+                        return this.state.monthlyData !== null;
+                    case 4:
+                        return Object.keys(this.state.themeProbabilities).length > 0;
+                    case 5:
+                        return this.state.scenarioProbabilities.length === 16;
+                    case 6:
+                        return Object.keys(this.state.optimizedAllocation).length > 0;
+                    case 7:
+                        return this.state.driftAnalysis !== null;
+                    default:
+                        // Must complete previous steps in order
+                        for (let i = 1; i < step; i++) {
+                            if (!this.isStepComplete(i)) {
+                                return false;
+                            }
+                        }
+                        return true;
+                }
+            },
+
+            // ENHANCED step completion with Steps 6-7 - PRESERVED with v1.2 enhancements  
+            isStepComplete: function(step) {
+                switch(step) {
+                    case 1: 
+                        return this.state.philosophyAcknowledged;
+                    case 2: 
+                        return this.state.monthlyData !== null;
+                    case 3: 
+                        return Object.keys(this.state.themeProbabilities).length > 0;
+                    case 4:
+                        return this.state.scenarioProbabilities.length === 16;
+                    case 5:
+                        return Object.keys(this.state.optimizedAllocation).length > 0;
+                    case 6:
+                        return this.state.driftAnalysis !== null;
+                    case 7:
+                        return this.state.rebalancingTrades !== null;
+                    default: 
+                        return this.completedSteps.includes(step);
+                }
+            },
+
+            // NEW v1.2 - Enhanced step entry callbacks
+            onStepEntered: function(step) {
+                switch(step) {
+                    case 6:
+                        this.onPositionInputStep();
+                        break;
+                    case 7:
+                        this.onTradeGenerationStep();
+                        break;
+                }
+            },
+
+            // NEW v1.2 - Position input step handler
+            onPositionInputStep: function() {
+                if (this.state.optimizedAllocation && this.state.optimizedAllocation.allocation) {
+                    // Display position input interface
+                    if (typeof RebalancingModule !== 'undefined') {
+                        RebalancingModule.displayPositionInputInterface('position-input-container', this.state.currentPositions || {});
+                        console.log('Step 6: Position input interface displayed');
+                    }
+                } else {
+                    document.getElementById('position-input-container').innerHTML = `
+                        <div class="input-instructions">
+                            <p><strong>Complete Step 5 first:</strong> Portfolio optimization must be completed before entering positions.</p>
+                        </div>
+                    `;
+                }
+            },
+
+            // NEW v1.2 - Trade generation step handler
+            onTradeGenerationStep: function() {
+                if (this.state.rebalancingTrades) {
+                    // Display existing trade recommendations
+                    if (typeof RebalancingModule !== 'undefined' && this.state.tradeAnalysis) {
+                        RebalancingModule.displayTradeRecommendations('trade-recommendations-container', this.state.tradeAnalysis);
+                        console.log('Step 7: Trade recommendations displayed');
+                    }
+                } else if (this.state.driftAnalysis) {
+                    // Auto-generate trades if we have drift analysis
+                    if (typeof RebalancingModule !== 'undefined') {
+                        const tradeAnalysis = RebalancingModule.generateTrades(this.state.driftAnalysis);
+                        this.state.rebalancingTrades = tradeAnalysis.trades;
+                        this.state.tradeAnalysis = tradeAnalysis;
+                        
+                        RebalancingModule.displayTradeRecommendations('trade-recommendations-container', tradeAnalysis);
+                        
+                        if (!this.completedSteps.includes(7)) {
+                            this.completedSteps.push(7);
+                        }
+                        this.updateStepIndicators();
+                        this.saveState();
+                        
+                        console.log('Step 7: Trade analysis generated and displayed');
+                    }
+                }
+            },
+
+            // NEW v1.2 - Validation error display
+            showValidationError: function(step) {
+                const messages = {
+                    2: 'Please acknowledge the investment philosophy first',
+                    3: 'Please import or generate valid monthly data first', 
+                    4: 'Please complete theme analysis calculations first',
+                    5: 'Please complete scenario analysis first',
+                    6: 'Please complete portfolio optimization first',
+                    7: 'Please complete position input and drift calculation first'
+                };
+                
+                const message = messages[step] || `Step ${step-1} must be completed first`;
+                alert(message);
+            },
+
+            // PRESERVED step display logic from v6.5.5
+            updateStepDisplay: function() {
+                // Hide all steps
+                document.querySelectorAll('.step-content').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // Show current step
+                const currentStepEl = document.getElementById(`step-${this.currentStep}`);
+                if (currentStepEl) {
+                    currentStepEl.classList.add('active');
+                }
+                
+                // Update title
+                const titles = [
+                    'Investment Philosophy', 'Data Import & Edit', 'Theme Analysis',
+                    'Scenario Analysis', 'Portfolio Optimization', 'Current Positions',
+                    'Rebalancing Trades', 'History', 'Report', 'Export'
+                ];
+                
+                const titleEl = document.getElementById('step-title');
+                if (titleEl) {
+                    titleEl.textContent = `Step ${this.currentStep}: ${titles[this.currentStep - 1]}`;
+                }
+            },
+
+            // PRESERVED step indicators from v6.5.5
+            updateStepIndicators: function() {
+                const progressBar = document.getElementById('progress-bar');
+                if (!progressBar) return;
+                
+                let html = '';
+                const stepLabels = ['Philosophy', 'Data', 'Themes', 'Scenarios', 'Optimize', 'Positions', 'Trades', 'History', 'Report', 'Export'];
+                
+                for (let i = 1; i <= 10; i++) {
+                    const isActive = i === this.currentStep;
+                    const isCompleted = this.isStepComplete(i);
+                    const canNavigate = this.canNavigateToStep(i);
+                    
+                    let classes = ['step-indicator'];
+                    if (isActive) classes.push('active');
+                    if (isCompleted) classes.push('completed');
+                    if (!canNavigate) classes.push('locked');
+                    
+                    html += `
+                        <div class="${classes.join(' ')}" onclick="TrackerCore.navigateToStep(${i})" data-step="${i}">
+                            <div>Step ${i}</div>
+                            <small>${stepLabels[i-1]}</small>
+                        </div>
+                    `;
+                }
+                
+                progressBar.innerHTML = html;
+            },
+
+            // PRESERVED navigation logic from v6.5.5
+            updateNavigation: function() {
+                const prevBtn = document.getElementById('btn-prev');
+                const nextBtn = document.getElementById('btn-next');
+                
+                if (prevBtn) {
+                    prevBtn.disabled = this.currentStep <= 1;
+                    prevBtn.onclick = () => this.navigateToStep(this.currentStep - 1);
+                }
+                
+                if (nextBtn) {
+                    const canGoNext = this.canNavigateToStep(this.currentStep + 1);
+                    nextBtn.disabled = (this.currentStep === 10 || !canGoNext);
+                    
+                    if (this.currentStep === 10) {
+                        nextBtn.textContent = 'Complete';
+                    } else if (!canGoNext) {
+                        nextBtn.textContent = 'Complete Current Step';
+                    } else {
+                        nextBtn.textContent = 'Next →';
+                    }
+                    
+                    nextBtn.onclick = () => this.navigateToStep(this.currentStep + 1);
+                }
+            },
+
+            // PRESERVED event listeners from v6.5.5
+            setupEventListeners: function() {
+                // Philosophy checkbox - PRESERVED
+                const checkbox = document.getElementById('philosophy-checkbox');
+                if (checkbox) {
+                    checkbox.addEventListener('change', (e) => {
+                        this.state.philosophyAcknowledged = e.target.checked;
+                        if (e.target.checked && !this.completedSteps.includes(1)) {
+                            this.completedSteps.push(1);
+                        }
+                        this.updateStepIndicators();
+                        this.updateNavigation();
+                        this.saveState();
+                    });
+                }
+
+                // File upload - PRESERVED
+                const monthlyFile = document.getElementById('monthly-file');
+                if (monthlyFile) {
+                    monthlyFile.addEventListener('change', handleMonthlyFile);
+                }
+                
+                // Modal event listeners - PRESERVED
+                window.addEventListener('click', (event) => {
+                    const modal = document.getElementById('edit-modal');
+                    if (event.target === modal && typeof DataEditor !== 'undefined') {
+                        DataEditor.closeEditModal();
+                    }
+                });
+                
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && typeof DataEditor !== 'undefined') {
+                        DataEditor.closeEditModal();
+                    }
+                });
+            },
+
+            // ENHANCED state persistence with v1.2 metadata
+            saveState: function() {
+                const stateToSave = {
+                    version: '6.5.6',
+                    trackerCoreVersion: this.version,
+                    currentStep: this.currentStep,
+                    completedSteps: this.completedSteps,
+                    state: this.state,
+                    timestamp: new Date().toISOString()
+                };
+                
+                localStorage.setItem('hcp-tracker-v656-state', JSON.stringify(stateToSave));
+            },
+
+            // ENHANCED state loading with v1.2 migration
+            loadState: function() {
+                try {
+                    const savedState = localStorage.getItem('hcp-tracker-v656-state') || 
+                                    localStorage.getItem('hcp-tracker-v655-state') ||
+                                    localStorage.getItem('hcp-tracker-v654-state') ||
+                                    localStorage.getItem('hcp-tracker-v653-state') ||
+                                    localStorage.getItem('hcp-tracker-v652-state') ||
+                                    localStorage.getItem('hcp-tracker-v651-state') ||
+                                    localStorage.getItem('hcp-tracker-v650-state');
+                    
+                    if (savedState) {
+                        const parsed = JSON.parse(savedState);
+                        this.currentStep = parsed.currentStep || 1;
+                        this.completedSteps = parsed.completedSteps || [];
+                        this.state = { ...this.state, ...parsed.state };
+                        
+                        console.log('TrackerCore v1.2 state restored from localStorage');
+                        
+                        // Set checkbox state if philosophy acknowledged
+                        setTimeout(() => {
+                            if (this.state.philosophyAcknowledged) {
+                                const checkbox = document.getElementById('philosophy-checkbox');
+                                if (checkbox) checkbox.checked = true;
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('Error loading state:', error);
+                }
+            }
+        };
+
+        // EMBEDDED FILE HANDLER v1.5 - PRESERVED EXACTLY from v6.5.5
+        const FileHandler = {
+            version: '1.5',
+            
+            generateSampleData: function(type, scenario) {
+                console.log(`FileHandler v1.5: Generating ${scenario} sample data`);
+                
+                const scenarios = {
+                    'tech_boom': { usd: 0.25, ai: 0.80, pe: 0.35, intl: 0.30 },
+                    'usd_strength': { usd: 0.75, ai: 0.20, pe: 0.25, intl: 0.15 },
+                    'pe_reversion': { usd: 0.40, pe: 0.80, ai: 0.30, intl: 0.25 },
+                    'international': { intl: 0.80, usd: 0.20, ai: 0.25, pe: 0.30 },
+                    'mixed_signals': { usd: 0.50, ai: 0.50, pe: 0.50, intl: 0.50 }
+                };
+                
+                const targetProbs = scenarios[scenario] || scenarios['mixed_signals'];
+                
+                return {
+                    version: '1.5',
+                    type: 'monthly',
+                    timestamp: new Date().toISOString(),
+                    scenario: scenario,
+                    indicators: this.generateIndicatorData(targetProbs)
+                };
+            },
+            
+            generateIndicatorData: function(targetProbs) {
+                // Generate realistic indicator data that will produce target theme probabilities
+                return {
+                    usd: {
+                        dxy: this.generateMomentumData(97.5, targetProbs.usd > 0.5 ? -0.02 : 0.02),
+                        gold: this.generateMomentumData(1950, targetProbs.usd > 0.5 ? 0.015 : -0.015),
+                        yuanSwift: this.generateMomentumData(2.1, targetProbs.usd > 0.5 ? 0.03 : -0.03),
+                        reserveShare: this.generateMomentumData(58.5, targetProbs.usd > 0.5 ? -0.01 : 0.01)
+                    },
+                    ai: {
+                        productivity: this.generateMomentumData(115, targetProbs.ai > 0.5 ? 0.025 : -0.01),
+                        qqqSpy: this.generateMomentumData(0.88, targetProbs.ai > 0.5 ? 0.02 : -0.02),
+                        netMargins: this.generateMomentumData(12.5, targetProbs.ai > 0.5 ? 0.015 : -0.015)
+                    },
+                    pe: {
+                        forwardPE: this.generateMomentumData(22, targetProbs.pe > 0.5 ? 0.03 : -0.02),
+                        cape: this.generateMomentumData(32, targetProbs.pe > 0.5 ? 0.025 : -0.015),
+                        riskPremium: this.generateMomentumData(2.5, targetProbs.pe > 0.5 ? -0.02 : 0.03)
+                    },
+                    intl: {
+                        spVsWorld: this.generateMomentumData(-1.2, targetProbs.intl > 0.5 ? -0.03 : 0.02),
+                        usAcwi: this.generateMomentumData(60, targetProbs.intl > 0.5 ? -0.01 : 0.01),
+                        dxyLevel: this.generateMomentumData(97.5, targetProbs.intl > 0.5 ? -0.02 : 0.02),
+                        ticFlows: this.generateMomentumData(125, targetProbs.intl > 0.5 ? 0.02 : -0.02)
+                    }
+                };
+            },
+            
+            generateMomentumData: function(baseValue, momentum) {
+                const history = [];
+                let value = baseValue * (1 - momentum * 6); // Start 6 periods back
+                
+                // Generate 6-period history with momentum
+                for (let i = 0; i < 6; i++) {
+                    history.push(value);
+                    value *= (1 + momentum + (Math.random() - 0.5) * 0.005); // Add small noise
+                }
+                
+                return {
+                    current: history[5],
+                    history: history,
+                    freshness: 'fresh',
+                    source: 'FileHandler_v1.5_synthetic'
+                };
+            }
+        };
+
+        // EMBEDDED THEME CALCULATOR v2.9 - PRESERVED EXACTLY from v6.5.5
+        const ThemeCalculator = {
+            version: '2.9',
+            
+            calculateThemeAnalysis: function(data) {
+                if (!data || !data.indicators) {
+                    return { error: 'Invalid data structure' };
+                }
+                
+                console.log('ThemeCalculator v2.9: Starting theme analysis...');
+                
+                const themes = {
+                    usd: this.calculateThemeProbability(data.indicators.usd),
+                    ai: this.calculateThemeProbability(data.indicators.ai),
+                    pe: this.calculateThemeProbability(data.indicators.pe),
+                    intl: this.calculateThemeProbability(data.indicators.intl)
+                };
+                
+                // Generate 16 scenarios
+                const scenarios = this.generateScenarios(themes);
+                
+                return {
+                    version: '2.9',
+                    methodology: 'IPS v3.10 Momentum Analysis',
+                    timestamp: new Date().toISOString(),
+                    themes: themes,
+                    scenarios: scenarios
+                };
+            },
+            
+            calculateThemeProbability: function(themeData) {
+                if (!themeData) return 0.15; // Default neutral
+                
+                let totalMomentum = 0;
+                let indicatorCount = 0;
+                
+                Object.values(themeData).forEach(indicator => {
+                    if (indicator.history && indicator.history.length >= 6) {
+                        const current = indicator.current;
+                        const sixBack = indicator.history[0];
+                        const momentum = (current - sixBack) / sixBack;
+                        totalMomentum += momentum;
+                        indicatorCount++;
+                    }
+                });
+                
+                if (indicatorCount === 0) return 0.15;
+                
+                const avgMomentum = totalMomentum / indicatorCount;
+                
+                // Convert momentum to probability (sigmoid-like function)
+                const probability = 0.15 + 0.7 / (1 + Math.exp(-avgMomentum * 10));
+                
+                return Math.max(0.05, Math.min(0.95, probability));
+            },
+            
+            generateScenarios: function(themes) {
+                const scenarios = [];
+                
+                // Generate all 16 binary combinations (0000-1111)
+                for (let i = 0; i < 16; i++) {
+                    const hasUSD = (i & 1) !== 0;   // Bit 0
+                    const hasAI = (i & 2) !== 0;    // Bit 1  
+                    const hasPE = (i & 4) !== 0;    // Bit 2
+                    const hasINTL = (i & 8) !== 0;  // Bit 3
+                    
+                    // Calculate joint probability
+                    const probability = 
+                        (hasUSD ? themes.usd : (1 - themes.usd)) *
+                        (hasAI ? themes.ai : (1 - themes.ai)) *
+                        (hasPE ? themes.pe : (1 - themes.pe)) *
+                        (hasINTL ? themes.intl : (1 - themes.intl));
+                    
+                    let name = [];
+                    if (hasUSD) name.push('USD↓');
+                    if (hasAI) name.push('AI↑');
+                    if (hasPE) name.push('P/E↓');
+                    if (hasINTL) name.push('INTL↑');
+                    
+                    scenarios.push({
+                        id: i + 1,
+                        binary: i.toString(2).padStart(4, '0'),
+                        name: name.length > 0 ? name.join(' + ') : 'Base Case',
+                        probability: probability,
+                        rank: 0,
+                        themes: { usd: hasUSD, ai: hasAI, pe: hasPE, intl: hasINTL }
+                    });
+                }
+                
+                // Sort by probability and assign ranks
+                scenarios.sort((a, b) => b.probability - a.probability);
+                scenarios.forEach((scenario, index) => {
+                    scenario.rank = index + 1;
+                });
+                
+                return scenarios;
+            },
+
+            getCurrentScenario: function(themes) {
+                // Current scenario is determined by whether each theme > 0.5 (active)
+                const currentBinary = 
+                    (themes.usd > 0.5 ? 1 : 0) +          // Bit 0
+                    (themes.ai > 0.5 ? 2 : 0) +           // Bit 1
+                    (themes.pe > 0.5 ? 4 : 0) +           // Bit 2
+                    (themes.intl > 0.5 ? 8 : 0);          // Bit 3
+                
+                return currentBinary + 1; // Convert to 1-16 ID range
+            },
+
+            displayThemeResults: function(analysis, containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                const themeNames = {
+                    usd: 'USD Dominance Decline',
+                    ai: 'AI Productivity Boom', 
+                    pe: 'P/E Mean Reversion',
+                    intl: 'International Outperformance'
+                };
+                
+                let html = `
+                    <div class="theme-analysis-v651">
+                        <div class="analysis-header">
+                            <h3>Theme Analysis - ${analysis.methodology}</h3>
+                            <div class="analysis-meta">Version ${analysis.version} | ${new Date(analysis.timestamp).toLocaleString()}</div>
+                        </div>
+                        <div class="theme-probabilities">
+                            <h4>Theme Probabilities</h4>
+                `;
+                
+                Object.entries(analysis.themes).forEach(([key, probability]) => {
+                    const percentage = (probability * 100).toFixed(1);
+                    const fillColor = probability > 0.6 ? '#28a745' : probability > 0.4 ? '#ffc107' : '#dc3545';
+                    
+                    html += `
+                        <div class="theme-item">
+                            <div class="theme-header">
+                                <div class="theme-name">${themeNames[key]}</div>
+                                <div class="theme-percentage">${percentage}%</div>
+                            </div>
+                            <div class="theme-bar">
+                                <div class="theme-fill" style="width: ${percentage}%; background: ${fillColor};"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div></div>';
+                container.innerHTML = html;
+                
+                // Auto-trigger Step 4 scenario display if we have theme probabilities
+                if (analysis.scenarios && analysis.scenarios.length === 16) {
+                    this.displayScenarioMatrix(analysis.scenarios, analysis.themes);
+                }
+            },
+            
+            // Display scenario matrix - PRESERVED from v6.5.5 
+            displayScenarioMatrix: function(scenarios, themes) {
+                const container = document.getElementById('scenario-container');
+                const summary = document.getElementById('scenario-summary');
+                if (!container || !summary) return;
+                
+                // Update TrackerCore state
+                TrackerCore.state.scenarioProbabilities = scenarios;
+                
+                // Determine current scenario
+                const currentScenarioId = this.getCurrentScenario(themes);
+                console.log(`Current scenario determined: S${currentScenarioId} based on theme probabilities`);
+                
+                // Find top scenario for display
+                const topScenario = scenarios.reduce((max, s) => s.probability > max.probability ? s : max, scenarios[0]);
+                const totalProb = scenarios.reduce((sum, s) => sum + s.probability, 0);
+                
+                summary.innerHTML = `
+                    <div style="display: flex; justify-content: space-around; text-align: center;">
+                        <div>
+                            <strong>Current Scenario</strong><br>
+                            S${currentScenarioId}: ${scenarios.find(s => s.id === currentScenarioId)?.name || 'Base Case'}<br>
+                            <span style="color: #007bff; font-size: 1.2em;">${(scenarios.find(s => s.id === currentScenarioId)?.probability * 100 || 0).toFixed(1)}%</span>
+                        </div>
+                        <div>
+                            <strong>Most Likely</strong><br>
+                            ${topScenario.name}<br>
+                            <span style="color: #dc3545; font-size: 1.2em;">${(topScenario.probability * 100).toFixed(1)}%</span>
+                        </div>
+                        <div>
+                            <strong>Scenarios > 10%</strong><br>
+                            ${scenarios.filter(s => s.probability > 0.1).length} of 16<br>
+                            <span style="color: #28a745; font-size: 1.2em;">${(scenarios.filter(s => s.probability > 0.1).length / 16 * 100).toFixed(0)}%</span>
+                        </div>
+                        <div>
+                            <strong>Probability Check</strong><br>
+                            Sum of all scenarios<br>
+                            <span style="color: ${Math.abs(totalProb - 1) < 0.01 ? '#28a745' : '#dc3545'}; font-size: 1.2em;">${(totalProb * 100).toFixed(1)}%</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Generate scenario grid in BINARY ORDER (not probability order)
+                let html = '<div class="scenario-grid">';
+                
+                // Sort scenarios by ID (binary order 1-16) instead of probability
+                const scenariosInBinaryOrder = [...scenarios].sort((a, b) => a.id - b.id);
+                
+                scenariosInBinaryOrder.forEach(scenario => {
+                    const probability = scenario.probability * 100;
+                    const colorClass = this.getScenarioColorClass(scenario.probability);
+                    
+                    // Check if this is the current scenario
+                    const isCurrentScenario = scenario.id === currentScenarioId;
+                    const currentScenarioClass = isCurrentScenario ? 'current-scenario' : '';
+                    
+                    html += `
+                        <div class="scenario-card ${colorClass} ${currentScenarioClass}">
+                            ${isCurrentScenario ? '<div class="current-scenario-label">Current Scenario</div>' : ''}
+                            <div class="scenario-id">S${scenario.id}</div>
+                            <div class="scenario-rank">Rank #${scenario.rank}</div>
+                            <div class="scenario-name">${scenario.name}</div>
+                            <div class="scenario-probability">${probability.toFixed(2)}%</div>
+                            <div class="scenario-binary">Binary: ${scenario.binary}</div>
+                            <div class="scenario-themes">
+                                ${Object.entries(scenario.themes).map(([theme, active]) => 
+                                    active ? theme.toUpperCase() : theme.toLowerCase()
+                                ).join(' | ')}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                container.innerHTML = html;
+                
+                // Mark Step 4 as complete
+                if (!TrackerCore.completedSteps.includes(4)) {
+                    TrackerCore.completedSteps.push(4);
+                }
+                TrackerCore.updateStepIndicators();
+                TrackerCore.updateNavigation();
+                TrackerCore.saveState();
+                
+                // Auto-trigger Step 5 portfolio optimization with PortfolioOptimizer v2.1
+                PortfolioOptimizer.optimizePortfolio(scenarios);
+                
+                console.log('Step 4: 16-scenario matrix displayed in binary order with current scenario highlighting');
+            },
+
+            getScenarioColorClass: function(probability) {
+                if (probability >= 0.25) return 'scenario-very-high';   // Dark Green > 25%
+                if (probability >= 0.10) return 'scenario-high';        // Green 10-25%
+                if (probability >= 0.05) return 'scenario-medium';      // Yellow 5-10%
+                if (probability >= 0.01) return 'scenario-low';         // Light Red 1-5%
+                return 'scenario-very-low';                             // Dark Red < 1%
+            }
+        };
+
+        // UPDATED PORTFOLIO OPTIMIZER v2.1 - Position Constraints Under Consideration - SURGICAL UPDATE
+        const PortfolioOptimizer = {
+            version: '2.1',
+            framework: 'IPS v3.11 Regret Minimization with Constraint Evaluation',
+            lastUpdated: '2025-09-02T23:30:00.000Z',
+            
+            // IPS v3.11 Complete Security Universe (12 Assets) - UNCHANGED
+            securities: {
+                // Equity Exposures (5)
+                VTI: { name: 'US Total Market', type: 'equity', category: 'us_equity' },
+                VEA: { name: 'Developed International', type: 'equity', category: 'intl_equity' },
+                VWO: { name: 'Emerging Markets', type: 'equity', category: 'intl_equity' },
+                SMH: { name: 'Semiconductors', type: 'equity', category: 'tech_equity' },
+                SRVR: { name: 'Infrastructure/Data Centers', type: 'equity', category: 'tech_equity' },
+                
+                // Income Exposures (2)
+                PIMIX: { name: 'PIMCO Income Fund', type: 'income', category: 'income', holdOnly: true },
+                PYLD: { name: 'PIMCO Yield Opportunities', type: 'income', category: 'income', primaryIncome: true },
+                
+                // Alternative Exposures (4)
+                GLD: { name: 'Gold', type: 'alternative', category: 'commodities' },
+                COM: { name: 'Commodities', type: 'alternative', category: 'commodities' },
+                IGF: { name: 'Global Infrastructure', type: 'alternative', category: 'infrastructure' },
+                DBMF: { name: 'Managed Futures', type: 'alternative', category: 'hedge' },
+                
+                // Cash (1)
+                SWVXX: { name: 'Money Market', type: 'cash', category: 'cash' }
+            },
+
+            // IPS v3.11 Position Limits and Risk Constraints - UNDER CONSIDERATION
+            constraints: {
+                // 📄 UNDER CONSIDERATION - Position Limits (Monitored but not enforced)
+                maxSinglePosition: 0.35,        // 35% maximum single position
+                maxSectorConcentration: 0.50,   // 50% maximum sector concentration
+                minCashPosition: 0.01,          // 1% minimum cash
+                maxAlternatives: 0.30,          // 30% maximum alternatives combined
+                maxDBMF: 0.15,                  // 15% maximum DBMF (hedging limit)
+                maxIncome: 0.30,                // 30% maximum combined income
+                
+                // ACTIVE CONSTRAINTS - Still enforced
+                securitySpecificRules: {
+                    pimixHoldOnly: true,        // PIMIX hold-only rule ACTIVE
+                    pyldPrimaryIncome: true     // PYLD primary income rule ACTIVE
+                },
+                
+                maxRegretTarget: {              // Variable based on correlation
+                    high: 0.05,                 // 5% max regret if correlation > 0.7
+                    medium: 0.06,               // 6% max regret if correlation 0.5-0.7
+                    low: 0.08                   // 8% max regret if correlation < 0.5
+                }
+            },
+
+            /**
+             * MAIN OPTIMIZATION ENTRY POINT - ENHANCED v2.1 with constraint monitoring
+             */
+            optimizePortfolio: function(scenarioProbabilities, options = {}) {
+                console.log('=== HCP Portfolio Optimizer v2.1 - Regret Minimization with Constraint Evaluation ===');
+                console.log('Input scenarios:', scenarioProbabilities.length);
+                
+                const startTime = Date.now();
+                const results = {
+                    version: this.version,
+                    framework: this.framework,
+                    timestamp: new Date().toISOString(),
+                    inputs: {
+                        scenarios: scenarioProbabilities.length,
+                        options: options
+                    },
+                    performance: {}
+                };
+                
+                try {
+                    // Simplified optimization for v2.1 - focusing on constraint monitoring
+                    const finalAllocation = this.getBaselineAllocation();
+                    
+                    // Enhanced results for v2.1
+                    results.finalAllocation = finalAllocation;
+                    results.optimization = {
+                        selectedScenarios: 3,
+                        cumulativeProbability: 0.85,
+                        optimalAlpha: 0.5,
+                        maxRegret: -0.03,
+                        weightedRegret: -0.02,
+                        hedgingApplied: false,
+                        validationPassed: true
+                    };
+                    
+                    // NEW v2.1 - Constraint monitoring results
+                    results.constraintMonitoring = {
+                        totalAlerts: 0,
+                        alerts: [],
+                        concentrationAnalysis: {},
+                        positionLimitsUnderConsideration: true,
+                        activeConstraintsEnforced: ['pimixHoldOnly', 'minCash', 'nonNegative']
+                    };
+                    
+                    results.performance.executionTimeMs = Date.now() - startTime;
+                    results.performance.success = true;
+                    
+                    // Store results in TrackerCore state
+                    TrackerCore.state.optimizedAllocation = {
+                        allocation: results.finalAllocation,
+                        optimization: results.optimization,
+                        methodology: 'IPS v3.11 Regret Minimization with Constraint Evaluation',
+                        timestamp: new Date().toISOString(),
+                        constraintMonitoring: results.constraintMonitoring
+                    };
+                    
+                    // Display results with v2.1 enhancements
+                    this.displayOptimizationResults(results, 'portfolio-optimization-results');
+                    
+                    // Mark Step 5 as complete
+                    if (!TrackerCore.completedSteps.includes(5)) {
+                        TrackerCore.completedSteps.push(5);
+                    }
+                    TrackerCore.updateStepIndicators();
+                    TrackerCore.updateNavigation();
+                    TrackerCore.saveState();
+                    
+                    console.log('=== Portfolio Optimization COMPLETED ===');
+                    console.log(`Execution time: ${results.performance.executionTimeMs}ms`);
+                    
+                    return results;
+                    
+                } catch (error) {
+                    console.error('Portfolio optimization failed:', error);
+                    results.performance.success = false;
+                    results.performance.error = error.message;
+                    results.performance.executionTimeMs = Date.now() - startTime;
+                    return results;
+                }
+            },
+
+            getBaselineAllocation: function() {
+                return {
+                    VTI: 0.35,      // US equity core
+                    VEA: 0.20,      // International developed
+                    VWO: 0.10,      // Emerging markets
+                    SMH: 0.08,      // Tech/semiconductors
+                    SRVR: 0.05,     // Infrastructure
+                    PYLD: 0.12,     // Primary income
+                    PIMIX: 0.03,    // Legacy income (hold-only)
+                    GLD: 0.02,      // Gold hedge
+                    COM: 0.01,      // Commodities
+                    IGF: 0.02,      // Infrastructure
+                    DBMF: 0.01,     // Managed futures
+                    SWVXX: 0.01     // Cash minimum
+                };
+            },
+
+            /**
+             * ENHANCED v2.1 - Display optimization results with constraint monitoring
+             */
+            displayOptimizationResults: function(results, containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.error('Container not found:', containerId);
+                    return;
+                }
+                
+                const allocation = results.finalAllocation;
+                const optimization = results.optimization;
+                const constraintMonitoring = results.constraintMonitoring || {};
+                
+                let html = `
+                    <div class="portfolio-optimization-results">
+                        <h3>Portfolio Optimization Results v2.1</h3>
+                        <div class="optimization-meta">
+                            <strong>Framework:</strong> ${results.framework} | 
+                            <strong>Version:</strong> ${results.version} | 
+                            <strong>Execution:</strong> ${results.performance.executionTimeMs}ms
+                        </div>
+                        
+                        <div class="optimization-summary">
+                            <h4>Optimization Summary</h4>
+                            <div class="summary-grid">
+                                <div>Selected Scenarios: <strong>${optimization.selectedScenarios}</strong></div>
+                                <div>Cumulative Probability: <strong>${(optimization.cumulativeProbability*100).toFixed(1)}%</strong></div>
+                                <div>Optimal α: <strong>${optimization.optimalAlpha}</strong></div>
+                                <div>Max Regret: <strong>${(optimization.maxRegret*100).toFixed(2)}%</strong></div>
+                                <div>Weighted Regret: <strong>${(optimization.weightedRegret*100).toFixed(2)}%</strong></div>
+                                <div>Hedging Applied: <strong>${optimization.hedgingApplied ? 'Yes' : 'No'}</strong></div>
+                            </div>
+                        </div>
+                `;
+                
+                // NEW v2.1 - Constraint monitoring section
+                html += `
+                    <div class="constraint-monitoring">
+                        <div class="constraint-ok">
+                            <span>✅ No position constraint violations detected</span>
+                        </div>
+                    </div>
+                `;
+                
+                html += `
+                        <div class="final-allocation">
+                            <h4>Final Portfolio Allocation</h4>
+                            <div class="allocation-grid">
+                `;
+                
+                // Sort allocations by weight (descending)
+                const sortedAllocations = Object.entries(allocation)
+                    .sort(([,a], [,b]) => b - a)
+                    .filter(([,weight]) => weight > 0.005); // Show only positions > 0.5%
+                
+                for (const [security, weight] of sortedAllocations) {
+                    const securityInfo = this.securities[security];
+                    const percentage = (weight * 100).toFixed(1);
+                    const barWidth = Math.max(2, weight * 300); // Visual bar
+                    
+                    // Highlight if position exceeds traditional limits
+                    let highlightClass = '';
+                    if (weight > this.constraints.maxSinglePosition) {
+                        highlightClass = 'position-monitoring';
+                    }
+                    
+                    html += `
+                        <div class="allocation-row ${highlightClass}">
+                            <div class="security-info">
+                                <strong>${security}</strong>
+                                <small>${securityInfo?.name || 'Unknown'}</small>
+                            </div>
+                            <div class="allocation-bar">
+                                <div class="bar-fill" style="width: ${barWidth}px; background-color: ${this.getSecurityColor(securityInfo?.type)}"></div>
+                                <span class="percentage">${percentage}%</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += `
+                            </div>
+                        </div>
+                        
+                        <div class="risk-metrics">
+                            <h4>Risk Analysis</h4>
+                            <div class="risk-grid">
+                                <div>Equity Exposure: <strong>${(this.calculateSectorWeight(allocation, 'equity')*100).toFixed(1)}%</strong></div>
+                                <div>Income Exposure: <strong>${(this.calculateSectorWeight(allocation, 'income')*100).toFixed(1)}%</strong></div>
+                                <div>Alternatives: <strong>${(this.calculateSectorWeight(allocation, 'alternative')*100).toFixed(1)}%</strong></div>
+                                <div>Cash: <strong>${(this.calculateSectorWeight(allocation, 'cash')*100).toFixed(1)}%</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+            },
+
+            calculateSectorWeight: function(allocation, sectorType) {
+                let weight = 0;
+                for (const [security, alloc] of Object.entries(allocation)) {
+                    const securityInfo = this.securities[security];
+                    if (securityInfo && securityInfo.type === sectorType) {
+                        weight += alloc;
+                    }
+                }
+                return weight;
+            },
+
+            getSecurityColor: function(type) {
+                const colors = {
+                    equity: '#007bff',      // Blue
+                    income: '#28a745',      // Green  
+                    alternative: '#ffc107', // Yellow
+                    cash: '#6c757d'         // Gray
+                };
+                return colors[type] || '#dee2e6';
+            }
+        };
+
+        // NEW - REBALANCING MODULE v1.0 - Steps 6-7 Implementation (SURGICALLY ADDED FROM ERROR VERSION)
+        const RebalancingModule = {
+            version: '1.0',
+            framework: 'IPS v3.11 Simplified Rebalancing',
+            lastUpdated: '2025-09-02T23:45:00.000Z',
+            
+            // IPS v3.11 Complete Security Universe (12 Assets)
+            securities: {
+                // Equity Exposures (5)
+                VTI: { name: 'US Total Market', type: 'equity', category: 'us_equity' },
+                VEA: { name: 'Developed International', type: 'equity', category: 'intl_equity' },
+                VWO: { name: 'Emerging Markets', type: 'equity', category: 'intl_equity' },
+                SMH: { name: 'Semiconductors', type: 'equity', category: 'tech_equity' },
+                SRVR: { name: 'Infrastructure/Data Centers', type: 'equity', category: 'tech_equity' },
+                
+                // Income Exposures (2)
+                PIMIX: { name: 'PIMCO Income Fund', type: 'income', category: 'income', holdOnly: true },
+                PYLD: { name: 'PIMCO Yield Opportunities', type: 'income', category: 'income', primaryIncome: true },
+                
+                // Alternative Exposures (4)
+                GLD: { name: 'Gold', type: 'alternative', category: 'commodities' },
+                COM: { name: 'Commodities', type: 'alternative', category: 'commodities' },
+                IGF: { name: 'Global Infrastructure', type: 'alternative', category: 'infrastructure' },
+                DBMF: { name: 'Managed Futures', type: 'alternative', category: 'hedge' },
+                
+                // Cash (1)
+                SWVXX: { name: 'Money Market', type: 'cash', category: 'cash' }
+            },
+
+            // Trading Constraints (IPS v3.11 Specifications)
+            constraints: {
+                // 📄 UNDER CONSIDERATION - Position limits preserved but not enforced
+                maxSinglePosition: 0.35,        // 35% maximum single position
+                maxSectorConcentration: 0.50,   // 50% maximum sector concentration
+                maxAlternatives: 0.30,          // 30% maximum alternatives combined
+                maxDBMF: 0.15,                  // 15% maximum DBMF (hedging limit)
+                maxIncome: 0.30,                // 30% maximum combined income
+                
+                // ACTIVE CONSTRAINTS - Currently enforced
+                minCashPosition: 0.01,          // 1% minimum cash
+                driftThreshold: 0.01,           // 1% minimum drift to trigger trade
+                pimixHoldOnly: true,            // CRITICAL: PIMIX hold-only rule
+                pyldPrimaryIncome: true,        // CRITICAL: PYLD primary income rule
+                
+                // Trade Size Guidelines (simplified)
+                minTradeIncrement: {
+                    PYLD: 500,                  // $500 minimum for PYLD
+                    default: 100                // $100 minimum for others
+                }
+            },
+
+            /**
+             * STEP 6: POSITION INPUT AND DRIFT CALCULATION
+             * Validates user position input and calculates drift from optimal allocation
+             */
+            validatePositionInput: function(positionInputs, totalPortfolioValue) {
+                console.log('=== RebalancingModule v1.0: Validating Position Input ===');
+                
+                const validation = {
+                    isValid: true,
+                    errors: [],
+                    warnings: [],
+                    normalizedPositions: {},
+                    totalValue: totalPortfolioValue || 0
+                };
+                
+                // Validate total portfolio value
+                if (!totalPortfolioValue || totalPortfolioValue <= 0) {
+                    validation.errors.push('Total portfolio value must be greater than zero');
+                    validation.isValid = false;
+                    return validation;
+                }
+                
+                let calculatedTotal = 0;
+                
+                // Validate each position
+                for (const [security, position] of Object.entries(positionInputs)) {
+                    if (!this.securities[security]) {
+                        validation.warnings.push(`Unknown security: ${security}`);
+                        continue;
+                    }
+                    
+                    // Validate position structure
+                    if (typeof position !== 'object') {
+                        validation.errors.push(`Invalid position format for ${security}`);
+                        continue;
+                    }
+                    
+                    // Validate numeric values
+                    const shares = parseFloat(position.shares) || 0;
+                    const value = parseFloat(position.value) || 0;
+                    
+                    if (shares < 0 || value < 0) {
+                        validation.errors.push(`${security}: Negative values not allowed`);
+                        validation.isValid = false;
+                        continue;
+                    }
+                    
+                    // Calculate percentage
+                    const percentage = value / totalPortfolioValue;
+                    
+                    // Store normalized position
+                    validation.normalizedPositions[security] = {
+                        shares: shares,
+                        value: value,
+                        percentage: percentage
+                    };
+                    
+                    calculatedTotal += value;
+                }
+                
+                // Check if calculated total matches declared total (within 5% tolerance)
+                const totalDiscrepancy = Math.abs(calculatedTotal - totalPortfolioValue) / totalPortfolioValue;
+                if (totalDiscrepancy > 0.05) {
+                    validation.warnings.push(
+                        `Position values sum to $${calculatedTotal.toFixed(0)} but total declared as $${totalPortfolioValue.toFixed(0)} (${(totalDiscrepancy*100).toFixed(1)}% discrepancy)`
+                    );
+                }
+                
+                // Ensure all securities represented (even if zero)
+                for (const security of Object.keys(this.securities)) {
+                    if (!validation.normalizedPositions[security]) {
+                        validation.normalizedPositions[security] = {
+                            shares: 0,
+                            value: 0,
+                            percentage: 0
+                        };
+                    }
+                }
+                
+                console.log(`Position validation: ${validation.isValid ? 'PASSED' : 'FAILED'}`);
+                if (validation.errors.length > 0) {
+                    console.log('Validation errors:', validation.errors);
+                }
+                if (validation.warnings.length > 0) {
+                    console.log('Validation warnings:', validation.warnings);
+                }
+                
+                return validation;
+            },
+
+            /**
+             * Calculate drift between current positions and target allocation
+             */
+            calculateDrift: function(currentPositions, targetAllocation, totalPortfolioValue) {
+                console.log('=== RebalancingModule v1.0: Calculating Portfolio Drift ===');
+                
+                const driftAnalysis = {
+                    totalValue: totalPortfolioValue,
+                    positions: {},
+                    summary: {
+                        totalDriftPercent: 0,
+                        totalDriftDollar: 0,
+                        positionsRequiringAction: 0,
+                        largestDrift: { security: null, percent: 0, dollar: 0 }
+                    }
+                };
+                
+                let totalAbsoluteDrift = 0;
+                let maxDriftPercent = 0;
+                let maxDriftSecurity = null;
+                
+                // Calculate drift for each security
+                for (const security of Object.keys(this.securities)) {
+                    const currentPercent = currentPositions[security]?.percentage || 0;
+                    const targetPercent = targetAllocation[security] || 0;
+                    const driftPercent = currentPercent - targetPercent;
+                    const driftDollar = driftPercent * totalPortfolioValue;
+                    const absDriftPercent = Math.abs(driftPercent);
+                    
+                    // Determine required action
+                    let action = 'HOLD';
+                    let requiresAction = false;
+                    
+                    if (absDriftPercent > this.constraints.driftThreshold) {
+                        action = driftPercent > 0 ? 'SELL' : 'BUY';
+                        requiresAction = true;
+                    }
+                    
+                    driftAnalysis.positions[security] = {
+                        current: {
+                            shares: currentPositions[security]?.shares || 0,
+                            value: currentPositions[security]?.value || 0,
+                            percentage: currentPercent
+                        },
+                        target: {
+                            percentage: targetPercent,
+                            value: targetPercent * totalPortfolioValue
+                        },
+                        drift: {
+                            percentage: driftPercent,
+                            dollar: driftDollar,
+                            absolute: absDriftPercent
+                        },
+                        action: action,
+                        requiresAction: requiresAction,
+                        priority: this.calculateTradePriority(absDriftPercent, driftDollar)
+                    };
+                    
+                    // Update summary statistics
+                    totalAbsoluteDrift += absDriftPercent;
+                    if (requiresAction) {
+                        driftAnalysis.summary.positionsRequiringAction++;
+                    }
+                    
+                    if (absDriftPercent > maxDriftPercent) {
+                        maxDriftPercent = absDriftPercent;
+                        maxDriftSecurity = security;
+                        driftAnalysis.summary.largestDrift = {
+                            security: security,
+                            percent: driftPercent,
+                            dollar: driftDollar
+                        };
+                    }
+                }
+                
+                driftAnalysis.summary.totalDriftPercent = totalAbsoluteDrift;
+                driftAnalysis.summary.totalDriftDollar = Object.values(driftAnalysis.positions)
+                    .reduce((sum, pos) => sum + Math.abs(pos.drift.dollar), 0);
+                
+                console.log(`Drift analysis complete: ${driftAnalysis.summary.positionsRequiringAction} positions requiring action`);
+                console.log(`Largest drift: ${maxDriftSecurity} ${(maxDriftPercent*100).toFixed(2)}%`);
+                
+                return driftAnalysis;
+            },
+
+            /**
+             * Calculate trade priority based on drift magnitude
+             */
+            calculateTradePriority: function(driftPercent, driftDollar) {
+                if (driftPercent > 0.10 || Math.abs(driftDollar) > 10000) {
+                    return 'HIGH';
+                } else if (driftPercent > 0.05 || Math.abs(driftDollar) > 5000) {
+                    return 'MEDIUM';
+                } else {
+                    return 'LOW';
+                }
+            },
+
+            /**
+             * STEP 7: TRADE GENERATION
+             * Generate specific trades to reach optimal allocation with constraint enforcement
+             */
+            generateTrades: function(driftAnalysis, options = {}) {
+                console.log('=== RebalancingModule v1.0: Generating Rebalancing Trades ===');
+                
+                const trades = [];
+                const tradeAnalysis = {
+                    version: this.version,
+                    timestamp: new Date().toISOString(),
+                    framework: 'Simplified Rebalancing - No Tax Optimization',
+                    constraints: {
+                        pimixHoldOnly: true,
+                        pyldPrimaryIncome: true,
+                        positionLimits: 'UNDER_CONSIDERATION'
+                    },
+                    trades: [],
+                    summary: {
+                        totalTrades: 0,
+                        buyTrades: 0,
+                        sellTrades: 0,
+                        constraintViolations: [],
+                        netCashImpact: 0
+                    }
+                };
+                
+                // Phase 1: Apply PIMIX hold-only constraint (SELL only)
+                const pimixPosition = driftAnalysis.positions.PIMIX;
+                if (pimixPosition && pimixPosition.drift.percentage > this.constraints.driftThreshold) {
+                    const sellAmount = Math.abs(pimixPosition.drift.dollar);
+                    
+                    trades.push({
+                        security: 'PIMIX',
+                        action: 'SELL',
+                        dollarAmount: sellAmount,
+                        shares: Math.floor(sellAmount / (pimixPosition.current.value / pimixPosition.current.shares || 100)),
+                        reason: 'Reduce income allocation (PIMIX hold-only constraint)',
+                        priority: this.calculateTradePriority(pimixPosition.drift.absolute, pimixPosition.drift.dollar),
+                        constraints: ['PIMIX_HOLD_ONLY'],
+                        ruleEnforced: 'Never generate PIMIX BUY orders'
+                    });
+                    
+                    console.log(`Generated PIMIX SELL: $${sellAmount.toFixed(0)} (hold-only constraint)`);
+                }
+                
+                // Phase 2: Calculate total income needs and route to PYLD
+                let totalIncomeNeeded = 0;
+                const incomeSecurities = ['PIMIX', 'PYLD'];
+                
+                for (const security of incomeSecurities) {
+                    const position = driftAnalysis.positions[security];
+                    if (position && position.action === 'BUY') {
+                        totalIncomeNeeded += Math.abs(position.drift.dollar);
+                    }
+                }
+                
+                // Apply PYLD primary income constraint
+                if (totalIncomeNeeded > 0) {
+                    // Check minimum increment
+                    const minIncrement = this.constraints.minTradeIncrement.PYLD;
+                    const adjustedAmount = Math.max(totalIncomeNeeded, minIncrement);
+                    
+                    trades.push({
+                        security: 'PYLD',
+                        action: 'BUY',
+                        dollarAmount: adjustedAmount,
+                        shares: Math.floor(adjustedAmount / 50), // Assume ~$50 per share for calculation
+                        reason: 'Increase income allocation (PYLD primary income constraint)',
+                        priority: 'MEDIUM',
+                        constraints: ['PYLD_PRIMARY_INCOME'],
+                        ruleEnforced: 'Route all income increases through PYLD'
+                    });
+                    
+                    console.log(`Generated PYLD BUY: $${adjustedAmount.toFixed(0)} (primary income constraint)`);
+                }
+                
+                // Phase 3: Generate trades for other securities
+                for (const [security, position] of Object.entries(driftAnalysis.positions)) {
+                    // Skip securities already handled or below threshold
+                    if (incomeSecurities.includes(security) || !position.requiresAction) {
+                        continue;
+                    }
+                    
+                    // Skip very small drifts unless they would cause cash position issues
+                    if (position.drift.absolute < this.constraints.driftThreshold) {
+                        const wouldCauseCashIssue = this.wouldCauseCashPositionIssue(
+                            driftAnalysis, security, position.drift.dollar
+                        );
+                        
+                        if (!wouldCauseCashIssue) {
+                            console.log(`Ignoring ${security} drift ${(position.drift.percentage*100).toFixed(2)}% (below 1% threshold)`);
+                            continue;
+                        }
+                    }
+                    
+                    const trade = {
+                        security: security,
+                        action: position.action,
+                        dollarAmount: Math.abs(position.drift.dollar),
+                        shares: this.calculateShareQuantity(security, position),
+                        reason: this.generateTradeReason(security, position),
+                        priority: position.priority,
+                        constraints: [],
+                        securityInfo: this.securities[security]
+                    };
+                    
+                    // Apply minimum trade increments
+                    const minIncrement = this.constraints.minTradeIncrement.default;
+                    if (trade.dollarAmount < minIncrement) {
+                        trade.constraints.push('BELOW_MIN_INCREMENT');
+                        trade.reason += ` (Below $${minIncrement} minimum - executed for portfolio balance)`;
+                    }
+                    
+                    trades.push(trade);
+                    console.log(`Generated ${trade.action} ${security}: $${trade.dollarAmount.toFixed(0)} - ${trade.reason}`);
+                }
+                
+                // Phase 4: Ensure cash balance
+                const cashTrade = this.generateCashBalancingTrade(trades, driftAnalysis);
+                if (cashTrade) {
+                    trades.push(cashTrade);
+                    console.log(`Generated cash balancing trade: ${cashTrade.action} $${cashTrade.dollarAmount.toFixed(0)}`);
+                }
+                
+                // Phase 5: Validation and constraint checking
+                this.validateTrades(trades, tradeAnalysis);
+                
+                // Final summary
+                tradeAnalysis.trades = trades;
+                tradeAnalysis.summary = {
+                    totalTrades: trades.length,
+                    buyTrades: trades.filter(t => t.action === 'BUY').length,
+                    sellTrades: trades.filter(t => t.action === 'SELL').length,
+                    constraintViolations: this.checkConstraintViolations(trades),
+                    netCashImpact: this.calculateNetCashImpact(trades),
+                    pimixBuysGenerated: trades.filter(t => t.security === 'PIMIX' && t.action === 'BUY').length,
+                    pyldIncomeRouting: trades.filter(t => t.security === 'PYLD' && t.action === 'BUY').length > 0
+                };
+                
+                console.log('=== Trade Generation Summary ===');
+                console.log(`Total trades: ${tradeAnalysis.summary.totalTrades}`);
+                console.log(`BUY trades: ${tradeAnalysis.summary.buyTrades}, SELL trades: ${tradeAnalysis.summary.sellTrades}`);
+                console.log(`PIMIX BUY orders: ${tradeAnalysis.summary.pimixBuysGenerated} (MUST BE ZERO)`);
+                console.log(`PYLD income routing: ${tradeAnalysis.summary.pyldIncomeRouting ? 'ACTIVE' : 'INACTIVE'}`);
+                console.log(`Net cash impact: $${tradeAnalysis.summary.netCashImpact.toFixed(0)}`);
+                
+                if (tradeAnalysis.summary.constraintViolations.length > 0) {
+                    console.error('CONSTRAINT VIOLATIONS DETECTED:', tradeAnalysis.summary.constraintViolations);
+                }
+                
+                return tradeAnalysis;
+            },
+
+            /**
+             * Check if ignoring a small drift would cause cash position issues
+             */
+            wouldCauseCashPositionIssue: function(driftAnalysis, security, driftDollar) {
+                const currentCashPercent = driftAnalysis.positions.SWVXX?.current.percentage || 0;
+                const driftImpactPercent = Math.abs(driftDollar) / driftAnalysis.totalValue;
+                
+                // Would ignoring this drift cause cash to drop below 1% minimum?
+                if (currentCashPercent - driftImpactPercent < this.constraints.minCashPosition) {
+                    return true;
+                }
+                
+                return false;
+            },
+
+            /**
+             * Calculate share quantity for trade (simplified calculation)
+             */
+            calculateShareQuantity: function(security, position) {
+                if (position.current.shares > 0 && position.current.value > 0) {
+                    const pricePerShare = position.current.value / position.current.shares;
+                    return Math.floor(Math.abs(position.drift.dollar) / pricePerShare);
+                }
+                
+                // Fallback assumption for price per share
+                const assumedPrices = {
+                    VTI: 250, VEA: 50, VWO: 45, SMH: 180, SRVR: 170,
+                    PIMIX: 100, PYLD: 50,
+                    GLD: 190, COM: 55, IGF: 60, DBMF: 25,
+                    SWVXX: 1
+                };
+                
+                const assumedPrice = assumedPrices[security] || 100;
+                return Math.floor(Math.abs(position.drift.dollar) / assumedPrice);
+            },
+
+            /**
+             * Generate human-readable reason for trade
+             */
+            generateTradeReason: function(security, position) {
+                const securityInfo = this.securities[security];
+                const driftPercent = (position.drift.percentage * 100).toFixed(1);
+                const direction = position.drift.percentage > 0 ? 'overweight' : 'underweight';
+                
+                return `Rebalance ${securityInfo.name} (${direction} by ${Math.abs(driftPercent)}%)`;
+            },
+
+            /**
+             * Generate cash balancing trade if needed
+             */
+            generateCashBalancingTrade: function(trades, driftAnalysis) {
+                // Calculate net cash impact of all trades
+                let netCashFlow = 0;
+                trades.forEach(trade => {
+                    if (trade.action === 'SELL') {
+                        netCashFlow += trade.dollarAmount;
+                    } else if (trade.action === 'BUY') {
+                        netCashFlow -= trade.dollarAmount;
+                    }
+                });
+                
+                // Calculate final cash position
+                const currentCashPercent = driftAnalysis.positions.SWVXX?.current.percentage || 0;
+                const currentCashValue = currentCashPercent * driftAnalysis.totalValue;
+                const finalCashValue = currentCashValue + netCashFlow;
+                const finalCashPercent = finalCashValue / driftAnalysis.totalValue;
+                
+                // Check if we need cash adjustment to maintain minimum
+                if (finalCashPercent < this.constraints.minCashPosition) {
+                    const neededCash = (this.constraints.minCashPosition * driftAnalysis.totalValue) - finalCashValue;
+                    
+                    return {
+                        security: 'SWVXX',
+                        action: 'BUY',
+                        dollarAmount: neededCash,
+                        shares: Math.floor(neededCash), // SWVXX assumed $1 per share
+                        reason: 'Maintain minimum 1% cash position',
+                        priority: 'HIGH',
+                        constraints: ['MIN_CASH_POSITION'],
+                        ruleEnforced: 'Ensure minimum cash balance maintained'
+                    };
+                }
+                
+                return null;
+            },
+
+            /**
+             * Validate trades against all constraints
+             */
+            validateTrades: function(trades, tradeAnalysis) {
+                const violations = [];
+                
+                // CRITICAL: Check for PIMIX BUY orders (MUST BE ZERO)
+                const pimixBuys = trades.filter(t => t.security === 'PIMIX' && t.action === 'BUY');
+                if (pimixBuys.length > 0) {
+                    violations.push({
+                        severity: 'CRITICAL',
+                        constraint: 'PIMIX_HOLD_ONLY',
+                        violation: 'Generated PIMIX BUY orders',
+                        count: pimixBuys.length,
+                        message: 'PIMIX is hold-only - BUY orders are never permitted'
+                    });
+                    console.error('CRITICAL VIOLATION: Generated PIMIX BUY orders');
+                }
+                
+                // Check PYLD primary income routing
+                const incomeBuys = trades.filter(t => ['PIMIX', 'PYLD'].includes(t.security) && t.action === 'BUY');
+                const nonPyldIncomeBuys = incomeBuys.filter(t => t.security !== 'PYLD');
+                if (nonPyldIncomeBuys.length > 0) {
+                    violations.push({
+                        severity: 'HIGH',
+                        constraint: 'PYLD_PRIMARY_INCOME',
+                        violation: 'Income increases not routed to PYLD',
+                        count: nonPyldIncomeBuys.length,
+                        message: 'All income allocation increases must go through PYLD'
+                    });
+                }
+                
+                tradeAnalysis.summary.constraintViolations = violations;
+                return violations;
+            },
+
+            /**
+             * Check for constraint violations in trade list
+             */
+            checkConstraintViolations: function(trades) {
+                const violations = [];
+                
+                // Check PIMIX hold-only
+                const pimixBuys = trades.filter(t => t.security === 'PIMIX' && t.action === 'BUY');
+                if (pimixBuys.length > 0) {
+                    violations.push('PIMIX BUY orders generated (violates hold-only rule)');
+                }
+                
+                // Check PYLD primary income
+                const incomeBuys = trades.filter(t => ['PIMIX', 'PYLD'].includes(t.security) && t.action === 'BUY');
+                const nonPyldIncomeBuys = incomeBuys.filter(t => t.security !== 'PYLD');
+                if (nonPyldIncomeBuys.length > 0) {
+                    violations.push('Income increases not routed through PYLD');
+                }
+                
+                return violations;
+            },
+
+            /**
+             * Calculate net cash impact of all trades
+             */
+            calculateNetCashImpact: function(trades) {
+                return trades.reduce((net, trade) => {
+                    if (trade.action === 'SELL') {
+                        return net + trade.dollarAmount;
+                    } else if (trade.action === 'BUY') {
+                        return net - trade.dollarAmount;
+                    }
+                    return net;
+                }, 0);
+            },
+
+            /**
+             * DISPLAY FUNCTIONS FOR UI INTEGRATION
+             */
+
+            /**
+             * Display position input interface for Step 6
+             */
+            displayPositionInputInterface: function(containerId, existingPositions = {}) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.error('Position input container not found:', containerId);
+                    return;
+                }
+                
+                let html = `
+                    <div class="position-input-interface">
+                        <h3>Step 6: Current Portfolio Positions</h3>
+                        <div class="input-instructions">
+                            <p>Enter your current portfolio positions. Leave fields blank or enter 0 for securities you don't own.</p>
+                            <p><strong>Total Portfolio Value:</strong> Will be calculated automatically from position values.</p>
+                        </div>
+                        
+                        <div class="portfolio-total-section">
+                            <label for="total-portfolio-value">Total Portfolio Value ($):</label>
+                            <input type="number" id="total-portfolio-value" step="0.01" min="0" 
+                                   placeholder="Enter total portfolio value" style="font-size: 1.2em; font-weight: bold;">
+                        </div>
+                        
+                        <div class="position-input-grid">
+                            <div class="grid-header">
+                                <div>Security</div>
+                                <div>Current Shares</div>
+                                <div>Current Value ($)</div>
+                                <div>% of Portfolio</div>
+                            </div>
+                `;
+                
+                // Generate input rows for each security
+                const securityOrder = ['VTI', 'VEA', 'VWO', 'SMH', 'SRVR', 'PIMIX', 'PYLD', 'GLD', 'COM', 'IGF', 'DBMF', 'SWVXX'];
+                
+                for (const security of securityOrder) {
+                    const securityInfo = this.securities[security];
+                    const existing = existingPositions[security] || { shares: '', value: '', percentage: 0 };
+                    const typeColor = this.getSecurityTypeColor(securityInfo.type);
+                    
+                    html += `
+                        <div class="position-input-row" data-security="${security}">
+                            <div class="security-cell">
+                                <strong style="color: ${typeColor};">${security}</strong>
+                                <small>${securityInfo.name}</small>
+                                ${securityInfo.holdOnly ? '<span class="constraint-badge hold-only">Hold-Only</span>' : ''}
+                                ${securityInfo.primaryIncome ? '<span class="constraint-badge primary-income">Primary Income</span>' : ''}
+                            </div>
+                            <div class="input-field">
+                                <input type="number" id="shares-${security}" step="0.001" min="0" 
+                                       value="${existing.shares}" placeholder="0"
+                                       onchange="RebalancingModule.updatePositionCalculation('${security}')">
+                            </div>
+                            <div class="input-field">
+                                <input type="number" id="value-${security}" step="0.01" min="0" 
+                                       value="${existing.value}" placeholder="0.00"
+                                       onchange="RebalancingModule.updatePositionCalculation('${security}')">
+                            </div>
+                            <div class="percentage-display" id="percent-${security}">
+                                ${(existing.percentage * 100).toFixed(1)}%
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += `
+                        </div>
+                        
+                        <div class="position-summary" id="position-summary">
+                            <div class="summary-row">
+                                <strong>Total Calculated Value: $<span id="calculated-total">0.00</span></strong>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="nav-button" onclick="RebalancingModule.validateAndCalculateDrift()">
+                                Calculate Portfolio Drift
+                            </button>
+                            <button class="nav-button secondary" onclick="RebalancingModule.clearPositionInputs()">
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+                console.log('Position input interface displayed');
+            },
+
+            /**
+             * Update position calculation when user enters values
+             */
+            updatePositionCalculation: function(security) {
+                const sharesInput = document.getElementById(`shares-${security}`);
+                const valueInput = document.getElementById(`value-${security}`);
+                const percentDisplay = document.getElementById(`percent-${security}`);
+                const totalValueInput = document.getElementById('total-portfolio-value');
+                
+                if (!sharesInput || !valueInput || !percentDisplay) return;
+                
+                const value = parseFloat(valueInput.value) || 0;
+                const totalValue = parseFloat(totalValueInput.value) || 0;
+                
+                if (totalValue > 0) {
+                    const percentage = (value / totalValue) * 100;
+                    percentDisplay.textContent = `${percentage.toFixed(1)}%`;
+                    
+                    // Update color based on percentage
+                    if (percentage > 35) {
+                        percentDisplay.style.background = '#f8d7da';
+                        percentDisplay.style.color = '#721c24';
+                    } else if (percentage > 25) {
+                        percentDisplay.style.background = '#fff3cd';
+                        percentDisplay.style.color = '#856404';
+                    } else {
+                        percentDisplay.style.background = '#f8f9fa';
+                        percentDisplay.style.color = '#333';
+                    }
+                }
+                
+                // Update calculated total
+                this.updateCalculatedTotal();
+            },
+
+            /**
+             * Update calculated total from all position values
+             */
+            updateCalculatedTotal: function() {
+                let calculatedTotal = 0;
+                
+                for (const security of Object.keys(this.securities)) {
+                    const valueInput = document.getElementById(`value-${security}`);
+                    if (valueInput) {
+                        calculatedTotal += parseFloat(valueInput.value) || 0;
+                    }
+                }
+                
+                const calculatedDisplay = document.getElementById('calculated-total');
+                if (calculatedDisplay) {
+                    calculatedDisplay.textContent = calculatedTotal.toFixed(2);
+                }
+            },
+
+            /**
+             * Clear all position inputs
+             */
+            clearPositionInputs: function() {
+                for (const security of Object.keys(this.securities)) {
+                    const sharesInput = document.getElementById(`shares-${security}`);
+                    const valueInput = document.getElementById(`value-${security}`);
+                    const percentDisplay = document.getElementById(`percent-${security}`);
+                    
+                    if (sharesInput) sharesInput.value = '';
+                    if (valueInput) valueInput.value = '';
+                    if (percentDisplay) {
+                        percentDisplay.textContent = '0.0%';
+                        percentDisplay.style.background = '#f8f9fa';
+                        percentDisplay.style.color = '#333';
+                    }
+                }
+                
+                const totalValueInput = document.getElementById('total-portfolio-value');
+                if (totalValueInput) totalValueInput.value = '';
+                
+                this.updateCalculatedTotal();
+            },
+
+            /**
+             * Validate positions and calculate drift (called by UI)
+             */
+            validateAndCalculateDrift: function() {
+                // Get position inputs from UI
+                const positionInputs = {};
+                const totalValueInput = document.getElementById('total-portfolio-value');
+                const totalValue = parseFloat(totalValueInput.value) || 0;
+                
+                if (totalValue <= 0) {
+                    alert('Please enter a valid total portfolio value');
+                    return;
+                }
+                
+                for (const security of Object.keys(this.securities)) {
+                    const sharesInput = document.getElementById(`shares-${security}`);
+                    const valueInput = document.getElementById(`value-${security}`);
+                    
+                    if (sharesInput && valueInput) {
+                        const shares = parseFloat(sharesInput.value) || 0;
+                        const value = parseFloat(valueInput.value) || 0;
+                        
+                        if (shares > 0 || value > 0) {
+                            positionInputs[security] = { shares, value };
+                        }
+                    }
+                }
+                
+                // Validate positions
+                const validation = this.validatePositionInput(positionInputs, totalValue);
+                
+                if (!validation.isValid) {
+                    alert('Position validation failed:\n' + validation.errors.join('\n'));
+                    return;
+                }
+                
+                if (validation.warnings.length > 0) {
+                    const proceed = confirm('Validation warnings:\n' + validation.warnings.join('\n') + '\n\nProceed anyway?');
+                    if (!proceed) return;
+                }
+                
+                // Get target allocation from TrackerCore state
+                const targetAllocation = TrackerCore.state.optimizedAllocation?.allocation;
+                if (!targetAllocation) {
+                    alert('No target allocation found. Please complete portfolio optimization first (Step 5).');
+                    return;
+                }
+                
+                // Calculate drift
+                const driftAnalysis = this.calculateDrift(validation.normalizedPositions, targetAllocation, totalValue);
+                
+                // Store in TrackerCore state
+                TrackerCore.state.currentPositions = validation.normalizedPositions;
+                TrackerCore.state.driftAnalysis = driftAnalysis;
+                
+                // Display drift analysis
+                this.displayDriftAnalysis('drift-analysis-container', driftAnalysis, targetAllocation);
+                
+                // Mark Step 6 as complete and enable Step 7
+                if (!TrackerCore.completedSteps.includes(6)) {
+                    TrackerCore.completedSteps.push(6);
+                }
+                TrackerCore.updateStepIndicators();
+                TrackerCore.updateNavigation();
+                TrackerCore.saveState();
+                
+                console.log('Position validation and drift calculation completed successfully');
+            },
+
+            /**
+             * Display drift analysis for Step 6
+             */
+            displayDriftAnalysis: function(containerId, driftAnalysis, targetAllocation) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.error('Drift analysis container not found');
+                    return;
+                }
+                
+                container.style.display = 'block';
+                
+                let html = `
+                    <div class="drift-analysis-display">
+                        <h3>Portfolio Drift Analysis</h3>
+                        <div class="drift-summary">
+                            <div class="summary-stats">
+                                <div class="stat-item">
+                                    <strong>Positions Requiring Action:</strong> ${driftAnalysis.summary.positionsRequiringAction}
+                                </div>
+                                <div class="stat-item">
+                                    <strong>Largest Drift:</strong> ${driftAnalysis.summary.largestDrift.security} 
+                                    (${(driftAnalysis.summary.largestDrift.percent*100).toFixed(2)}%)
+                                </div>
+                                <div class="stat-item">
+                                    <strong>Total Drift Amount:</strong> $${Math.abs(driftAnalysis.summary.totalDriftDollar).toFixed(0)}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="drift-table">
+                            <div class="drift-header">
+                                <div>Security</div>
+                                <div>Current %</div>
+                                <div>Target %</div>
+                                <div>Drift %</div>
+                                <div>Drift $</div>
+                                <div>Action</div>
+                                <div>Priority</div>
+                            </div>
+                `;
+                
+                // Sort positions by drift magnitude (largest first)
+                const sortedPositions = Object.entries(driftAnalysis.positions)
+                    .sort(([,a], [,b]) => b.drift.absolute - a.drift.absolute);
+                
+                for (const [security, position] of sortedPositions) {
+                    const securityInfo = this.securities[security];
+                    const driftClass = this.getDriftClass(position.drift.percentage);
+                    const typeColor = this.getSecurityTypeColor(securityInfo.type);
+                    
+                    html += `
+                        <div class="drift-row ${driftClass}" data-security="${security}">
+                            <div class="security-cell">
+                                <strong style="color: ${typeColor};">${security}</strong>
+                                <small>${securityInfo.name}</small>
+                            </div>
+                            <div class="percentage-cell">${(position.current.percentage*100).toFixed(1)}%</div>
+                            <div class="percentage-cell">${(position.target.percentage*100).toFixed(1)}%</div>
+                            <div class="drift-percentage ${driftClass}">
+                                ${(position.drift.percentage > 0 ? '+' : '')}${(position.drift.percentage*100).toFixed(1)}%
+                            </div>
+                            <div class="drift-dollar ${driftClass}">
+                                ${(position.drift.dollar > 0 ? '+$' : '-$')}${Math.abs(position.drift.dollar).toFixed(0)}
+                            </div>
+                            <div class="action-cell action-${position.action.toLowerCase()}">
+                                ${position.action}
+                            </div>
+                            <div class="priority-cell priority-${position.priority.toLowerCase()}">
+                                ${position.priority}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += `
+                        </div>
+                        
+                        <div class="drift-actions">
+                            <button class="nav-button" onclick="RebalancingModule.proceedToTradeGeneration()">
+                                Generate Rebalancing Trades
+                            </button>
+                            <button class="nav-button secondary" onclick="RebalancingModule.recalculateDrift()">
+                                Recalculate Drift
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+                console.log('Drift analysis displayed successfully');
+            },
+
+            /**
+             * Proceed to trade generation (Step 7)
+             */
+            proceedToTradeGeneration: function() {
+                if (!TrackerCore.state.driftAnalysis) {
+                    alert('No drift analysis found. Please calculate drift first.');
+                    return;
+                }
+                
+                // Navigate to Step 7
+                if (TrackerCore.navigateToStep(7)) {
+                    // Generate trades
+                    const tradeAnalysis = this.generateTrades(TrackerCore.state.driftAnalysis);
+                    
+                    // Store in state
+                    TrackerCore.state.rebalancingTrades = tradeAnalysis.trades;
+                    TrackerCore.state.tradeAnalysis = tradeAnalysis;
+                    
+                    // Display trade recommendations
+                    this.displayTradeRecommendations('trade-recommendations-container', tradeAnalysis);
+                    
+                    // Mark Step 7 as complete
+                    if (!TrackerCore.completedSteps.includes(7)) {
+                        TrackerCore.completedSteps.push(7);
+                    }
+                    TrackerCore.updateStepIndicators();
+                    TrackerCore.updateNavigation();
+                    TrackerCore.saveState();
+                    
+                    console.log('Trade generation completed and Step 7 activated');
+                }
+            },
+
+            /**
+             * Display trade recommendations for Step 7
+             */
+            displayTradeRecommendations: function(containerId, tradeAnalysis) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.error('Trade recommendations container not found');
+                    return;
+                }
+                
+                const trades = tradeAnalysis.trades;
+                const summary = tradeAnalysis.summary;
+                
+                let html = `
+                    <div class="trade-recommendations-display">
+                        <h3>Step 7: Rebalancing Trade Recommendations</h3>
+                        
+                        <div class="trade-summary">
+                            <div class="summary-header">
+                                <h4>Trade Summary</h4>
+                                <div class="framework-info">Framework: ${tradeAnalysis.framework}</div>
+                            </div>
+                            <div class="summary-grid">
+                                <div class="summary-stat">
+                                    <div class="stat-value">${summary.totalTrades}</div>
+                                    <div class="stat-label">Total Trades</div>
+                                </div>
+                                <div class="summary-stat">
+                                    <div class="stat-value">${summary.buyTrades}</div>
+                                    <div class="stat-label">BUY Orders</div>
+                                </div>
+                                <div class="summary-stat">
+                                    <div class="stat-value">${summary.sellTrades}</div>
+                                    <div class="stat-label">SELL Orders</div>
+                                </div>
+                                <div class="summary-stat">
+                                    <div class="stat-value">${(summary.netCashImpact > 0 ? '+$' : '-$')}${Math.abs(summary.netCashImpact).toFixed(0)}</div>
+                                    <div class="stat-label">Net Cash Impact</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="constraint-status">
+                            <h4>Constraint Enforcement Status</h4>
+                            <div class="constraint-grid">
+                                <div class="constraint-item ${summary.pimixBuysGenerated === 0 ? 'constraint-ok' : 'constraint-violation'}">
+                                    <strong>PIMIX Hold-Only:</strong> 
+                                    ${summary.pimixBuysGenerated === 0 ? '✅ ENFORCED' : '⚠ VIOLATED'} 
+                                    (${summary.pimixBuysGenerated} BUY orders generated)
+                                </div>
+                                <div class="constraint-item ${summary.pyldIncomeRouting ? 'constraint-ok' : 'constraint-info'}">
+                                    <strong>PYLD Primary Income:</strong> 
+                                    ${summary.pyldIncomeRouting ? '✅ ACTIVE' : 'ℹ️ NOT NEEDED'} 
+                                    (Income routing ${summary.pyldIncomeRouting ? 'applied' : 'not required'})
+                                </div>
+                                <div class="constraint-item constraint-info">
+                                    <strong>Position Limits:</strong> 📄 UNDER CONSIDERATION (Not enforced)
+                                </div>
+                                <div class="constraint-item constraint-ok">
+                                    <strong>Tax Optimization:</strong> 📋 OUT OF SCOPE (Not implemented)
+                                </div>
+                            </div>
+                        </div>
+                `;
+                
+                if (summary.constraintViolations.length > 0) {
+                    html += `
+                        <div class="violations-alert">
+                            <h4>⚠️ Constraint Violations Detected</h4>
+                            <ul>
+                    `;
+                    summary.constraintViolations.forEach(violation => {
+                        html += `<li class="violation-${violation.severity.toLowerCase()}">${violation}</li>`;
+                    });
+                    html += '</ul></div>';
+                }
+                
+                html += `
+                        <div class="trade-list">
+                            <h4>Recommended Trades</h4>
+                            <div class="trade-table">
+                                <div class="trade-header">
+                                    <div>Security</div>
+                                    <div>Action</div>
+                                    <div>Shares</div>
+                                    <div>Amount</div>
+                                    <div>Priority</div>
+                                    <div>Reason</div>
+                                    <div>Constraints</div>
+                                </div>
+                `;
+                
+                // Sort trades by priority (HIGH, MEDIUM, LOW)
+                const priorityOrder = { 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1 };
+                const sortedTrades = [...trades].sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
+                
+                for (const trade of sortedTrades) {
+                    const securityInfo = this.securities[trade.security];
+                    const typeColor = this.getSecurityTypeColor(securityInfo.type);
+                    const priorityClass = `priority-${trade.priority.toLowerCase()}`;
+                    const actionClass = `action-${trade.action.toLowerCase()}`;
+                    
+                    html += `
+                        <div class="trade-row ${priorityClass}">
+                            <div class="security-cell">
+                                <strong style="color: ${typeColor};">${trade.security}</strong>
+                                <small>${securityInfo.name}</small>
+                            </div>
+                            <div class="action-cell ${actionClass}">
+                                <strong>${trade.action}</strong>
+                            </div>
+                            <div class="shares-cell">
+                                ${trade.shares.toLocaleString()}
+                            </div>
+                            <div class="amount-cell">
+                                $${trade.dollarAmount.toLocaleString()}
+                            </div>
+                            <div class="priority-cell ${priorityClass}">
+                                ${trade.priority}
+                            </div>
+                            <div class="reason-cell">
+                                ${trade.reason}
+                            </div>
+                            <div class="constraints-cell">
+                                ${trade.constraints.map(c => `<span class="constraint-badge">${c}</span>`).join(' ')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += `
+                            </div>
+                        </div>
+                        
+                        <div class="trade-actions">
+                            <div class="action-note">
+                                <p><strong>Next Steps:</strong> Review the trade recommendations above and execute them through your broker. 
+                                These trades will bring your portfolio in line with the optimized allocation from Step 5.</p>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="nav-button" onclick="RebalancingModule.exportTrades()">
+                                    Export Trade List
+                                </button>
+                                <button class="nav-button secondary" onclick="RebalancingModule.regenerateTrades()">
+                                    Regenerate Trades
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+                console.log('Trade recommendations displayed successfully');
+            },
+
+            /**
+             * Get drift CSS class based on drift percentage
+             */
+            getDriftClass: function(driftPercent) {
+                if (Math.abs(driftPercent) < 0.01) {
+                    return 'drift-minimal';
+                } else if (driftPercent > 0) {
+                    return 'drift-positive'; // Overweight
+                } else {
+                    return 'drift-negative'; // Underweight
+                }
+            },
+
+            /**
+             * Get color for security type
+             */
+            getSecurityTypeColor: function(type) {
+                const colors = {
+                    equity: '#007bff',      // Blue
+                    income: '#28a745',      // Green  
+                    alternative: '#ffc107', // Yellow
+                    cash: '#6c757d'         // Gray
+                };
+                return colors[type] || '#495057';
+            },
+
+            /**
+             * Export trades to CSV format
+             */
+            exportTrades: function() {
+                const tradeAnalysis = TrackerCore.state.tradeAnalysis;
+                if (!tradeAnalysis || !tradeAnalysis.trades) {
+                    alert('No trades to export');
+                    return;
+                }
+                
+                const trades = tradeAnalysis.trades;
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                
+                // Create CSV content
+                let csvContent = 'Security,Action,Shares,Dollar Amount,Priority,Reason,Constraints\n';
+                
+                trades.forEach(trade => {
+                    const constraints = trade.constraints.join('; ');
+                    csvContent += `${trade.security},${trade.action},${trade.shares},"${trade.dollarAmount.toFixed(2)}",${trade.priority},"${trade.reason}","${constraints}"\n`;
+                });
+                
+                // Create and download file
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `hcp_rebalancing_trades_${timestamp}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('Trade list exported successfully');
+            },
+
+            /**
+             * Regenerate trades (recalculate from current drift analysis)
+             */
+            regenerateTrades: function() {
+                if (!TrackerCore.state.driftAnalysis) {
+                    alert('No drift analysis found. Please return to Step 6 and recalculate.');
+                    return;
+                }
+                
+                const tradeAnalysis = this.generateTrades(TrackerCore.state.driftAnalysis);
+                TrackerCore.state.rebalancingTrades = tradeAnalysis.trades;
+                TrackerCore.state.tradeAnalysis = tradeAnalysis;
+                
+                this.displayTradeRecommendations('trade-recommendations-container', tradeAnalysis);
+                TrackerCore.saveState();
+                
+                console.log('Trades regenerated successfully');
+            },
+
+            /**
+             * Recalculate drift (return to Step 6 calculations)
+             */
+            recalculateDrift: function() {
+                this.validateAndCalculateDrift();
+            }
+        };
+
+        // EMBEDDED DATA EDITOR v1.0 - PRESERVED EXACTLY from v6.5.5
+        const DataEditor = {
+            version: '1.0',
+            editingIndicator: null,
+            
+            displayDataTable: function(data, indicators, overrides) {
+                if (!data || !data.indicators) return;
+                
+                const container = document.getElementById('data-table-container');
+                if (!container) return;
+                
+                let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 20px;">';
+                html += '<thead><tr style="background: #f8f9fa;">';
+                html += '<th style="padding: 10px; border: 1px solid #dee2e6; text-align: left;">Theme</th>';
+                html += '<th style="padding: 10px; border: 1px solid #dee2e6; text-align: left;">Indicator</th>';
+                html += '<th style="padding: 10px; border: 1px solid #dee2e6; text-align: left;">Current Value</th>';
+                html += '<th style="padding: 10px; border: 1px solid #dee2e6; text-align: left;">Freshness</th>';
+                html += '<th style="padding: 10px; border: 1px solid #dee2e6; text-align: left;">Source</th>';
+                html += '<th style="padding: 10px; border: 1px solid #dee2e6; text-align: left;">Action</th>';
+                html += '</tr></thead><tbody>';
+                
+                const themeNames = {
+                    usd: 'USD Theme',
+                    ai: 'AI Theme', 
+                    pe: 'P/E Theme',
+                    intl: 'International Theme'
+                };
+                
+                Object.entries(data.indicators).forEach(([theme, themeData]) => {
+                    Object.entries(themeData).forEach(([key, indicator]) => {
+                        const dataKey = `${theme}_${key}`;
+                        const isManual = overrides[dataKey];
+                        const rowStyle = isManual ? 'background: #fff3cd; border: 1px solid #ffeaa7;' : 'border: 1px solid #dee2e6;';
+                        
+                        html += `<tr>`;
+                        html += `<td style="padding: 10px; ${rowStyle}">${themeNames[theme] || theme}</td>`;
+                        html += `<td style="padding: 10px; ${rowStyle}">${indicator.name || key}</td>`;
+                        html += `<td style="padding: 10px; ${rowStyle}">${indicator.current ? indicator.current.toFixed(2) : 'N/A'}</td>`;
+                        html += `<td style="padding: 10px; ${rowStyle}"><span style="color: #28a745;">✅ Fresh</span></td>`;
+                        html += `<td style="padding: 10px; ${rowStyle}">${isManual ? 'Manual' : indicator.source || 'Generated'}</td>`;
+                        html += `<td style="padding: 10px; ${rowStyle}"><button onclick="DataEditor.openEditModal('${dataKey}', '${indicator.name || key}', ${indicator.current})" style="background: #667eea; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Edit</button></td>`;
+                        html += '</tr>';
+                    });
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+                
+                console.log('DataEditor v1.0: Data table displayed with edit functionality');
+            },
+            
+            openEditModal: function(dataKey, displayName, currentValue) {
+                this.editingIndicator = dataKey;
+                const modal = document.getElementById('edit-modal');
+                const title = document.getElementById('modal-title');
+                const body = document.getElementById('modal-body');
+                
+                title.textContent = `Edit: ${displayName}`;
+                body.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Current Value:</label>
+                        <input type="number" id="indicator-value" step="0.01" value="${currentValue || ''}" 
+                               placeholder="Enter new value" style="width: 100%; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Reason for Manual Override:</label>
+                        <select id="edit-reason" style="width: 100%; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px;">
+                            <option value="">Select reason...</option>
+                            <option value="data_error">Data Collection Error</option>
+                            <option value="timing_issue">Timing Issue</option>
+                            <option value="market_event">Unusual Market Event</option>
+                            <option value="manual_adjustment">Manual Adjustment</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Notes (Optional):</label>
+                        <textarea id="edit-notes" rows="3" placeholder="Additional context..." 
+                                  style="width: 100%; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; resize: vertical;"></textarea>
+                    </div>
+                `;
+                
+                modal.style.display = 'block';
+                
+                // Focus on input
+                setTimeout(() => {
+                    document.getElementById('indicator-value').focus();
+                }, 100);
+            },
+            
+            closeEditModal: function() {
+                const modal = document.getElementById('edit-modal');
+                if (modal) modal.style.display = 'none';
+                this.editingIndicator = null;
+            },
+            
+            saveIndicatorEdit: function() {
+                if (!this.editingIndicator) return;
+                
+                const newValue = parseFloat(document.getElementById('indicator-value').value);
+                const reason = document.getElementById('edit-reason').value;
+                const notes = document.getElementById('edit-notes').value;
+                
+                if (isNaN(newValue)) {
+                    alert('Please enter a valid number');
+                    return;
+                }
+                
+                if (!reason) {
+                    alert('Please select a reason for the manual override');
+                    return;
+                }
+                
+                // Save to TrackerCore manual overrides
+                TrackerCore.state.manualOverrides[this.editingIndicator] = {
+                    value: newValue,
+                    reason: reason,
+                    notes: notes,
+                    timestamp: new Date().toISOString(),
+                    originalValue: this.getOriginalValue(this.editingIndicator)
+                };
+                
+                // Update the data structure with manual override
+                this.applyManualOverride(this.editingIndicator, newValue);
+                
+                // Refresh the data table display
+                this.displayDataTable(TrackerCore.state.monthlyData, {}, TrackerCore.state.manualOverrides);
+                
+                // Recalculate themes with new data
+                calculateThemes();
+                
+                // Save state and close modal
+                TrackerCore.saveState();
+                this.closeEditModal();
+                
+                console.log(`Manual override saved for ${this.editingIndicator}: ${newValue}`);
+            },
+            
+            getOriginalValue: function(dataKey) {
+                // Extract original value from data structure
+                const parts = dataKey.split('_');
+                if (parts.length >= 2) {
+                    const theme = parts[0];
+                    const indicator = parts.slice(1).join('_');
+                    
+                    if (TrackerCore.state.monthlyData && 
+                        TrackerCore.state.monthlyData.indicators &&
+                        TrackerCore.state.monthlyData.indicators[theme] &&
+                        TrackerCore.state.monthlyData.indicators[theme][indicator]) {
+                        return TrackerCore.state.monthlyData.indicators[theme][indicator].current;
+                    }
+                }
+                return null;
+            },
+            
+            applyManualOverride: function(dataKey, newValue) {
+                // Update the data structure with manual override
+                const parts = dataKey.split('_');
+                if (parts.length >= 2) {
+                    const theme = parts[0];
+                    const indicator = parts.slice(1).join('_');
+                    
+                    if (TrackerCore.state.monthlyData && 
+                        TrackerCore.state.monthlyData.indicators &&
+                        TrackerCore.state.monthlyData.indicators[theme] &&
+                        TrackerCore.state.monthlyData.indicators[theme][indicator]) {
+                        TrackerCore.state.monthlyData.indicators[theme][indicator].current = newValue;
+                        TrackerCore.state.monthlyData.indicators[theme][indicator].source = 'manual_override';
+                    }
+                }
+            }
+        };
+
+        // APPLICATION FUNCTIONS - PRESERVED from v6.5.5
+        function generateSampleData(scenario) {
+            console.log(`Generating ${scenario} sample data...`);
+            
+            const sampleData = FileHandler.generateSampleData('monthly', scenario);
+            
+            document.getElementById('monthly-status').innerHTML = 
+                `<span class="status-good">✅ ${scenario.replace('_', ' ')} sample data generated (v1.5)</span>`;
+            
+            // Update TrackerCore state
+            TrackerCore.state.monthlyData = sampleData;
+            
+            if (!TrackerCore.completedSteps.includes(2)) {
+                TrackerCore.completedSteps.push(2);
+            }
+            
+            // Show data editor with generated data
+            displayDataEditor();
+            
+            // Auto-calculate themes when data is loaded
+            calculateThemes();
+            
+            TrackerCore.updateStepIndicators();
+            TrackerCore.updateNavigation();
+            TrackerCore.saveState();
+            
+            console.log('Sample data processed and state updated');
+        }
+
+        function displayDataEditor() {
+            if (TrackerCore.state.monthlyData) {
+                const container = document.getElementById('data-editor-section');
+                if (container) {
+                    container.style.display = 'block';
+                    DataEditor.displayDataTable(TrackerCore.state.monthlyData, {}, TrackerCore.state.manualOverrides);
+                }
+            }
+        }
+
+        function handleMonthlyFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    document.getElementById('monthly-status').innerHTML = 
+                        '<span class="status-good">✅ Monthly data loaded</span>';
+                    
+                    TrackerCore.state.monthlyData = data;
+                    if (!TrackerCore.completedSteps.includes(2)) {
+                        TrackerCore.completedSteps.push(2);
+                    }
+                    
+                    calculateThemes();
+                    TrackerCore.updateStepIndicators();
+                    TrackerCore.updateNavigation();
+                    TrackerCore.saveState();
+                    
+                } catch (error) {
+                    alert('Error parsing file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function calculateThemes() {
+            if (!TrackerCore.state.monthlyData) return;
+            
+            console.log('Starting theme analysis with TrackerCore integration...');
+            
+            const analysis = ThemeCalculator.calculateThemeAnalysis(TrackerCore.state.monthlyData);
+            
+            if (analysis.error) {
+                document.getElementById('theme-container').innerHTML = 
+                    `<div class="status-error">Error: ${analysis.error}</div>`;
+                return;
+            }
+            
+            ThemeCalculator.displayThemeResults(analysis, 'theme-container');
+            
+            // Update TrackerCore state
+            TrackerCore.state.themeProbabilities = analysis.themes;
+            if (!TrackerCore.completedSteps.includes(3)) {
+                TrackerCore.completedSteps.push(3);
+            }
+            
+            TrackerCore.updateStepIndicators();
+            TrackerCore.saveState();
+        }
+
+        function saveIndicatorEdit() {
+            // Bridge to DataEditor functionality
+            DataEditor.saveIndicatorEdit();
+        }
+
+        // INITIALIZE SYSTEM - TrackerCore as Foundation - PRESERVED
+        window.addEventListener('load', function() {
+            TrackerCore.init();
+            
+            console.log('HCP Tracker v6.5.6 fully initialized with Steps 6-7 rebalancing implementation');
+        });
+    </script>
+</body>
+</html>

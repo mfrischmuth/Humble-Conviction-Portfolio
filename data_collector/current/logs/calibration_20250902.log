@@ -1,0 +1,112 @@
+2025-09-02 07:38:32,560 - HCP_Calibration_v1.1 - INFO - ================================================================================
+2025-09-02 07:38:32,561 - HCP_Calibration_v1.1 - INFO - HCP CALIBRATION DATA COLLECTOR v1.1
+2025-09-02 07:38:32,561 - HCP_Calibration_v1.1 - INFO - Fixed dangerous fallback behavior - now fails explicitly when data unavailable
+2025-09-02 07:38:32,561 - HCP_Calibration_v1.1 - INFO - Building comprehensive historical datasets for indicator calibration
+2025-09-02 07:38:32,562 - HCP_Calibration_v1.1 - INFO - Target trigger rate: 50%
+2025-09-02 07:38:32,562 - HCP_Calibration_v1.1 - INFO - Minimum data points: 50
+2025-09-02 07:38:32,562 - HCP_Calibration_v1.1 - INFO - ================================================================================
+2025-09-02 07:38:32,563 - HCP_Calibration_v1.1 - INFO - Running full calibration data collection...
+2025-09-02 07:38:32,563 - HCP_Calibration_v1.1 - INFO - 
+Starting comprehensive data collection...
+2025-09-02 07:38:32,563 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting FORWARD_PE ---
+2025-09-02 07:38:32,563 - HCP_Calibration_v1.1 - INFO - Collecting Forward P/E data from Yardeni and FactSet...
+2025-09-02 07:38:32,563 - HCP_Calibration_v1.1 - INFO - Downloading Yardeni PDF...
+2025-09-02 07:38:33,000 - HCP_Calibration_v1.1 - ERROR - CRITICAL: Failed to download Yardeni PDF: HTTP 403
+2025-09-02 07:38:33,002 - HCP_Calibration_v1.1 - INFO - Scraping FactSet Earnings Insight...
+2025-09-02 07:38:33,391 - HCP_Calibration_v1.1 - ERROR - CRITICAL: No Yardeni historical data available
+2025-09-02 07:38:33,391 - HCP_Calibration_v1.1 - WARNING - No current FactSet data available
+2025-09-02 07:38:33,392 - HCP_Calibration_v1.1 - ERROR - CRITICAL: No Forward P/E data from any source
+2025-09-02 07:38:33,392 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for forward_pe...
+2025-09-02 07:38:33,392 - HCP_Calibration_v1.1 - ERROR - Cannot calibrate forward_pe: data collection failed
+2025-09-02 07:38:33,393 - HCP_Calibration_v1.1 - INFO - ✓ forward_pe: failed, 0 points, quality: failed
+2025-09-02 07:38:33,393 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting PRODUCTIVITY ---
+2025-09-02 07:38:33,393 - HCP_Calibration_v1.1 - INFO - Collecting productivity data from FRED...
+2025-09-02 07:38:34,021 - HCP_Calibration_v1.1 - INFO - Collected 122 productivity data points
+2025-09-02 07:38:34,022 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for productivity...
+2025-09-02 07:38:34,027 - HCP_Calibration_v1.1 - INFO - ✓ productivity: success, 122 points, quality: good
+2025-09-02 07:38:34,027 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting QQQ_SPY ---
+2025-09-02 07:38:34,028 - HCP_Calibration_v1.1 - INFO - Collecting QQQ/SPY ratio data...
+2025-09-02 07:38:41,326 - HCP_Calibration_v1.1 - INFO - Collected 317 QQQ/SPY ratio data points
+2025-09-02 07:38:41,327 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for qqq_spy...
+2025-09-02 07:38:41,329 - HCP_Calibration_v1.1 - INFO - ✓ qqq_spy: success, 317 points, quality: good
+2025-09-02 07:38:41,330 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting NET_MARGINS ---
+2025-09-02 07:38:41,331 - HCP_Calibration_v1.1 - INFO - Collecting S&P 500 net margins data...
+2025-09-02 07:38:41,331 - HCP_Calibration_v1.1 - ERROR - CRITICAL: S&P 500 net margins requires subscription data source
+2025-09-02 07:38:41,332 - HCP_Calibration_v1.1 - ERROR - Available sources: S&P Capital IQ, FactSet, Bloomberg, Refinitiv
+2025-09-02 07:38:41,332 - HCP_Calibration_v1.1 - ERROR - Consider using SPDR S&P 500 ETF (SPY) financial reports as proxy
+2025-09-02 07:38:41,332 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for net_margins...
+2025-09-02 07:38:41,333 - HCP_Calibration_v1.1 - ERROR - Cannot calibrate net_margins: data collection failed
+2025-09-02 07:38:41,333 - HCP_Calibration_v1.1 - INFO - ✓ net_margins: failed, 0 points, quality: failed
+2025-09-02 07:38:41,334 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting CAPE ---
+2025-09-02 07:38:41,334 - HCP_Calibration_v1.1 - INFO - Attempting to collect CAPE data from Robert Shiller's website...
+2025-09-02 07:38:52,143 - HCP_Calibration_v1.1 - INFO - Successfully downloaded Shiller CAPE data
+2025-09-02 07:38:52,144 - HCP_Calibration_v1.1 - ERROR - CAPE data parsing not yet implemented
+2025-09-02 07:38:52,145 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for cape...
+2025-09-02 07:38:52,145 - HCP_Calibration_v1.1 - ERROR - Cannot calibrate cape: data collection failed
+2025-09-02 07:38:52,147 - HCP_Calibration_v1.1 - INFO - ✓ cape: failed, 0 points, quality: failed
+2025-09-02 07:38:52,149 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting RISK_PREMIUM ---
+2025-09-02 07:38:52,149 - HCP_Calibration_v1.1 - INFO - Calculating equity risk premium from FRED treasury data...
+2025-09-02 07:38:52,524 - HCP_Calibration_v1.1 - WARNING - Risk premium calculation incomplete: missing earnings yield component
+2025-09-02 07:38:52,526 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for risk_premium...
+2025-09-02 07:38:52,526 - HCP_Calibration_v1.1 - WARNING - Insufficient data for risk_premium: 0 < 50 required
+2025-09-02 07:38:52,527 - HCP_Calibration_v1.1 - INFO - ✓ risk_premium: partial, 0 points, quality: no_data
+2025-09-02 07:38:52,527 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting DXY ---
+2025-09-02 07:38:52,528 - HCP_Calibration_v1.1 - INFO - Collecting DXY data from Yahoo Finance...
+2025-09-02 07:38:52,596 - HCP_Calibration_v1.1 - INFO - Successfully collected 260 DXY data points
+2025-09-02 07:38:52,596 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for dxy...
+2025-09-02 07:38:52,598 - HCP_Calibration_v1.1 - INFO - ✓ dxy: success, 260 points, quality: good
+2025-09-02 07:38:52,599 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting YUAN_SWIFT ---
+2025-09-02 07:38:52,599 - HCP_Calibration_v1.1 - INFO - Yuan SWIFT data requires manual PDF parsing from SWIFT reports...
+2025-09-02 07:38:52,599 - HCP_Calibration_v1.1 - ERROR - CRITICAL: Yuan SWIFT collection not implemented
+2025-09-02 07:38:52,600 - HCP_Calibration_v1.1 - ERROR - Requires: Download monthly SWIFT RMB Tracker PDFs and parse percentage values
+2025-09-02 07:38:52,601 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for yuan_swift...
+2025-09-02 07:38:52,601 - HCP_Calibration_v1.1 - ERROR - Cannot calibrate yuan_swift: data collection failed
+2025-09-02 07:38:52,601 - HCP_Calibration_v1.1 - INFO - ✓ yuan_swift: failed, 0 points, quality: failed
+2025-09-02 07:38:52,602 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting RESERVE_SHARE ---
+2025-09-02 07:38:52,602 - HCP_Calibration_v1.1 - INFO - USD Reserve Share requires IMF COFER database access...
+2025-09-02 07:38:52,602 - HCP_Calibration_v1.1 - ERROR - CRITICAL: USD Reserve Share collection not implemented
+2025-09-02 07:38:52,603 - HCP_Calibration_v1.1 - ERROR - Requires: IMF COFER (Composition of Foreign Exchange Reserves) database
+2025-09-02 07:38:52,603 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for reserve_share...
+2025-09-02 07:38:52,603 - HCP_Calibration_v1.1 - ERROR - Cannot calibrate reserve_share: data collection failed
+2025-09-02 07:38:52,603 - HCP_Calibration_v1.1 - INFO - ✓ reserve_share: failed, 0 points, quality: failed
+2025-09-02 07:38:52,603 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting GOLD_PURCHASES ---
+2025-09-02 07:38:52,604 - HCP_Calibration_v1.1 - INFO - Gold purchases require World Gold Council data...
+2025-09-02 07:38:52,604 - HCP_Calibration_v1.1 - ERROR - CRITICAL: Gold purchases collection not implemented
+2025-09-02 07:38:52,605 - HCP_Calibration_v1.1 - ERROR - Requires: World Gold Council quarterly reports or subscription
+2025-09-02 07:38:52,605 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for gold_purchases...
+2025-09-02 07:38:52,605 - HCP_Calibration_v1.1 - ERROR - Cannot calibrate gold_purchases: data collection failed
+2025-09-02 07:38:52,606 - HCP_Calibration_v1.1 - INFO - ✓ gold_purchases: failed, 0 points, quality: failed
+2025-09-02 07:38:52,606 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting SP_VS_WORLD ---
+2025-09-02 07:38:52,606 - HCP_Calibration_v1.1 - INFO - Calculating S&P 500 vs MSCI World performance...
+2025-09-02 07:38:52,606 - HCP_Calibration_v1.1 - WARNING - MSCI World data requires subscription
+2025-09-02 07:38:52,607 - HCP_Calibration_v1.1 - INFO - Alternative: Use VEU (Developed Markets ex-US) as proxy
+2025-09-02 07:38:52,826 - HCP_Calibration_v1.1 - INFO - Collected proxy data: SPY (225 points), VEU (223 points)
+2025-09-02 07:38:52,827 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for sp_vs_world...
+2025-09-02 07:38:52,827 - HCP_Calibration_v1.1 - WARNING - Insufficient data for sp_vs_world: 0 < 50 required
+2025-09-02 07:38:52,827 - HCP_Calibration_v1.1 - INFO - ✓ sp_vs_world: proxy, 0 points, quality: no_data
+2025-09-02 07:38:52,828 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting US_ACWI ---
+2025-09-02 07:38:52,828 - HCP_Calibration_v1.1 - ERROR - CRITICAL: US % of ACWI requires MSCI subscription data
+2025-09-02 07:38:52,828 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for us_acwi...
+2025-09-02 07:38:52,828 - HCP_Calibration_v1.1 - ERROR - Cannot calibrate us_acwi: data collection failed
+2025-09-02 07:38:52,828 - HCP_Calibration_v1.1 - INFO - ✓ us_acwi: failed, 0 points, quality: failed
+2025-09-02 07:38:52,828 - HCP_Calibration_v1.1 - INFO - 
+--- Collecting TIC_FLOWS ---
+2025-09-02 07:38:52,828 - HCP_Calibration_v1.1 - INFO - TIC flows require U.S. Treasury TIC reports...
+2025-09-02 07:38:52,829 - HCP_Calibration_v1.1 - ERROR - CRITICAL: TIC flows collection not implemented
+2025-09-02 07:38:52,829 - HCP_Calibration_v1.1 - ERROR - Requires: Parsing monthly Treasury TIC (Treasury International Capital) reports
+2025-09-02 07:38:52,829 - HCP_Calibration_v1.1 - INFO - Calibrating threshold for tic_flows...
+2025-09-02 07:38:52,829 - HCP_Calibration_v1.1 - ERROR - Cannot calibrate tic_flows: data collection failed
+2025-09-02 07:38:52,829 - HCP_Calibration_v1.1 - INFO - ✓ tic_flows: failed, 0 points, quality: failed
+2025-09-02 07:38:52,840 - HCP_Calibration_v1.1 - INFO - Calibration dataset saved to: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\current\calibration_data\hcp_calibration_dataset_20250902.json

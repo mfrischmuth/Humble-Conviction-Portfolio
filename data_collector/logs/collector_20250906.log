@@ -1,0 +1,87 @@
+2025-09-06 23:15:38,347 - INFO - Loaded master data file with 4 indicators
+2025-09-06 23:15:38,347 - INFO - Using DATA_DIR: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\Outputs
+2025-09-06 23:15:38,348 - INFO - Using PDF_DIR: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\pdfs
+2025-09-06 23:15:38,348 - INFO - Master file: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\Outputs\hcp_master_data.json
+2025-09-06 23:16:57,843 - INFO - Loaded master data file with 4 indicators
+2025-09-06 23:16:57,844 - INFO - Using DATA_DIR: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\Outputs
+2025-09-06 23:16:57,844 - INFO - Using PDF_DIR: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\pdfs
+2025-09-06 23:16:57,844 - INFO - Master file: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\Outputs\hcp_master_data.json
+2025-09-06 23:16:57,845 - INFO - ============================================================
+2025-09-06 23:16:57,845 - INFO - HCP Unified Collector v4.2.3 - GitHub Repo Paths
+2025-09-06 23:16:57,845 - INFO - Mode: MONTHLY
+2025-09-06 23:16:57,845 - INFO - Data Directory: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\Outputs
+2025-09-06 23:16:57,845 - INFO - PDF Directory: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\pdfs
+2025-09-06 23:16:57,845 - INFO - ============================================================
+2025-09-06 23:16:57,845 - INFO - Fetching market data...
+2025-09-06 23:16:57,845 - INFO -   Fetching dxy (DX=F)...
+2025-09-06 23:16:58,209 - INFO -     [SUCCESS] dxy: 20 months, 253 days (current: 97.73)
+2025-09-06 23:16:58,209 - INFO -   Fetching qqq (QQQ)...
+2025-09-06 23:16:58,376 - INFO -     [SUCCESS] qqq: 24 months, 249 days (current: 576.06)
+2025-09-06 23:16:58,377 - INFO -   Fetching spy (SPY)...
+2025-09-06 23:16:58,584 - INFO -     [SUCCESS] spy: 24 months, 249 days (current: 647.24)
+2025-09-06 23:16:58,585 - INFO -   Fetching efa (EFA)...
+2025-09-06 23:16:58,766 - INFO -     [SUCCESS] efa: 24 months, 249 days (current: 91.79)
+2025-09-06 23:16:58,766 - INFO -   Fetching vt (VT)...
+2025-09-06 23:16:58,946 - INFO -     [SUCCESS] vt: 24 months, 249 days (current: 134.38)
+2025-09-06 23:16:58,947 - INFO -   Fetching tnx (^TNX)...
+2025-09-06 23:16:59,047 - INFO -     [SUCCESS] tnx: 9 months, 249 days (current: 4.09)
+2025-09-06 23:16:59,048 - INFO -   Fetching tlt (TLT)...
+2025-09-06 23:16:59,243 - INFO -     [SUCCESS] tlt: 24 months, 249 days (current: 88.56)
+2025-09-06 23:16:59,244 - INFO -   Fetching gld (GLD)...
+2025-09-06 23:16:59,349 - INFO -     [SUCCESS] gld: 24 months, 249 days (current: 331.05)
+2025-09-06 23:16:59,350 - INFO -   Fetching tips (TIP)...
+2025-09-06 23:16:59,532 - INFO -     [SUCCESS] tips: 24 months, 249 days (current: 111.46)
+2025-09-06 23:16:59,533 - INFO - Fetching FRED data...
+2025-09-06 23:16:59,997 - INFO -   [SUCCESS] productivity: 8 observations
+2025-09-06 23:17:00,367 - INFO -   [SUCCESS] tips_10y: 499 observations
+2025-09-06 23:17:01,352 - INFO -   [SUCCESS] breakeven_10y: 500 observations
+2025-09-06 23:17:02,295 - INFO -   [SUCCESS] real_gdp: 8 observations
+2025-09-06 23:17:02,296 - INFO - Parsing PDF data...
+2025-09-06 23:17:02,296 - INFO -   Looking for PDFs in: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\pdfs
+2025-09-06 23:17:02,296 - INFO -   Parsing SWIFT RMB Tracker PDFs...
+2025-09-06 23:17:02,296 - INFO -     Found 6 PDF files
+2025-09-06 23:17:02,413 - INFO -     Found 2025-04: 2.85%
+2025-09-06 23:17:02,586 - INFO -     Found 2025-04: 4.13%
+2025-09-06 23:17:02,792 - INFO -     Found 2025-02: 2.70%
+2025-09-06 23:17:03,016 - INFO -     Found 2025-02: 3.79%
+2025-09-06 23:17:03,254 - INFO -     Found 2025-07: 2.12%
+2025-09-06 23:17:03,472 - INFO -     Found 2025-07: 2.88%
+2025-09-06 23:17:03,704 - INFO -     Found 2025-06: 2.09%
+2025-09-06 23:17:03,904 - INFO -     Found 2025-06: 2.89%
+2025-09-06 23:17:04,165 - INFO -     Found 2025-03: 3.04%
+2025-09-06 23:17:04,369 - INFO -     Found 2025-03: 4.33%
+2025-09-06 23:17:04,595 - INFO -     Found 2025-05: 2.38%
+2025-09-06 23:17:04,774 - INFO -     Found 2025-05: 3.50%
+2025-09-06 23:17:04,775 - INFO -   [SUCCESS] Yuan SWIFT: 6 months parsed
+2025-09-06 23:17:04,776 - INFO -     Current value: 2.88%
+2025-09-06 23:17:04,777 - INFO - Fetching IMF COFER data...
+2025-09-06 23:17:06,235 - WARNING -   [MANUAL] COFER fetch failed: API returned status 501
+2025-09-06 23:17:06,236 - INFO -   Will require manual entry via CSV
+2025-09-06 23:17:06,237 - INFO - Fetching Put/Call ratio...
+2025-09-06 23:17:06,353 - INFO -   [SUCCESS] Put/Call: 0.967
+2025-09-06 23:17:06,354 - INFO - Fetching Forward P/E...
+2025-09-06 23:17:06,465 - WARNING - Using trailing P/E as forward unavailable
+2025-09-06 23:17:06,466 - INFO -   [SUCCESS] Forward P/E: 26.6
+2025-09-06 23:17:06,466 - INFO - Fetching ETF flow and market cap data...
+2025-09-06 23:17:06,466 - INFO -   [ESTIMATE] US Market Cap %: 60.0%
+2025-09-06 23:17:06,644 - INFO -   [SUCCESS] ETF Flow Differential: $41.0B
+2025-09-06 23:17:06,644 - INFO - Fetching earnings data...
+2025-09-06 23:17:06,867 - INFO -   [SUCCESS] EPS Delivery: 1.112
+2025-09-06 23:17:06,867 - INFO - Calculating USD indicators...
+2025-09-06 23:17:06,867 - INFO -   [OK] DXY: 97.73
+2025-09-06 23:17:06,868 - INFO -   [OK] Real Rate Differential: 1.29%
+2025-09-06 23:17:06,868 - INFO -   [OK] Yuan SWIFT Share: 2.88%
+2025-09-06 23:17:06,868 - INFO - Calculating Innovation indicators...
+2025-09-06 23:17:06,868 - INFO -   [OK] QQQ/SPY Ratio: 0.8900
+2025-09-06 23:17:06,868 - INFO -   [OK] Productivity Growth: 1.50%
+2025-09-06 23:17:06,868 - INFO - Calculating P/E indicators...
+2025-09-06 23:17:06,868 - INFO -   [OK] Put/Call Ratio: 0.967
+2025-09-06 23:17:06,868 - INFO -   [OK] Forward P/E: 26.6
+2025-09-06 23:17:06,869 - INFO -   [OK] EPS Delivery: 1.112
+2025-09-06 23:17:06,869 - INFO - Calculating US Leadership indicators...
+2025-09-06 23:17:06,869 - INFO -   [OK] SPY/EFA Momentum: 4.29%
+2025-09-06 23:17:06,869 - INFO -   [OK] US Market Cap %: 60.0%
+2025-09-06 23:17:06,869 - INFO -   [OK] ETF Flow Differential: $41.0B
+2025-09-06 23:17:06,872 - INFO - Created backup: hcp_master_data_backup_20250906_231706.json
+2025-09-06 23:17:06,880 - INFO - Master data file saved to: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\Outputs\hcp_master_data.json
+2025-09-06 23:17:06,904 - INFO - Data saved to: C:\Users\markf\OneDrive\Documents\GitHub\Humble-Conviction-Portfolio\data_collector\Outputs\hcp_data_v423_20250906_231706.json

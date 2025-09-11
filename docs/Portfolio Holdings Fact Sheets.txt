@@ -1,0 +1,2637 @@
+VTI: https://investor.vanguard.com/investment-products/etfs/profile/vti
+VEA: https://investor.vanguard.com/investment-products/etfs/profile/vea
+VWO: https://investor.vanguard.com/investment-products/etfs/profile/vwo
+SMH: https://www.vaneck.com/us/en/smh/fact-sheet/
+SRVR: https://www.paceretfs.com/products/srvr
+IGF: https://www.ishares.com/us/products/239746/ishares-global-infrastructure-etf
+PYLD: https://www.pimco.com/us/en/investments/etf/pimco-multisector-bond-active-exchange-traded-fund/usetf-usd
+PIMIX: https://www.pimco.com/us/en/investments/mutual-fund/pimco-income-fund/inst-usd
+GLD: https://www.ssga.com/library-content/products/factsheets/etfs/us/factsheet-us-en-gld.pdf
+COM: https://www.ishares.com/us/literature/fact-sheet/comt-ishares-gsci-commodity-dynamic-roll-strategy-etf-fund-fact-sheet-en-us.pdf
+DBMF: https://imgpfunds.com/im-dbi-managed-futures-strategy-etf/
+SWVXX: https://www.schwabassetmanagement.com/products/swvxx
+
+VTI:
+VTI
+Vanguard Total Stock Market ETF
+Also available as an Admiral™ Shares mutual fund.
+
+
+Management style
+Index
+Asset class
+Domestic Stock - General
+Category
+Large Blend
+Risk / reward scale
+Start of Risk Scale. On a scale of 1 to 5, 1 is less risk less reward, 5 is more risk more reward
+The fund risk level is a4
+Less
+
+More
+
+End of Risk Scale.
+Expense ratio
+0.03%
+as of 04/29/2025
+
+30 day SEC yield
+1.14%
+ 
+BSEC yield footnote code
+ 
+as of 08/31/2025
+
+Market price (MP)
+$319.55
+as of 09/05/2025
+NAV price
+$319.55
+as of 09/05/2025
+
+VTI
+
+Vanguard Total Stock Market ETF
+
+Overview
+Performance & fees
+Price
+Portfolio composition
+Distributions
+Fund management
+Fund literature
+Overview
+Key facts
+IOV ticker symbol
+
+VTI.IV
+
+CUSIP
+
+922908769
+
+Management style
+
+Index
+
+Asset class
+
+Domestic Stock - General
+
+Category
+
+Large Blend
+
+Inception date
+
+05/24/2001
+
+Fund Number
+
+0970
+
+Ratings
+Risk / reward scale
+
+Start of Risk Scale. On a scale of 1 to 5, 1 is less risk less reward, 5 is more risk more reward
+The fund risk level is a4
+Less
+
+More
+
+End of Risk Scale.
+Why should I care about risk?
+Price
+Minimum Investment
+
+$1.00
+as of 09/05/2025
+
+Market price
+
+$319.55
+as of 09/05/2025
+
+Market price change
+
+-$0.59 (-0.18%)
+as of 09/05/2025
+
+Expense Ratio
+
+0.03%
+as of 04/29/2025
+
+NAV Price
+
+$319.55
+as of 09/05/2025
+
+NAV Change
+
+-$0.63 (-0.20%)
+as of 09/05/2025
+
+Performance
+YTD returns (MP)
+
+10.98%
+as of 09/05/2025
+
+YTD returns (NAV)
+
+11.03%
+as of 09/05/2025
+
+Product summary
+Seeks to track the performance of the CRSP US Total Market Index.
+Large-, mid-, and small-cap equity diversified across growth and value styles.
+Employs a passively managed, index-sampling strategy.
+The fund remains fully invested.
+Low expenses minimize net tracking error.
+With respect to 75% of its total assets, the fund may not: (1) purchase more than 10% of the outstanding voting securities of any one issuer or (2) purchase securities of any issuer if, as a result, more than 5% of the fund’s total assets would be invested in that issuer’s securities; except as may be necessary to approximate the composition of its target index. This limitation does not apply to obligations of the U.S. government or its agencies or instrumentalities.
+
+Fund management
+Vanguard Equity Index Group
+
+Performance & fees
+Total returns
+SummaryQuarterlyAnnuallyCumulative
+
+
+Month-End
+
+Quarterly (Pre-Tax)
+as of 08/31/2025
+
+Recent returns
+
+Average annual
+
+Month-end	3-Month total	YTD	1-yr	3-yr	5-yr	10-yr	
+Since inception
+
+05/24/2001
+
+VTI (Market price)	2.35%	10.10%	10.51%	15.78%	18.79%	14.03%	13.94%	9.09%
+VTI (NAV)
+2.28%	9.93%	10.51%	15.74%	18.78%	14.04%	13.93%	9.08%
+Benchmark2Benchmark
+
+2.27%	9.93%	10.52%	15.76%	18.77%	14.05%	13.94%	9.10%
+
+Quarterly after-tax returns
+Expense ratio
+VTI
+
+0.03%
+
+Average expense ratio of similar funds3
+
+0.75%
+
+Historical volatility measures
+as of 07/31/2025
+Benchmark	R-Squared4	Beta4
+Spliced Total Stock Market Index2	1.00	1.00
+Dow Jones U.S. Total Stock Market Index	1.00	1.00
+The performance data shown represent past performance, which is not a guarantee of future results. Investment returns and principal value will fluctuate so that investors' shares, when sold, may be worth more or less than their original cost. Current performance may be lower or higher than the performance data cited. The performance of an index is not an exact representation of any particular investment, as you cannot invest directly in an index.
+
+
+Price
+Current market price
+Current price as of Mon Sep 08 09:44:10GMT-7 2025
+
+Market price
+
+$320.25
+
+Market price change
+
+$0.70 (0.22%)
+Open
+
+$320.44
+High
+
+$320.92
+Low
+
+$319.77
+Refresh last price 
+
+Bid/Ask spread
+
+$0.01 (0.00%)
+Volume
+
+2,301,756
+Size
+
+2 X 5
+Tick
+
+UP
+Quotes delayed at least 15 minutes. Source: FactSet.
+
+
+Closing price
+Closing price as of 09/05/2025
+
+Market price
+
+$319.55
+Market price change
+
+-$0.59 (-0.18%)
+NAV
+
+$319.55
+NAV change
+
+-$0.63 (-0.20%)
+30-day Median Bid/Ask spread
+
+0.00%
+52-week High
+
+$320.18
+as of 09/04/2025
+
+52-week Low
+
+$243.56
+as of 04/08/2025
+
+52-week Difference
+
+$76.62 (31.46%)
+Premium/Discount
+
+$0.00
+25-day Avg Volume
+
+3,749,813.76
+50-day Avg Volume
+
+3,618,687.72
+30 day SEC yield
+
+1.14%   B SEC yield footnote code 
+as of 08/31/2025
+
+Historical prices
+1 month3 months6 months1 year3 years5 years10 years
+
+
+Chart
+
+Table
+Name	Date	NAV
+VTI	09/05/2025$319.55
+
+Premium/Discount chart
+Portfolio composition
+Characteristics
+as of 07/31/2025
+
+Fundamental	VTI	
+BenchmarkBenchmark
+Number of stocks	3526	3512
+Median market cap	$219.1 B	$219.1 B
+Earnings growth rate	22.5%	22.5%
+Short-term reserves	—	—
+P/E ratio	26.8x	26.7x
+P/B ratio	4.5x	4.4x
+Turnover rate (Fiscal Year-end 12/31/2024)	2.1%	—
+Return on equity	24.0%	24.0%
+Foreign holdings	0.2%	—
+Fund total net assets as of 07/31/2025	$1.9 T	—
+Share class total net assets	$514.0 B	—
+
+Weighted exposures
+as of 07/31/2025
+
+Sectors
+2.80%
+Utilities
+Sectors5
+VTI
+BenchmarkBenchmark
++/- Weight
+Basic Materials
+1.50%
+1.50%
+0.00%
+Consumer Discretionary
+14.40%
+14.40%
+0.00%
+Consumer Staples
+3.80%
+3.80%
+0.00%
+Energy
+3.20%
+3.20%
+0.00%
+Financials
+11.40%
+11.50%
+-0.10%
+Health Care
+8.80%
+8.80%
+0.00%
+Industrials
+12.80%
+12.80%
+0.00%
+Real Estate
+2.40%
+2.40%
+0.00%
+Technology
+37.00%
+37.00%
+0.00%
+Telecommunications
+1.90%
+1.90%
+0.00%
+Utilities
+2.80%
+2.70%
+0.10%
+Weighted equity exposures exclude any temporary cash investments and equity index futures. Some short-term fixed income securities are classified as cash and are excluded from the weighted bond exposures.
+
+
+Holding details
+as of 07/31/2025
+
+EquityFixed incomeShort-term reservePortfolio composition file
+Ticker	Holdings	CUSIP	SEDOL	% of fund	Shares	Market value
+NVDA	NVIDIA Corp.	67066G104	2379504	6.77 %	728,395,949	$129,559,787,449
+MSFT	Microsoft Corp.	594918104	2588173	6.51 %	233,552,323	$124,600,164,321
+AAPL	Apple Inc.	037833100	2046251	5.09 %	469,335,902	$97,420,053,178
+AMZN	Amazon.com Inc.	023135106	2000019	3.67 %	300,242,297	$70,289,724,151
+META	Facebook Inc. Class A	30303M102	B7TL820	2.76 %	68,223,926	$52,767,113,325
+AVGO	Broadcom Inc.	11135F101	BDZ78H9	2.27 %	147,753,274	$43,395,136,574
+GOOGL	Alphabet Inc. Class A	02079K305	BYVY8G0	1.83 %	182,168,183	$34,958,074,318
+GOOG	Alphabet Inc. Class C	02079K107	BYY88Y7	1.48 %	146,522,369	$28,258,304,085
+TSLA	Tesla Inc.	88160R101	B616C79	1.39 %	86,033,861	$26,521,658,330
+BRK.B	Berkshire Hathaway Inc. Class B	084670702	2073390	1.37 %	55,755,240	$26,309,782,651
+
+1-10 of 3489   Page 1
+Vanguard portfolio holdings disclaimer
+
+Distributions
+Realized/Unrealized gains
+as of 07/31/2025
+
+Realized gain
+
+-$5.59
+% of NAV
+
+-1.80%
+Unrealized gains of NAV
+
+$183.60
+% of NAV
+
+59.04%
+Fiscal year end
+
+12/31/2025
+Distribution schedule
+
+Quarterly
+How your fund can affect your taxes
+A fund's capital gains and losses can reveal the tax implications of holding a particular fund in a taxable account. This is true of both realized and unrealized capital gains and losses.
+
+
+These tax implications don't apply to investors holding a fund in a tax-deferred account, such as an IRA or employer-sponsored retirement plan.
+
+Learn about realized and unrealized gains and losses
+Dividend income and capital gains
+Type	$/Share	Payable date	Record date	Ex-dividend date
+Dividend	$0.913200	07/02/2025	06/30/2025	06/30/2025
+Dividend	$0.985400	03/31/2025	03/27/2025	03/27/2025
+Dividend	$0.941200	12/26/2024	12/23/2024	12/23/2024
+Dividend	$0.870700	10/01/2024	09/27/2024	09/27/2024
+Dividend	$0.951900	07/02/2024	06/28/2024	06/28/2024
+Dividend	$0.910500	03/27/2024	03/25/2024	03/22/2024
+1-6 of 6 Page 1
+Distribution yields are not available for products with less than 12 months of distribution history.
+
+Fund management
+Vanguard Total Stock Market ETF seeks to track the investment performance of the CRSP US Total Market Index, which represents approximately 100% of the investable U.S. stock market and includes large-, mid-, small-, and micro-cap stocks regularly traded on the New York Stock Exchange and Nasdaq. The fund invests by sampling the index, meaning that it holds a broadly diversified collection of securities that, in the aggregate, approximates the full Index in terms of key characteristics. These key characteristics include industry weightings and market capitalization, as well as certain financial measures such as price/earnings ratio and dividend yield. The experience and stability of Vanguard’s Equity Index Group have permitted continuous refinement of techniques for reducing tracking error. The group uses proprietary software to implement trading decisions that accommodate cash flow and maintain close correlation with index characteristics. Vanguard’s refined indexing process, combined with low management fees and efficient trading, has provided tight tracking net of expenses.
+
+*****
+VEA:
+
+VEA
+Vanguard FTSE Developed Markets ETF
+Also available as an Admiral™ Shares mutual fund.
+
+
+Management style
+Index
+Asset class
+International/Global Stock
+Category
+Foreign Large Blend
+Risk / reward scale
+Start of Risk Scale. On a scale of 1 to 5, 1 is less risk less reward, 5 is more risk more reward
+The fund risk level is a5
+Less
+
+More
+
+End of Risk Scale.
+Expense ratio
+0.03%
+as of 04/29/2025
+
+SEC yield
+—
+Market price (MP)
+$58.96
+as of 09/05/2025
+NAV price
+$58.89
+as of 09/05/2025
+
+VEA
+
+Vanguard FTSE Developed Markets ETF
+
+Overview
+Performance & fees
+Price
+Portfolio composition
+Distributions
+Fund management
+Fund literature
+Overview
+Key facts
+IOV ticker symbol
+
+VEA.IV
+
+CUSIP
+
+921943858
+
+Management style
+
+Index
+
+Asset class
+
+International/Global Stock
+
+Category
+
+Foreign Large Blend
+
+Inception date
+
+07/20/2007
+
+Fund Number
+
+0936
+
+Ratings
+Risk / reward scale
+
+Start of Risk Scale. On a scale of 1 to 5, 1 is less risk less reward, 5 is more risk more reward
+The fund risk level is a5
+Less
+
+More
+
+End of Risk Scale.
+Why should I care about risk?
+Price
+Minimum Investment
+
+$1.00
+as of 09/05/2025
+
+Market price
+
+$58.96
+as of 09/05/2025
+
+Market price change
+
+$0.28 (0.48%)
+as of 09/05/2025
+
+Expense Ratio
+
+0.03%
+as of 04/29/2025
+
+NAV Price
+
+$58.89
+as of 09/05/2025
+
+NAV Change
+
+$0.24 (0.41%)
+as of 09/05/2025
+
+Performance
+YTD returns (MP)
+
+24.86%
+as of 09/05/2025
+
+YTD returns (NAV)
+
+24.79%
+as of 09/05/2025
+
+Product summary
+Seeks to track the investment performance of the FTSE Developed All Cap ex US Index.
+Provides a convenient way to match the performance of a diversified group of stocks of large-, mid-, and small-cap companies located in Canada and the major markets of Europe and the Pacific region.
+Follows a passively managed full-replication approach.
+Fund management
+Vanguard Equity Index Group
+
+Performance & fees
+Total returns
+SummaryQuarterlyAnnuallyCumulative
+
+
+Month-End
+
+Quarterly (Pre-Tax)
+as of 08/31/2025
+
+Recent returns
+
+Average annual
+
+Month-end	3-Month total	YTD	1-yr	3-yr	5-yr	10-yr	
+Since inception
+
+07/20/2007
+
+VEA (Market price)	4.43%	6.48%	24.33%	15.51%	16.78%	10.33%	7.79%	3.97%
+VEA (NAV)
+4.64%	6.39%	24.26%	15.28%	16.72%	10.29%	7.79%	3.98%
+Benchmark2Benchmark
+
+4.14%	6.67%	24.11%	15.69%	16.57%	10.26%	7.75%	3.88%
+Fair-value pricing information
+
+
+Quarterly after-tax returns
+Expense ratio
+VEA
+
+0.03%
+
+Average expense ratio of similar funds3
+
+0.86%
+
+Historical volatility measures
+as of 07/31/2025
+Benchmark	R-Squared4	Beta4
+Spliced Developed ex US Index2	0.98	1.05
+FTSE Global All Cap ex US Index	0.95	1.09
+The performance data shown represent past performance, which is not a guarantee of future results. Investment returns and principal value will fluctuate so that investors' shares, when sold, may be worth more or less than their original cost. Current performance may be lower or higher than the performance data cited. The performance of an index is not an exact representation of any particular investment, as you cannot invest directly in an index.
+
+
+Price
+Current market price
+Current price as of Mon Sep 08 09:47:08GMT-7 2025
+
+Market price
+
+$59.37
+
+Market price change
+
+$0.41 (0.70%)
+Open
+
+$59.38
+High
+
+$59.53
+Low
+
+$59.23
+Refresh last price 
+
+Bid/Ask spread
+
+$0.01 (0.02%)
+Volume
+
+4,620,303
+Size
+
+250 X 721
+Tick
+
+UP
+Quotes delayed at least 15 minutes. Source: FactSet.
+
+
+Closing price
+Closing price as of 09/05/2025
+
+Market price
+
+$58.96
+Market price change
+
+$0.28 (0.48%)
+NAV
+
+$58.89
+NAV change
+
+$0.24 (0.41%)
+30-day Median Bid/Ask spread
+
+0.02%
+52-week High
+
+$59.50
+as of 08/22/2025
+
+52-week Low
+
+$45.76
+as of 04/08/2025
+
+52-week Difference
+
+$13.74 (30.03%)
+Premium/Discount
+
+$0.07
+25-day Avg Volume
+
+10,615,703.6
+50-day Avg Volume
+
+11,178,234.38
+SEC yield
+
+—
+Historical prices
+1 month3 months6 months1 year3 years5 years10 years
+
+
+Chart
+
+Table
+Name	Date	NAV
+VEA	08/21/2025	$58.54
+
+Premium/Discount chart
+Portfolio composition
+Characteristics
+as of 07/31/2025
+
+Fundamental	VEA	
+BenchmarkBenchmark
+Number of stocks	3882	3759
+Median market cap	$48.3 B	$48.4 B
+Earnings growth rate	14.8%	14.8%
+Short-term reserves	—	—
+P/E ratio	16.3x	16.3x
+P/B ratio	1.8x	1.8x
+Turnover rate (Fiscal Year-end 12/31/2024)	2.9%	—
+Return on equity	11.6%	11.6%
+Foreign holdings	99.3%	—
+Fund total net assets as of 07/31/2025	$230.2 B	—
+Share class total net assets	$162.8 B	—
+Risks associated with aggressive funds
+Vanguard funds classified as aggressive are subject to extremely wide fluctuations in share prices. The unusually high volatility associated with these funds may stem from one or more of the following strategies: a concentration of fund holdings in a relatively low number of individual stocks, or in a particular sector of the stock market, or in a particular geographical region of the world; a heavy emphasis on small-capitalization stocks or growth stocks with relatively high market valuations; holdings of international stocks or bonds, which are subject to price declines caused by changes in the value of the U.S. dollar against foreign currencies; or investments in bonds that have exceptionally long average durations, whose prices are highly sensitive to changes in interest rates.
+
+
+Weighted exposures
+as of 07/31/2025
+
+RegionsMarkets
+53.50%
+Europe
+Regions
+VEA
+Europe
+53.50%
+Pacific
+35.00%
+Middle East
+0.90%
+North America
+10.60%
+Other
+0.00%
+Weighted equity exposures exclude any temporary cash investments and equity index futures. Some short-term fixed income securities are classified as cash and are excluded from the weighted bond exposures.
+
+
+Holding details
+as of 07/31/2025
+
+EquityFixed incomeShort-term reservePortfolio composition file
+Ticker	Holdings	CUSIP	SEDOL	% of fund	Shares	Market value
+SAP	SAP SE	D66992104	4846288	1.15 %	9,372,166	$2,680,022,608
+ASML	ASML Holding NV	N07059202	B929F46	1.06 %	3,587,755	$2,486,575,803
+005930	Samsung Electronics Co. Ltd.	Y74718100	6771720	0.93 %	42,448,937	$2,163,364,999
+NESN	Nestle SA	H57312649	7123870	0.86 %	23,058,221	$2,014,759,645
+AZN	AstraZeneca plc	—	0989529	0.85 %	13,661,682	$1,993,125,111
+ROG	Roche Holding AG	H69293217	7110388	0.85 %	6,381,935	$1,991,629,780
+SHEL	Shell plc	—	BP6MXD8	0.84 %	54,514,237	$1,958,865,665
+HSBA	HSBC Holdings plc	—	0540528	0.84 %	160,779,770	$1,958,775,235
+NOVN	Novartis AG	H5820Q150	7103065	0.83 %	17,020,905	$1,938,460,567
+CBA	Commonwealth Bank of Australia	—	6215035	0.74 %	15,227,047	$1,728,719,324
+
+1-10 of 3878   Page 1
+Vanguard portfolio holdings disclaimer
+
+Distributions
+Realized/Unrealized gains
+as of 07/31/2025
+
+Realized gain
+
+-$2.17
+% of NAV
+
+-3.88%
+Unrealized gains of NAV
+
+$15.66
+% of NAV
+
+27.95%
+Fiscal year end
+
+12/31/2025
+Distribution schedule
+
+Quarterly
+How your fund can affect your taxes
+A fund's capital gains and losses can reveal the tax implications of holding a particular fund in a taxable account. This is true of both realized and unrealized capital gains and losses.
+
+
+These tax implications don't apply to investors holding a fund in a tax-deferred account, such as an IRA or employer-sponsored retirement plan.
+
+Learn about realized and unrealized gains and losses
+Dividend income and capital gains
+Type	$/Share	Payable date	Record date	Ex-dividend date
+Dividend	$0.440700	06/24/2025	06/20/2025	06/20/2025
+Dividend	$0.242200	03/25/2025	03/21/2025	03/21/2025
+Dividend	$0.712600	12/24/2024	12/20/2024	12/20/2024
+Dividend	$0.144400	09/24/2024	09/20/2024	09/20/2024
+Dividend	$0.460700	06/25/2024	06/21/2024	06/21/2024
+Dividend	$0.286500	03/20/2024	03/18/2024	03/15/2024
+1-6 of 6 Page 1
+Distribution yields are not available for products with less than 12 months of distribution history.
+
+Fund management
+Vanguard FTSE Developed Markets ETF seeks to track the performance of the FTSE Developed All Cap ex-US Index. Vanguard FTSE Developed Markets ETF is an exchange-traded share class of Vanguard Developed Markets Index Fund. The fund attempts to replicate the target index by investing all, or substantially all, of its assets in the stocks that make up the index, holding each stock in approximately the same proportion as its weighting in the index. The FTSE Developed All Cap ex US Index is a market-capitalization-weighted index that is made up of approximately 3,700 common stocks of large-, mid-, and small-cap companies located in Canada and the major markets of Europe and the Pacific region. The experience and stability of Vanguard’s Equity Index Group have permitted continuous refinement of techniques for reducing tracking error. The group uses proprietary software to implement trading decisions that accommodate cash flow and maintain close correlation with index characteristics. Vanguard’s refined indexing process, combined with low management fees and efficient trading, has provided tight tracking, net of expenses.
+
+*****
+VWO:
+VWO
+Vanguard FTSE Emerging Markets ETF
+Also available as an Admiral™ Shares mutual fund.
+
+
+Management style
+Index
+Asset class
+International/Global Stock
+Category
+Diversified Emerging Markets
+Risk / reward scale
+Start of Risk Scale. On a scale of 1 to 5, 1 is less risk less reward, 5 is more risk more reward
+The fund risk level is a5
+Less
+
+More
+
+End of Risk Scale.
+Expense ratio
+0.07%
+as of 02/28/2025
+
+SEC yield
+—
+Market price (MP)
+$51.97
+as of 09/05/2025
+NAV price
+$51.80
+as of 09/05/2025
+
+VWO
+
+Vanguard FTSE Emerging Markets ETF
+
+Overview
+Performance & fees
+Price
+Portfolio composition
+Distributions
+Fund management
+Fund literature
+Overview
+Key facts
+IOV ticker symbol
+
+VWO.IV
+
+CUSIP
+
+922042858
+
+Management style
+
+Index
+
+Asset class
+
+International/Global Stock
+
+Category
+
+Diversified Emerging Markets
+
+Inception date
+
+03/04/2005
+
+Fund Number
+
+0964
+
+Ratings
+Risk / reward scale
+
+Start of Risk Scale. On a scale of 1 to 5, 1 is less risk less reward, 5 is more risk more reward
+The fund risk level is a5
+Less
+
+More
+
+End of Risk Scale.
+Why should I care about risk?
+Price
+Minimum Investment
+
+$1.00
+as of 09/05/2025
+
+Market price
+
+$51.97
+as of 09/05/2025
+
+Market price change
+
+$0.59 (1.15%)
+as of 09/05/2025
+
+Expense Ratio
+
+0.07%
+as of 02/28/2025
+
+NAV Price
+
+$51.80
+as of 09/05/2025
+
+NAV Change
+
+$0.55 (1.07%)
+as of 09/05/2025
+
+Performance
+YTD returns (MP)
+
+18.47%
+as of 09/05/2025
+
+YTD returns (NAV)
+
+17.63%
+as of 09/05/2025
+
+Product summary
+Invests in stocks of companies located in emerging markets around the world, such as China, Brazil, Taiwan, and South Africa.
+Goal is to closely track the return of the FTSE Emerging Markets All Cap China A Inclusion Index.
+Has high potential for growth, but also high risk; share value may swing up and down more than that of stock funds that invest in developed countries, including the United States.
+Only appropriate for long-term goals.
+With respect to 75% of its total assets, the fund may not: (1) purchase more than 10% of the outstanding voting securities of any one issuer or (2) purchase securities of any issuer if, as a result, more than 5% of the fund’s total assets would be invested in that issuer’s securities; except as may be necessary to approximate the composition of its target index. This limitation does not apply to obligations of the U.S. government or its agencies or instrumentalities.
+
+Fund management
+Vanguard Equity Index Group
+
+Performance & fees
+Total returns
+SummaryQuarterlyAnnuallyCumulative
+
+
+Month-End
+
+Quarterly (Pre-Tax)
+as of 08/31/2025
+
+Recent returns
+
+Average annual
+
+Month-end	3-Month total	YTD	1-yr	3-yr	5-yr	10-yr	
+Since inception
+
+03/04/2005
+
+VWO (Market price)	3.47%	9.96%	17.47%	18.81%	11.46%	6.31%	7.12%	6.27%
+VWO (NAV)
+2.97%	9.56%	16.47%	17.97%	11.16%	6.17%	7.02%	6.26%
+Benchmark2Benchmark
+
+2.23%	8.69%	15.60%	16.78%	11.07%	6.34%	7.09%	6.38%
+Fair-value pricing information
+
+
+Quarterly after-tax returns
+Expense ratio
+VWO
+
+0.07%
+
+Average expense ratio of similar funds3
+
+1.13%
+
+Historical volatility measures
+as of 07/31/2025
+Benchmark	R-Squared4	Beta4
+Spliced Emerging Markets Index2	0.98	1.01
+FTSE Global All Cap ex US Index	0.76	0.93
+The performance data shown represent past performance, which is not a guarantee of future results. Investment returns and principal value will fluctuate so that investors' shares, when sold, may be worth more or less than their original cost. Current performance may be lower or higher than the performance data cited. The performance of an index is not an exact representation of any particular investment, as you cannot invest directly in an index.
+
+
+Price
+Current market price
+Current price as of Mon Sep 08 09:47:49GMT-7 2025
+
+Market price
+
+$52.32
+
+Market price change
+
+$0.35 (0.67%)
+Open
+
+$52.29
+High
+
+$52.40
+Low
+
+$52.22
+Refresh last price 
+
+Bid/Ask spread
+
+$0.01 (0.02%)
+Volume
+
+4,553,754
+Size
+
+358 X 300
+Tick
+
+UP
+Quotes delayed at least 15 minutes. Source: FactSet.
+
+
+Closing price
+Closing price as of 09/05/2025
+
+Market price
+
+$51.97
+Market price change
+
+$0.59 (1.15%)
+NAV
+
+$51.80
+NAV change
+
+$0.55 (1.07%)
+30-day Median Bid/Ask spread
+
+0.02%
+52-week High
+
+$51.91
+as of 08/25/2025
+
+52-week Low
+
+$40.33
+as of 04/08/2025
+
+52-week Difference
+
+$11.58 (28.71%)
+Premium/Discount
+
+$0.17
+25-day Avg Volume
+
+7,737,745.48
+50-day Avg Volume
+
+8,162,727.72
+SEC yield
+
+—
+Historical prices
+1 month3 months6 months1 year3 years5 years10 years
+
+
+Chart
+
+Table
+Name	Date	NAV
+VWO	09/05/2025$51.80
+
+Premium/Discount chart
+Portfolio composition
+Characteristics
+as of 07/31/2025
+
+Fundamental	VWO	
+BenchmarkBenchmark
+Number of stocks	5973	4802
+Median market cap	$28.0 B	$27.8 B
+Earnings growth rate	17.6%	17.7%
+Short-term reserves	—	—
+P/E ratio	15.2x	15.2x
+P/B ratio	2.2x	2.2x
+Turnover rate (Fiscal Year-end 10/31/2024)	7.8%	—
+Return on equity	15.3%	15.4%
+Foreign holdings	99.2%	—
+Fund total net assets as of 07/31/2025	$126.6 B	—
+Share class total net assets	$93.1 B	—
+Risks associated with aggressive funds
+Vanguard funds classified as aggressive are subject to extremely wide fluctuations in share prices. The unusually high volatility associated with these funds may stem from one or more of the following strategies: a concentration of fund holdings in a relatively low number of individual stocks, or in a particular sector of the stock market, or in a particular geographical region of the world; a heavy emphasis on small-capitalization stocks or growth stocks with relatively high market valuations; holdings of international stocks or bonds, which are subject to price declines caused by changes in the value of the U.S. dollar against foreign currencies; or investments in bonds that have exceptionally long average durations, whose prices are highly sensitive to changes in interest rates.
+
+
+Weighted exposures
+as of 07/31/2025
+
+RegionsMarkets
+99.20%
+Emerging Markets
+Regions
+VWO
+Emerging Markets
+99.20%
+Europe
+0.80%
+Other
+0.00%
+Weighted equity exposures exclude any temporary cash investments and equity index futures. Some short-term fixed income securities are classified as cash and are excluded from the weighted bond exposures.
+
+
+Holding details
+as of 07/31/2025
+
+EquityFixed incomeShort-term reservePortfolio composition file
+Ticker	Holdings	CUSIP	SEDOL	% of fund	Shares	Market value
+2330	Taiwan Semiconductor Manufacturing Co. Ltd.	—	6889106	9.46 %	322,034,605	$12,398,102,847
+700	Tencent Holdings Ltd.	G87572163	BMMV2K8	4.38 %	82,001,744	$5,741,125,740
+9988	Alibaba Group Holding Ltd.	—	BK6YZP5	2.72 %	236,929,560	$3,562,183,509
+HDFCBANK	HDFC Bank Ltd.	—	BK1N461	1.32 %	75,108,228	$1,723,607,052
+1810	Xiaomi Corp. Class B	—	BG0ZMJ9	1.17 %	228,384,000	$1,536,556,541
+RELIANCE	Reliance Industries Ltd.	Y72596102	6099626	1.09 %	90,317,964	$1,426,346,214
+939	China Construction Bank Corp. Class H	—	B0LMTQ3	0.99 %	1,267,071,103	$1,295,964,845
+ICICIBANK	ICICI Bank Ltd.	—	BSZ2BY7	0.90 %	69,917,493	$1,177,362,270
+PDD	PDD Holdings Inc. ADR	722304102	BYVW0F7	0.87 %	10,068,948	$1,142,322,151
+3690	Meituan Dianping Class B	—	BGJW376	0.83 %	70,526,386	$1,088,049,237
+
+1-10 of 5959   Page 1
+Vanguard portfolio holdings disclaimer
+
+Distributions
+Realized/Unrealized gains
+as of 07/31/2025
+
+Realized gain
+
+-$8.89
+% of NAV
+
+-17.85%
+Unrealized gains of NAV
+
+$15.60
+% of NAV
+
+31.32%
+Fiscal year end
+
+10/31/2025
+Distribution schedule
+
+Quarterly
+How your fund can affect your taxes
+A fund's capital gains and losses can reveal the tax implications of holding a particular fund in a taxable account. This is true of both realized and unrealized capital gains and losses.
+
+
+These tax implications don't apply to investors holding a fund in a tax-deferred account, such as an IRA or employer-sponsored retirement plan.
+
+Learn about realized and unrealized gains and losses
+Dividend income and capital gains
+Type	$/Share	Payable date	Record date	Ex-dividend date
+Dividend	$0.138500	06/24/2025	06/20/2025	06/20/2025
+Dividend	$0.046800	03/25/2025	03/21/2025	03/21/2025
+Dividend	$1.065600	12/24/2024	12/20/2024	12/20/2024
+Dividend	$0.134400	09/24/2024	09/20/2024	09/20/2024
+Dividend	$0.170400	06/25/2024	06/21/2024	06/21/2024
+Dividend	$0.038500	03/20/2024	03/18/2024	03/15/2024
+1-6 of 6 Page 1
+Distribution yields are not available for products with less than 12 months of distribution history.
+
+Fund management
+Vanguard FTSE Emerging Markets ETF seeks to track the performance of the FTSE Emerging Markets All Cap China A Inclusion Index. The FTSE Emerging Markets ETF is an exchange-traded share class of Vanguard Emerging Markets Stock Index Fund. The FTSE Emerging Markets ETF invests by sampling the index, meaning that it holds a broadly diversified collection of securities that, in the aggregate, approximates the index in terms of key characteristics. The FTSE Emerging Markets All Cap China A Inclusion Index is a market-capitalization-weighted index that is made up of common stocks of large-, mid-, and small-cap companies located in emerging markets around the world. The experience and stability of Vanguard’s Equity Index Group have permitted continuous refinement of techniques for reducing tracking error. The group uses proprietary software to implement trading decisions that accommodate cash flow and maintain close correlation with index characteristics. Vanguard’s refined indexing process, combined with low management fees and efficient trading, has provided tight tracking, net of expenses.
+
+*****
+SMH:
+SMH VanEck Semiconductor ETF
+NAV 
+$293.38 
+as of September 05, 2025
+YTD RETURNS
+21.15%
+as of September 05, 2025
+Total Net Assets
+$27.82B
+as of September 05, 2025
+Total Expense Ratio 
+0.35%
+Inception Date
+12/20/2011
+About SMH
+VanEck Semiconductor ETF (SMH®) seeks to replicate as closely as possible, before fees and expenses, the price and yield performance of the MVIS® US Listed Semiconductor 25 Index (MVSMHTR), which is intended to track the overall performance of companies involved in semiconductor production and equipment.
+
+Resources
+Fact Sheet 
+Fund Faq 
+Fund Profile 
+Summary Prospectus 
+REGULATORY DOCUMENTS 
+Related Insights 
+Why SMH
+Highly Liquid Companies: Index seeks to track the most liquid companies in the industry based on market capitalization and trading volume
+Industry Leaders: Index methodology favors the largest companies in the industry
+Global Scope: Portfolio may include both domestic and U.S. listed foreign companies allowing for enhanced industry representation
+YOU MAY ENJOY
+YOU MAY ENJOY
+Fund Details 
+as of  09/05/2025
+Exchange
+Nasdaq
+
+CUSIP
+92189F676
+
+ISIN
+US92189F6768
+
+Index Ticker
+MVSMHTR
+Intraday NAV (IIV)
+SMHIV
+
+Shares Outstanding
+94,841,874
+
+Options
+Available
+
+30-Day SEC Yield
+0.35%
+
+Morningstar™ Ratings 
+as of  04/30/2025
+Category	Overall	3 Year	5 Year
+Technology	
+out of 246 funds	
+out of 246 funds	
+out of 210 funds
+Morningstar Ratings: When applicable, ratings shown when the ETF is rated three stars or more for any given period. For each fund with at least a three-year history, Morningstar calculates a Morningstar Rating based on a Morningstar Risk-Adjusted Return measure that accounts for variation in a fund's monthly performance (including the effects of sales charges, loads, and redemption fees), placing more emphasis on downward variations and rewarding consistent performance. The top 10% of funds in each category receive 5 stars, the next 22.5% receive 4 stars, the next 35% receive 3 stars, the next 22.5% receive 2 stars and the bottom 10% receive 1 star. (Each share class is counted as a fraction of one fund within this scale and rated separately, which may cause slight variations in the distribution percentages.) The Overall Morningstar Rating for a fund is derived from a weighted average of the performance figures associated with its three-, five- and ten-year (if applicable) Morningstar Rating metrics.
+
+© Morningstar, Inc. All Rights Reserved. The information contained herein: (1) is proprietary to Morningstar; (2) may not be copied or distributed; and (3) is not warranted to be accurate, complete or timely. Neither Morningstar nor its content providers are responsible for any damages or losses arising from any use of this information. Past performance is no guarantee of future results.
+
+Please read important disclosure
+Index Key Points
+Performance
+Average Annual Total Returns* (%)
+Monthly Return
+Month End as of 08/31/2025
+Quarter End  as of 06/30/2025
+ 	1 MO	3 MO	YTD	1 YR	3 YR	5 YR	10 YR	LIFE
+12/20/11
+SMH (NAV)	0.54	21.13	19.85	19.74	40.41	27.91	29.31	25.61
+SMH (Share Price)	0.52	21.08	19.87	19.74	40.37	27.92	29.32	25.58
+MVSMHTR (Index)	0.57	21.20	20.00	19.98	40.62	28.09	29.43	25.63
+Performance Differential (NAV - Index)	-0.03	-0.07	-0.15	-0.24	-0.21	-0.18	-0.12	-0.02
+View All ETFs
+|
+View All Indices
+*Returns less than one year are not annualized.
+
+The performance data quoted represents past performance. Past performance is not a guarantee of future results. Investment return and principal value of an investment will fluctuate so that an investor's shares, when redeemed, may be worth more or less than their original cost. Performance may be lower or higher than performance data quoted. Please call 800.826.2333 or visit vaneck.com for performance current to the most recent month ended.
+
+Growth of Hypothetical $10,000 Investment 
+as of  09/05/2025
+3 Months
+6 Months
+1 Year
+3 Years
+5 Years
+10 Years
+Since Inception 12/20/2011
+12/20/2011 - 09/08/2025
+This graph illustrates a hypothetical $10,000 investment in the ETF invested at NAV. Returns reflect capital appreciation and the reinvestment of dividends and capital gains, if any, as well as all fees and expenses. The Index is unmanaged and includes the reinvestment of all dividends, but does not reflect the payment of transaction costs, advisory fees or expenses that are associated with an investment in the ETF. An index's performance is not illustrative of the Fund's performance. Indices are not securities in which investments can be made. Results reflect past performance and do not guarantee future results.
+
+
+
+Please read important disclosure
+Calendar Year Returns (%) 
+as of  12/31/2024
+The chart presents past performance which is no guarantee of future results and which may be lower or higher than current performance. Returns reflect temporary contractual fee waivers and/or expense reimbursements. Had the ETF incurred all expenses and fees, investment returns would have been reduced. Investment returns and ETF share values will fluctuate so that investors' shares, when redeemed, may be worth more or less than their original cost. ETF returns assume that dividends and capital gains distributions have been reinvested in the Fund at NAV. 
+
+NAV & Premium/ Discount History
+as of 09/05/2025
+12-Month High (08/14/25)
+302.02
+12-Month Low (04/08/25)
+179.75
+NAV & Premium/Discount History
+ XLS
+Best & Worst Quarter Returns (%) 
+as of 06/30/2025
+Best quarter
+2Q'25
++32.02%
+Worst quarter
+2Q'22
+-24.40%
+Prices 
+as of  09/05/2025
+NAV/
+Market
+Price	Volume
+30-Day Avg./
+Last Trading Day	Daily Change
+NAV/
+Last Price	YTD Change NAV/
+Last Price	Premium/
+Discount	30-Day
+Median
+Bid Ask
+Spread	NAV
+Chart
+$293.38
+$293.28	7,400,697
+9,763,867	 $3.38 / +1.17%
+ $3.42 / +1.18%	+21.15%
++21.11%	$-0.10
+-0.03%	0.01%	
+Premium/Discount History 
+as of  09/05/2025
+Calendar Year 2024	3Q 2024	4Q 2024	1Q 2025	2Q 2025	Premium/Discount Charts	NAV & Prem/Discount History
+Days closed at a premium	133	41	31	30	16		
+Days closed at NAV	20	3	2	4	1	
+Select
+Days closed at a discount	99	20	31	26	45		
+Fees
+Fees and Expenses
+Management Fee
+0.35%
+
+Other Expenses
+--
+
+Total Annual Fund Operating Expenses
+0.35%
+
+Van Eck Associates Corporation (the “Adviser”) will pay all expenses of the Fund, except for the fee payment under the investment management agreement, acquired fund fees and expenses, interest expense, offering costs, trading expenses, taxes and extraordinary expenses. Notwithstanding the foregoing, the Adviser has agreed to pay the offering costs until at least February 1, 2026. “Other Expenses” have been restated to reflect current fees.
+
+Holdings
+Book a 15-minute call to learn more about the holdings.
+Daily Holdings (%)  
+as of  09/05/2025
+Total Holdings : 26
+Download XLS
+Ticker
+Holding Name
+% of Net
+Assets
+Identifier (FIGI)
+Shares
+Asset Class
+Market Value
+(US$)
+Notional Value
+NVDA US	Nvidia Corp	20.70	BBG000BBJQV0	34,256,093	Stock	5,721,452,653	--
+TSM US	Taiwan Semiconductor Manufacturing Co L	11.06	BBG000BD8ZK0	12,554,707	Stock	3,055,941,231	--
+AVGO US	Broadcom Inc	10.57	BBG00KHY5S69	8,717,884	Stock	2,919,532,173	--
+AMD US	Advanced Micro Devices Inc	5.52	BBG000BBQCY0	10,097,404	Stock	1,526,121,641	--
+MU US	Micron Technology Inc	4.51	BBG000C5Z1S3	9,487,901	Stock	1,246,425,554	--
+LRCX US	Lam Research Corp	4.43	BBG000BNFLM9	11,896,656	Stock	1,224,760,735	--
+ASML US	Asml Holding Nv	4.41	BBG000K6MRN4	1,560,038	Stock	1,219,481,705	--
+ADI US	Analog Devices Inc	4.23	BBG000BB6G37	4,730,821	Stock	1,168,843,944	--
+KLAC US	Kla Corp	4.08	BBG000BMTFR4	1,245,292	Stock	1,127,101,336	--
+QCOM US	Qualcomm Inc	3.99	BBG000CGC1X8	6,902,932	Stock	1,103,364,651	--
+SNPS US	Synopsys Inc	3.79	BBG000BSFRF3	1,750,035	Stock	1,046,765,935	--
+AMAT US	Applied Materials Inc	3.75	BBG000BBPFB9	6,371,205	Stock	1,036,913,614	--
+TXN US	Texas Instruments Inc	3.75	BBG000BVV7G1	5,512,942	Stock	1,036,047,190	--
+INTC US	Intel Corp	3.73	BBG000C0G1D1	42,090,933	Stock	1,030,806,949	--
+CDNS US	Cadence Design Systems Inc	3.23	BBG000C13CD9	2,539,483	Stock	891,383,928	--
+NXPI US	Nxp Semiconductors Nv	1.64	BBG000BND699	1,997,176	Stock	452,839,686	--
+MRVL US	Marvell Technology Inc	1.63	BBG00ZXBJ153	7,116,895	Stock	450,712,960	--
+MPWR US	Monolithic Power Systems Inc	1.22	BBG000C30L48	389,645	Stock	337,378,020	--
+MCHP US	Microchip Technology Inc	1.09	BBG000BHCP19	4,577,818	Stock	301,769,763	--
+STM US	Stmicroelectronics Nv	0.74	BBG000BD4GX2	7,627,994	Stock	204,887,919	--
+TER US	Teradyne Inc	0.57	BBG000BV4DR6	1,305,485	Stock	156,919,297	--
+ON US	On Semiconductor Corp	0.50	BBG000DV7MX4	2,817,800	Stock	138,368,069	--
+SWKS US	Skyworks Solutions Inc	0.34	BBG000KLB4Q1	1,239,218	Stock	93,189,194	--
+QRVO US	Qorvo Inc	0.22	BBG007TJF1N7	648,912	Stock	60,277,436	--
+OLED US	Universal Display Corp	0.21	BBG000BLRP41	397,814	Stock	57,838,177	--
+-USD CASH-		0.04		11,624,748	Cash Bal	11,624,748	--
+--	Other/Cash	0.05	--	0	Cash	13,331,306	--
+These are not recommendations to buy or to sell any security. Securities and holdings may vary.
+Portfolio
+Fundamentals
+as of 08/31/2025
+Weighted Average Market Cap 
+1268.5B
+Price/Earnings Ratio
+(Last 12 Months) 
+36.04
+Price/Book Ratio
+(Last 12 Months) 
+6.64
+Market Cap (% of Net Assets) 
+as of 08/31/2025
+Large (>$5.0B)
+99.94
+Mid ($1.0 - $5.0B)
+--
+Small (<$1.0B)
+--
+3-YR Risk Measures
+as of 08/31/2025
+Beta vs. S&P 500 Index 
+1.28
+Correlation vs. S&P 500 Index 
+0.90
+Volatility (Standard Deviation) 
+29.89
+Sharpe Ratio 
+1.13
+Currency Exposure (%)
+as of 08/31/2025
+U.S. Dollar	99.94
+Other/Cash	0.06
+Sector Weightings (%)  
+as of  08/31/2025
+Chart
+Pie chart with 2 slices.
+Pie chart illustrating the Sector Weightings (%) . Each slice illustrates investment in that Sector
+End of interactive chart.
+Sector	% of Net Assets
+●Information Technology	99.94
+●Other/Cash	0.06
+Country Weightings (%)  
+as of  08/31/2025
+Chart
+Pie chart with 6 slices.
+Pie chart illustrating the Country Weightings (%) . Each slice illustrates investment in that CountryOfRisk
+End of interactive chart.
+Country	% of Net Assets
+●United States	81.00
+●Taiwan Region	10.60
+●Netherlands	5.95
+●Bermuda	1.64
+●Switzerland	0.75
+●Other/Cash	0.06
+Distributions
+Yields 
+as of  09/05/2025
+Distribution Frequency
+Annual
+
+30-Day SEC Yield
+0.35%
+
+Distribution Yield
+0.37%
+
+12 Month Yield
+0.37%
+
+Yield information reflects temporary waivers of expenses and/or fees. Yields would have been reduced had these fees/expenses been included. In the absence of temporary expense waivers or reimbursements, the 30-Day SEC Yield for VanEck Semiconductor ETF would have been 0.35% on 09/05/25. Distributions may vary from time to time.
+Distribution History
+Year	Ex-date	Record
+Date	Payable date	Dividend
+Income‡	Short-Term
+Capital Gains	Long-Term
+Capital Gains	Return of
+Capital	Total
+Distributions
+2024	12/23/2024	12/23/2024	12/24/2024	$ 1.0713	--	--	--	$ 1.07
+2023	12/18/2023	12/19/2023	12/22/2023	$ 1.0427	--	--	--	$ 1.04
+2022	12/19/2022	12/20/2022	12/23/2022	$ 1.2005	--	--	--	$ 1.20
+2021	12/20/2021	12/21/2021	12/27/2021	$ 0.7867	--	--	--	$ 0.79
+2020	12/21/2020	12/22/2020	12/28/2020	$ 0.7511	--	--	--	$ 0.75
+2019	12/23/2019	12/24/2019	12/30/2019	$ 1.0611	--	--	--	$ 1.06
+2018	12/20/2018	12/21/2018	12/27/2018	$ 0.8190	--	--	--	$ 0.82
+2017	12/18/2017	12/19/2017	12/22/2017	$ 0.6980	--	--	--	$ 0.70
+2016	12/19/2016	12/21/2016	12/23/2016	$ 0.2880	--	--	--	$ 0.29
+2015	12/21/2015	12/23/2015	12/28/2015	$ 0.5705	--	--	--	$ 0.57
+2014	12/22/2014	12/24/2014	12/29/2014	$ 0.3160	--	--	--	$ 0.32
+2013	12/23/2013	12/26/2013	12/30/2013	$ 0.3295	--	--	--	$ 0.33
+
+*****
+SRVR:
+SRVR Pacer Data & Infrastructure Real Estate ETF A strategy-driven exchange traded fund (ETF) that aims to offer investors exposure to global developed market companies that generate a significant amount of their revenue from real estate operations in the data and infrastructure sector. STRATEGY OVERVIEW An objective, rules-based strategy that seeks to track the Solactive GPR Data & Infrastructure Real Estate Index and invest in data and infrastructure REITs and C-Corps. Solactive GPR Data & Infrastrucure Real Estate Index Characteristics Weighted Average Market Cap ($mil) 44,613.07 Dividend Yield (%) 2.68 Price to Funds From Operations (FFO) 13.81 Source: FactSet. Top 10 Holdings Company Sub-Sector Weight (%) Digital Realty Trust, Inc. Data Infrastructure 16.87 American Tower Corporation Tech Infrastructure: Telecommunications 15.07 Equinix, Inc. Data Infrastructure 13.66 Iron Mountain, Inc. Data Infrastructure 5.11 Infrastrutture Wireless Italiane S.p.A. Tech Infrastructure: Telecommunications 5.05 Nextdc Limited Data Infrastructure 4.93 Cellnex Telecom S.A. Tech Infrastructure: Telecommunications 4.77 SBA Communications Corp. Class A Tech Infrastructure: Telecommunications 4.64 Crown Castle International Corp Tech Infrastructure: Telecommunications 4.29 Keppel DC REIT Data Infrastructure 4.11 Total 78.50 Sub-Sector Breakdown 50.04%TechInfrastructure: Telecommunications 49.96%DataInfrastructureSRVR Data as of 6/30/25 Pacer Data & Infrastructure Real Estate ETF The Pacer Data & Infrastructure Real Estate ETF (the “Fund”) is an exchange traded fund (“ETF”) that seeks to track the total return performance, before fees and expenses, of the Solactive GPR Data & Infrastructure Real Estate Index (the “Index”). Fund Details NAV $32.30 Fund Ticker SRVR Index Solactive GPR Data & Infrastrucure Real Estate Index Benchmark Index FTSE Nareit All Equity REITs Index Intraday NAV (IIV) SRVR.IV CUSIP# 69374H741 Fund Inception 5/15/18 Gross Expenses 0.60% Net Expenses* 0.55% Exchange NYSE Listed Implied Liquidity** (Shares) 1.79M Implied Liquidity** (USD) $52.72M *Includes Adviser’s contractual fee waiver of 0.05%, effective 11/1/2024 - 10/31/ 2025. **Source: Bloomberg. ETF implied liquidity is a representation of how many shares can potentially be traded daily in an ETF as portrayed by the creation unit. This is defined as the smallest value of the IDTS (Implied Daily Tradable Shares) for each holding in the creation unit. NAV (net asset value) is the value of one share of the Fund calculated daily. The NAV return is based on the NAV of the Fund. It may not reflect the actual return for the investor. Market Price is the price investors can buy and sell ETF shares for in the stock market and is used to calculate market return. It is based on the price at the listed exchange market close. This is when NAV is determined for most ETFs. If shares trade at another time, the return may differ. Market and NAV returns assume that dividends and capital gain distributions have been reinvested in the Fund at Market Price and NAV, respectively. Performance1 (%) Since Fund Inception (5/15/18) YTD 1 Year 3 Year 5 Year Pacer Data & Infrastructure Real Estate ETF NAV 6.08 8.46 19.69 0.41 0.18 Pacer Data & Infrastructure Real Estate ETF Market Price 6.09 8.53 19.62 0.48 0.20 Solactive GPR Data & Infrastrucure Real Estate Index2 8.72 8.86 20.60 N/A N/A FTSE Nareit All Equity REITs Index 7.01 1.80 9.20 3.36 6.66 (1)Returns less than one year are cumulative. (2)On 11/1/2022, the underlying index changed to the Solactive GPR Data & Infrastructure Real Estate Index. Source: US Bank. Performance quoted represents past performance and does not guarantee future results. Investment return and principal value will fluctuate, so shares may be worth more or less when redeemed or sold. Current performance may be lower or higher than the performance quoted. Visit www.paceretfs.com for the most recent month-end performance. Index returns are for illustrative purposes only. Index performance does not reflect any management fees, transaction costs or expenses. You cannot invest directly in an index. 
+
+*****
+IGF:
+IGF
+
+iShares Global Infrastructure ETF
+Add to Compare
+NAV as of Sep 05, 2025
+$59.87 
+52 WK: 50.62 - 61.33
+ 
+1 Day NAV Change as of Sep 05, 2025
+ 0.11 (0.19%)  
+NAV Total Return as of Sep 05, 2025
+YTD:  16.82%   
+Morningstar Rating
+   
+ 
+Fees as stated in the prospectus
+Expense Ratio: 0.39% 
+Overview
+Performance & Distributions
+Key Facts
+Fees
+Holdings
+Literature
+Why IGF?
+1. Exposure to companies that provide transportation, communication, water, and electricity services
+
+ 
+
+2. Targeted access to infrastructure stocks from around the world
+
+ 
+
+3. Use to express a global sector view
+
+INVESTMENT OBJECTIVE
+The iShares Global Infrastructure ETF seeks to track the investment results of an index composed of developed market equities in the infrastructure industry.
+iShares Global Infrastructure ETF
+IGF
+Fact Sheet
+Prospectus
+Financial and Legal Documents
+Data Download
+Buy IGF
+Overview
+Performance & Distributions
+Key Facts
+Fees
+Holdings
+Literature
+Performance
+Growth of Hypothetical $10,000  
+Line chart with 214 data points.
+The chart has 1 X axis displaying Time. Range: 2007-12-01 00:00:00 to 2025-09-05 00:00:00.
+The chart has 1 Y axis displaying values. Range: -80 to 160.
+End of interactive chart.
+View full chart
+Distributions
+Record Date	Ex-Date	Payable Date
+Jun 16, 2025	Jun 16, 2025	Jun 20, 2025
+Dec 17, 2024	Dec 17, 2024	Dec 20, 2024
+Jun 11, 2024	Jun 11, 2024	Jun 17, 2024
+Dec 21, 2023	Dec 20, 2023	Dec 27, 2023
+View full table
+Premium/Discount
+View full chart
+Returns
+Average Annual
+Cumulative
+Calendar Year
+as of 
+Jun 30, 2025
+ 	1y	3y	5y	10y	Incept.
+Total Return (%)  	27.25	11.78	12.45	7.04	4.31
+Market Price (%)  	27.66	11.65	12.42	7.03	4.31
+Benchmark (%)  	26.64	11.48	12.15	6.80	4.09
+After Tax Pre-Liq. (%)  	26.33	11.06	11.80	6.41	3.75
+After Tax Post-Liq. (%)  	16.81	9.18	9.94	5.62	3.45
+The performance quoted represents past performance and does not guarantee future results. Investment return and principal value of an investment will fluctuate so that an investor's shares, when sold or redeemed, may be worth more or less than the original cost. Current performance may be lower or higher than the performance quoted.
+The ETF total return may appear to diverge from the return of its benchmark. This may be due to the use of systematic fair value. Click here for more information
+
+ 
+iSHARES MARKET INSIGHT
+
+Is it the right time to buy electric vehicle (EV) stocks?
+Learn what’s driving EV stocks, including new developments in the electric vehicle & autonomous vehicle markets, declining lithium battery prices & more.
+
+READ NOW 
+Key Facts
+Net Assets of Fund
+as of Sep 05, 2025
+ $8,059,114,159
+Exchange
+ NASDAQ
+Benchmark Index
+ S&P Global Infrastructure Index
+Shares Outstanding
+as of Sep 05, 2025
+ 134,600,000
+Premium/Discount  
+as of Sep 05, 2025
+ -0.01
+Closing Price 
+as of Sep 05, 2025
+ 59.87
+30 Day Avg. Volume  
+as of Sep 05, 2025
+ 897,451.00
+Daily Volume  
+as of Sep 05, 2025
+ 745,376.00
+Fund Inception
+ Dec 10, 2007
+Asset Class
+ Equity
+Bloomberg Index Ticker
+ SPGTINNT
+Distribution Frequency  
+ Semi-Annual
+CUSIP
+ 464288372
+Non-FV NAV  
+as of Sep 05, 2025
+ 59.90
+30 Day Median Bid/Ask Spread  
+as of Sep 05, 2025
+ 0.02%
+Portfolio Characteristics
+Number of Holdings  
+as of Sep 05, 2025
+ 74
+30 Day SEC Yield  
+as of Aug 29, 2025
+ 2.76%
+Standard Deviation (3y)  
+as of Jul 31, 2025
+ 15.61%
+P/B Ratio  
+as of Sep 04, 2025
+ 2.32
+Equity Beta (3y)  
+as of Jul 31, 2025
+ 0.78
+12m Trailing Yield  
+as of Aug 29, 2025
+ 3.04%
+P/E Ratio  
+as of Sep 04, 2025
+ 20.05
+This information must be preceded or accompanied by a current prospectus. For standardized performance, please see the Performance section above.
+Fees
+as of current prospectus
+Management Fee	0.39%
+Acquired Fund Fees and Expenses  	0.00%
+Other Expenses	0.00%
+Expense Ratio  	0.39%
+The amounts shown above are as of the current prospectus, but may not include extraordinary expenses incurred by the Fund over the past fiscal year. Amounts are rounded to the nearest basis point, which in some cases may be "0.00".
+
+Ratings
+Morningstar Rating
+Overall  4 stars
+Overall Morningstar Rating for iShares Global Infrastructure ETF, as of Aug 31, 2025 rated against 79 Infrastructure Funds based on risk adjusted total return.
+Holdings
+All
+as of 
+Sep 05, 2025
+Filter list by keyword
+Ticker	Name	Sector	Asset Class	Market Value	Weight (%)	Notional Value	Quantity	CUSIP	ISIN	SEDOL	Accrual Date
+AENA	AENA SME SA	Industrials	Equity	$447,056,161.23	5.54	447,056,161.23	15,604,710.00	-	ES0105046017	BTMKJR0	-
+TCL	TRANSURBAN GROUP STAPLED UNITS	Industrials	Equity	$428,937,841.91	5.32	428,937,841.91	45,523,161.00	S62008826	AU000000TCL6	6200882	-
+NEE	NEXTERA ENERGY INC	Utilities	Equity	$361,492,725.20	4.48	361,492,725.20	5,098,628.00	65339F101	US65339F1012	2328915	-
+PAC	GRUPO AEROPORTUARIO DEL PACIFICO A	Industrials	Equity	$349,914,496.50	4.34	349,914,496.50	1,400,050.00	400506101	US4005061019	B0YFC60	-
+ENB	ENBRIDGE INC	Energy	Equity	$313,529,882.86	3.89	313,529,882.86	6,484,400.00	29250N105	CA29250N1050	2466149	-
+IBE	IBERDROLA SA	Utilities	Equity	$267,179,371.57	3.31	267,179,371.57	14,481,441.00	-	ES0144580Y14	B288C92	-
+SO	SOUTHERN	Utilities	Equity	$249,011,805.64	3.09	249,011,805.64	2,713,138.00	842587107	US8425871071	2829601	-
+CEG	CONSTELLATION ENERGY CORP	Utilities	Equity	$233,420,507.36	2.89	233,420,507.36	773,992.00	21037T109	US21037T1097	BMH4FS1	-
+DUK	DUKE ENERGY CORP	Utilities	Equity	$231,012,534.48	2.87	231,012,534.48	1,915,368.00	26441C204	US26441C2044	B7VD3F2	-
+AIA	AUCKLAND INTERNATIONAL AIRPORT LTD	Industrials	Equity	$222,843,389.86	2.76	222,843,389.86	49,544,039.00	-	NZAIAE0002S6	BKX3XG2	-
+1 to 10 of 98
+Previous12345…10Next
+Show More
+Detailed Holdings and Analytics  
+Holdings are subject to change.
+
+The values shown for “market value,” “weight,” and “notional value” (the “calculated values”) are based off of a price provided by a third-party pricing vendor for the portfolio holding and do not reflect the impact of systematic fair valuation (“the vendor price”). The vendor price is not necessarily the price at which the Fund values the portfolio holding for the purposes of determining its net asset value (the “valuation price”). Holdings data shown reflects the investment book of record, which may differ from the accounting book of record used for the purposes of determining the Net Assets of the Fund. Notional value represents the portfolio's exposures based on the economic value of investments and options are delta-adjusted. Additionally, where applicable, foreign currency exchange rates with respect to the portfolio holdings denominated in non-U.S. currencies for the valuation price will be generally determined as of the close of business on the New York Stock Exchange, whereas for the vendor price will be generally determined as of 4 p.m. London. The calculated values may have been different if the valuation price were to have been used to calculate such values. The vendor price is as of the most recent date for which a price is available and may not necessarily be as of the date shown above.
+
+Please see the “Determination of Net Asset Value” section of each Fund’s prospectus for additional information on the Fund’s valuation policies and procedures.
+
+“Quantity” represents the number of shares, units or contracts of the corresponding security, as applicable per security type.
+
+Exposure Breakdowns
+Sector
+Geography
+as of Sep 04, 2025
+% of Market Value
+
+Type	Fund
+Transportation
+42.12
+Utilities
+39.75
+Energy
+17.79
+Cash and/or Derivatives
+0.34
+Chart
+Bar chart with 4 bars.
+The chart has 1 X axis displaying categories.
+The chart has 1 Y axis displaying values. Range: 0 to 45.
+
+
+*****
+PYLD:
+PIMCO Multisector Bond Active Exchange-Traded Fund
+PYLD • Updated 09/05/2025
+Sector
+Multi sector
+Distribution Yield
+5.80%
+As of 07/31/2025
+30-Day SEC Yield   30-Day SEC Yield
+5.18%
+As of 09/05/2025
+NAV YTD Return
+7.25%
+As of 09/05/2025
+Market Price YTD Return
+7.08%
+As of 09/05/2025
+Documents
+Fund Fact Sheet
+Prospectus
+Overview
+Distributions
+Fees and Expenses
+Historical Prices
+Yields & Distributions
+Performance
+
+Morningstar Ratings
+Portfolio Composition
+All Documents
+Overview
+Fund Overview
+The Fund seeks to maximize yield and long term capital appreciation consistent with prudent investment management.
+
+Why Invest in This Fund
+Attractive yield
+Seeks to achieve attractive risk-adjusted yield through diversified “multisector” bond exposure.
+
+Holistic Approach to Portfolio Construction
+Obtain the full breadth of PIMCO’s market views and fixed income expertise in a single ETF.
+
+Fund Details
+DAILY NAV
+26.69 USD
+As of 09/05/2025
+
+One Day Return (NAV %)
+0.34%
+One Day Return (NAV USD)
+0.09
+Premium / DiscountMore Info
+0.07%
+Total Net Assets (USD)
+7,377,413,801.04
+Daily Trading Volume (dollar notional)
+65,706,386.32
+Quarterly Average Trading Volume (in USD)
+As of 06/30/2025
+
+55,538,815.60
+MARKET PRICEMore Info
+26.71 USD
+As of 09/05/2025
+
+One Day Return (market price %)
+0.26%
+One Day Return (market price USD)
+0.07
+30-Day Median Bid/Ask SpreadMore Info
+0.04%
+Shares Outstanding
+276,360,000
+Quarterly Average Trading Volume(shares)
+As of 06/30/2025
+
+2,134,194
+Yields & Distributions
+Distribution YieldDistribution Yield (At NAV)
+As of 07/31/2025
+
+5.80%
+30-Day SEC Yield Subsidized30-Day SEC Yield Subsidized
+As of 09/05/2025
+
+5.28%
+30-Day SEC Yield Unsubsidized30-Day SEC Yield
+As of 09/05/2025
+
+5.18%
+Est. Yield To MaturityMore Info
+As of 09/05/2025
+
+6.14%
+Fund Managers
+Daniel J. Ivascyn
+Group Chief Investment Officer
+Alfred Murata
+Portfolio Manager, Mortgage Credit
+Sonali Pier
+Portfolio Manager, Multi-Sector Credit
+Amit Arora
+Portfolio Manager, Investment Grade
+Mukundan Devarajan
+Quantitative Research Analyst
+Jason Duko
+Portfolio Manager
+Fund Information
+As of 09/05/2025
+
+Type
+Active
+Ticker
+PYLD
+Inception Date
+06/21/2023
+Effective MaturityEffective Maturity
+7.95 yrs
+Effective DurationEffective Duration
+4.40 yrs
+Number Of Holdings
+1539
+CUSIP
+72201R585
+Duration Category
+Intermediate
+Index Information
+Benchmark
+Bloomberg U.S. Aggregate Index
+Index Ticker
+LBUSTRUU
+Inception Date
+01/30/1976
+Rebalancing Frequency
+Monthly
+Annualized VolatilityAnnualized Volatility
+As of 07/31/2025
+
+5.01%
+Fees & Expenses
+Effective as of 10/31/2024
+
+Gross Expense Ratio
+0.80%
+Net Expense Ratio
+0.69%
+Adjusted Expense Ratio
+0.55%
+
+The Net Expense Ratio reflects a contractual fee waiver and/or expense reduction, which is in place through 10/31/2025 and renews automatically for a full year unless terminated by PIMCO in accordance with the terms of the agreement. See the Fund’s prospectus for more information.
+
+
+The Adjusted Expense Ratio is the same as the Net Expense Ratio, but also excludes certain investment expenses, such as interest expense from borrowings and repurchase agreements and dividend expense from investments on short sales, incurred directly by the Fund or indirectly through the Fund’s investments in underlying PIMCO Funds (if applicable), none of which are paid to PIMCO.
+
+
+Index Benchmark Description
+Bloomberg U.S. Aggregate Index represents securities that are SEC-registered, taxable, and dollar denominated. The index covers the U.S. investment grade fixed rate bond market, with index components for government and corporate securities, mortgage pass-through securities, and asset-backed securities. These major sectors are subdivided into more specific indices that are calculated and reported on a regular basis. It is not possible to invest directly in an unmanaged index.
+
+Historical Prices
+Historical Prices
+1 M
+3 M
+6 M
+YTD
+1 Yr
+All
+NAV Prices
+Line chart with 5 lines. The chart has 1 Y axis displaying values. Range: 25.5 to 27. The chart has 1 X axis displaying categories. The categories are years.
+
+End of interactive chart.
+Premium/Discount
+Premium/Discount
+
+2025 Q3
+NAV Prices
+Line chart with 5 lines. The chart has 1 Y axis displaying values. Range: 0 to 0.25. The chart has 1 X axis displaying categories. The categories are years.
+
+End of interactive chart.
+ 	First Quarter 2025	Second Quarter 2025	Calendar Year 2025
+Daily Traded at Premium
+60	57	117
+Daily Traded at NAV
+0	2	2
+Daily Traded at Discount
+0	3	3
+Yields & Distributions
+Distributions30 Day Sec YieldEstimated Yield To Maturity
+Distributions
+All data as of 09/05/2025
+1 M
+3 M
+6 M
+YTD
+1 Yr
+All
+Chart
+Table
+Export All Time
+Chart
+Bar chart with 4 data series.
+The chart has 1 X axis displaying categories.
+The chart has 1 Y axis displaying values. Range: 0 to 0.15.
+Dividends
+Long-term cap. gains
+Short-term cap. gains
+Special Distributions
+01 Jul
+01 Aug
+02 Sep
+0
+0.025
+0.05
+0.075
+0.1
+0.125
+0.15
+End of interactive chart.
+Show Yields & Distributions Disclosures
+Performance
+Average Annual ReturnsCumulative ReturnsGrowth of 10K
+Average Annual Returns
+All data as of 07/31/2025
+
+Month End
+Chart
+Bar chart with 5 data series.
+The chart has 1 X axis displaying categories.
+The chart has 1 Y axis displaying values. Range: 0 to 10.
+PIMCO Multisector Bond Active Exchange-Traded Fund (at NAV)
+Bloomberg U.S. Aggregate Index
+1 yr
+Since Inception
+0.00 %
+2.00 %
+4.00 %
+6.00 %
+8.00 %
+10.00 %
+
+
+End of interactive chart.
+ 	1 yr	Since Inception
+NAV Total Returns (After Fees)
+7.65	8.45
+Market Price Returns
+7.51	8.48
+Bloomberg U.S. Aggregate Index
+3.38	3.78
+Performance Difference (Fund NAV Vs. Index)
+4.27	4.67
+Performance Difference (Fund Market Price Vs. Index)
+4.13	4.70
+Standard Deviation Standard Deviation
+3.38	5.26
+After Tax Pre-Liquidation After Tax Pre-Liquidation
+5.05	6.05
+After Tax Post-Liquidation After Tax Post-Liquidation
+4.47	5.42
+Performance quoted represents past performance. Past performance is not a guarantee or a reliable indicator of future results. Current performance may be lower or higher than performance shown. Investment return and principal value will fluctuate, so that Fund shares may be worth more or less than their original cost when sold. Performance data current to the most recent month-end is available by clicking HERE or call 888-400-4ETF.
+
+
+Growth of $10,000 is calculated at NAV and assumes that all dividend and capital gain distributions were reinvested. It does not take into account sales charges or the effect of taxes. Results are not indicative of future performance.
+
+
+See below for a description of how market price is determined.
+
+Differences in the Fund’s performance versus the index and related attribution information with respect to particular categories of securities or individual positions may be attributable, in part, to differences in the pricing methodologies used by the Fund and the index.
+
+There is no assurance that any fund, including any fund that has experienced high or unusual performance for one or more periods, will experience similar levels of performance in the future. High performance is defined as a significant increase in either 1) a fund’s total return in excess of that of the fund’s benchmark between reporting periods or 2) a fund’s total return in excess of the fund’s historical returns between reporting periods. Unusual performance is defined as a significant change in a fund’s performance as compared to one or more previous reporting periods.Read More
+
+Morningstar Ratings
+Morningstar Ratings
+Morningstar Ratings
+Morningstar needs three years of history before assigning a rating.
+Portfolio Composition
+Top 10 Exposure
+As of 09/05/2025
+
+All Holdings
+Description	% of assets	Security Type	Coupon	Maturity
+FNMA TBA 30 YR 6.5 SINGLE FAMILY MORTGAGE	12.71	MORTGAGE BACKED SECURITIES	6.50	10/15/2054
+FNMA TBA 30 YR 6 SINGLE FAMILY MORTGAGE	12.29	MORTGAGE BACKED SECURITIES	6.00	10/15/2054
+REPO BANK AMERICA REPO	9.77	SHORT TERM INSTRUMENT	4.45	09/09/2025
+FNMA TBA 30 YR 4.5 SINGLE FAMILY MORTGAGE	6.42	MORTGAGE BACKED SECURITIES	4.50	10/14/2055
+FNMA TBA 30 YR 5 SINGLE FAMILY MORTGAGE	5.05	MORTGAGE BACKED SECURITIES	5.00	10/14/2055
+REPO BANK AMERICA REPO	3.36	SHORT TERM INSTRUMENT	4.40	09/12/2025
+FNMA TBA 30 YR 6.5 SINGLE FAMILY MORTGAGE	3.18	MORTGAGE BACKED SECURITIES	6.50	11/15/2054
+FNMA TBA 30 YR 6 SINGLE FAMILY MORTGAGE	2.05	MORTGAGE BACKED SECURITIES	6.00	11/15/2054
+FNMA TBA 30 YR 4 SINGLE FAMILY MORTGAGE	1.54	MORTGAGE BACKED SECURITIES	4.00	10/14/2055
+TSY INFL IX N/B 07/34 1.875	1.38	GOVERNMENT	1.88	07/15/2034
+The Top 10 Exposures represent the Fund’s ten largest exposures excluding currency positions. Current holdings are subject to risk. Holdings are subject to change at any time.
+Maturity Distribution (%)
+As of 07/31/2025
+0-1 yrs
+0.04
+1-3 yrs
+0.00
+3-5 yrs
+56.86
+5-10 yrs
+40.63
+10-20 yrs
+2.25
+20+ yrs
+0.22
+Effective Maturity (yrs)
+7.99
+Interest Rate & Sector Exposures
+As of 07/31/2025
+Interest Rate Exposures
+Effective DurationEffective Duration Tooltip
+4.44
+Bull Market DurationBull Market Duration Tooltip
+3.90
+Bear Market DurationBear Market Duration Tooltip
+4.69
+Sector Exposures
+Mortgage Spread DurationMortgage Spread Duration Tooltip
+2.92
+Corporate Spread DurationCorporate Spread Duration Tooltip
+2.95
+Emerging Market DurationEmerging Market Duration Tooltip
+0.29
+Sector Allocation Duration %
+As of 07/31/2025
+US Government Related
+7.75
+Securitized
+54.57
+Invest. Grade Credit
+18.92
+High Yield Credit
+6.31
+Non-USD Developed
+5.95
+Emerging Markets
+5.29
+Other
+0.28
+Net Other Short Duration Instruments
+0.91
+Sector Allocation Market Value %
+As of 07/31/2025
+US Government Related
+10.98
+Securitized
+71.45
+Invest. Grade Credit
+16.79
+High Yield Credit
+21.60
+Non-USD Developed
+7.55
+Emerging Markets
+8.08
+Other
+0.68
+Net Other Short Duration Instruments
+-37.13
+Credit Rating S & P
+As of 09/05/2025
+Government
+4.24
+AAA
+3.09
+AA+
+0.58
+AA
+0.84
+AA-
+0.12
+A+
+0.05
+A
+0.96
+A-
+0.67
+BBB+
+1.09
+BBB
+1.39
+BBB-
+3.62
+BB+
+1.03
+BB
+1.29
+BB-
+0.73
+B+
+0.94
+B
+0.96
+B-
+0.31
+CCC+
+0.02
+CCC
+0.24
+CC
+0.26
+D
+0.27
+Not Rated Corporates
+1.55
+Not Rated Others
+75.34
+Country Exposure Breakdown
+As of 09/05/2025
+Countries	Market Value Weight	Duration Weight
+United States	181.81	80.30
+United Kingdom	6.44	6.37
+Australia	3.80	3.70
+Brazil	2.54	1.09
+Mexico	1.48	0.85
+South Africa	1.18	1.50
+Peru	0.87	1.12
+Canada	0.86	0.62
+Italy	0.71	1.13
+Colombia	0.59	0.67
+
+*****
+PIMIX:
+PIMCO Income Fund
+PIMIX • Updated 09/05/2025
+Seeks to maximize current income; long-term capital appreciation is a secondary objective
+
+
+INST USD
+Daily Nav (USD)
+10.91
+As of 09/05/2025
+Daily YTD RETURN
+8.16%
+As of 09/05/2025
+Asset Class
+Fixed Income, Multi Sector
+Total Fund Assets (USD)
+189,610 MM
+As of 07/31/2025
+Fund Inception Date
+03/30/2007
+Overall Morningstar Rating™
+Rated 5 Stars
+As of 08/31/2025
+Documents
+Fund Fact Sheet
+Prospectus
+Monthly Commentaries
+Overview
+Distributions
+Fees and Expenses
+Performance
+
+Ratings & Rankings
+Portfolio Composition
+All Documents
+Overview
+Fund Overview
+Targets high, consistent income
+Designed to provide investors with steady and attractive income, the fund utilizes a flexible, multi-sector approach, employing our robust analytical capabilities and global sector expertise to help temper the risks of income investing.
+
+Why Invest in This Fund
+Pursue our highest-conviction ideas across global fixed income sectors in any market environment.
+
+
+Aim to increase resiliency and income, with a focus on quality assets.
+
+
+Take a flexible approach in seeking to capitalize on opportunities, as economic and market conditions change.
+
+Fund Details
+Daily NAV
+10.91 USD
+As of 09/05/2025
+
+Daily Change
+0.04
+Daily YTD Return
+8.16%
+Total Net Assets
+189,610 MM USD
+As of 07/31/2025
+
+One Day Return
+0.42%
+Yields & Distributions
+Historical Prices & Distributions
+Distribution Yield (At NAV)Distribution Yield (At NAV)
+As of 07/31/2025
+
+6.04%
+Latest Dividend Distribution (USD Share)Latest Dividend Distribution
+As of 08/29/2025More Info
+0.055000000
+30-Day SEC Yield Unsubsidized30-Day SEC Yield
+As of 07/31/2025
+
+4.90%
+Dividend Distribution (YTD)Dividend Distribution
+As of 08/29/2025
+
+0.440000030
+Fund Managers
+Daniel J. Ivascyn
+Group Chief Investment Officer
+Alfred Murata
+Portfolio Manager, Mortgage Credit
+Joshua Anderson
+Portfolio Manager, Asset-Backed Securities
+Key Fund Information
+Benchmark
+Bloomberg U.S. Aggregate Index
+Dividend Frequency
+Monthly with Daily Accrual
+Ticker
+PIMIX
+Share Class Inception
+03/30/2007
+CUSIP
+72201F490
+Fees & Expenses
+Effective as of 08/01/2025
+
+Gross Expense Ratio
+0.54%
+Adjusted Expense Ratio
+0.50%
+
+The Adjusted Expense Ratio excludes certain investment expenses, such as interest expense from borrowings and repurchase agreements and dividend expense from investments on short sales, incurred directly by the Fund or indirectly through the Fund’s investments in underlying PIMCO Funds (if applicable), none of which are paid to PIMCO.
+
+
+Benchmark Description
+Bloomberg U.S. Aggregate Index represents securities that are SEC-registered, taxable, and dollar denominated. The index covers the U.S. investment grade fixed rate bond market, with index components for government and corporate securities, mortgage pass-through securities, and asset-backed securities. These major sectors are subdivided into more specific indices that are calculated and reported on a regular basis. It is not possible to invest directly in an unmanaged index.
+
+
+Performance
+Average Annual ReturnsCumulative ReturnsCalendar Year ReturnsGrowth of 10K
+Average Annual Returns
+All data as of 09/05/2025
+
+Daily
+Chart
+Bar chart with 5 data series.
+The chart has 1 X axis displaying categories.
+The chart has 1 Y axis displaying values. Range: 0 to 10.
+PIMCO Income Fund (at NAV)
+1 yr
+3 yr
+5 yr
+10 yr
+Since Inception
+0.00 %
+2.00 %
+4.00 %
+6.00 %
+8.00 %
+10.00 %
+
+End of interactive chart.
+ 	1 yr	3 yr	5 yr	10 yr	Since Inception
+PIMCO Income Fund (at NAV)
+7.99	7.41	4.20	4.83	6.91
+Performance quoted represents past performance. Past performance is not a guarantee or a reliable indicator of future results. Investment return and the principal value of an investment will fluctuate. Shares may be worth more or less than original cost when redeemed. Current performance may be lower or higher than performance shown. For performance current to the most recent month-end, visit www.pimco.com or call (888) 87-PIMCO.
+
+
+Total return performance does not reflect the deduction of taxes that a shareholder would pay on fund distributions or the redemption of fund shares. The minimum initial investment for Institutional class shares is $1 million; however, it may be modified for certain financial intermediaries who submit trades on behalf of eligible investors.
+
+
+Daily YTD return is from the most recent calendar year end.
+
+Growth of $10,000 is calculated at NAV and assumes that all dividend and capital gain distributions were reinvested. It does not take into account sales charges or the effect of taxes. Results are not indicative of future performance.
+
+
+Differences in the Fund’s performance versus the index and related attribution information with respect to particular categories of securities or individual positions may be attributable, in part, to differences in the pricing methodologies used by the Fund and the index.
+
+There is no assurance that any fund, including any fund that has experienced high or unusual performance for one or more periods, will experience similar levels of performance in the future. High performance is defined as a significant increase in either 1) a fund’s total return in excess of that of the fund’s benchmark between reporting periods or 2) a fund’s total return in excess of the fund’s historical returns between reporting periods. Unusual performance is defined as a significant change in a fund’s performance as compared to one or more previous reporting periods.
+
+Certain Funds may offer a share class with an inception date which is different than the inception date of the Fund. For the periods prior to the inception date of a share class, performance information is based on the performance of the Fund’s oldest class shares, adjusted to reflect the fees and expenses paid by that class of shares.Read More
+
+
+Ratings & Rankings
+Morningstar RatingsLipper Rankings
+Morningstar Ratings
+All data as of 08/31/2025
+Fund Name
+PIMCO Income Fund
+Morningstar Category
+Multisector Bond
+OVERALL
+Rated 5 Stars
+(360 funds)
+3 YEAR
+Rated 4 Stars
+(360 funds)
+5 YEAR
+Rated 4 Stars
+(315 funds)
+10 YEAR
+Rated 5 Stars
+(222 funds)
+Monthly Overall Morningstar Rating for PIMCO Income Fund, as of 08/31/2025 rated against 360 funds based on risk-adjusted returns. Category: Multisector Bond.Read More
+
+Portfolio Composition
+As of 07/31/2025
+Duration in Years
+Effective Duration (yrs)
+5.48
+Risk Characteristics (Trailing 3 Years)
+Standard Deviation
+5.67
+Sharpe Ratio
+0.26
+Information Ratio
+1.84
+Tracking Error
+2.35
+Maturity %
+0-1 yrs
+0.03
+1-3 yrs
+0.00
+3-5 yrs
+37.56
+5-10 yrs
+62.20
+10-20 yrs
+3.35
+20+ yrs
+-3.14
+Effective Maturity (yrs)
+7.66
+Sector Allocation - Duration in Years
+US Government Related
+0.82
+Securitized
+3.69
+Invest. Grade Credit
+0.14
+High Yield Credit
+0.05
+Non-USD Developed
+0.33
+Emerging Markets
+0.40
+Other
+0.03
+Net Other Short Duration Instruments
+0.02
+
+*****
+GLD:
+SPDR® Gold Shares GLD Fact Sheet Gold As of 09/30/2021 Objective The investment objective of the Trust is for SPDR® Gold Shares (GLD®) to reflect the performance of the price of gold bullion, less the Trust’s expenses. Total Return (As of 09/30/2021) Cumulative   QTD YTD NAV (%) Market Value (%) LBMA Gold Price PM(%)-1.25-8.12 The Price of Gold The spot price for gold bullion is determined by market forces in the 24-hour global over-the-counter (OTC) market for gold. The OTC market accounts for most global gold trading, and prices quoted reflect the information available to the market at any given time. The price, holdings, and net asset value of the Gold Shares, as well as market data for the overall gold bullion market, can be tracked daily at spdrgoldshares.com. Annualized   1 Year 3 Year 5 Year 10 Year-8.01-0.85-7.93-7.28-1.15-7.67-7.64 13.18 5.25 0.33 13.34 5.50 0.38 13.64 5.67 0.73 Gross Expense Ratio‡ (%) 0.40 Fund Information Inception Date Intraday NAV Ticker Index Ticker 11/18/2004 GLDIV N/A Key Facts Ticker Symbol CUSIP Exchange Short Sale Eligible Margin Eligible GLD 78463V107 NYSE ARCA EXCHANGE Yes Yes Performance quoted represents past performance, which is no guarantee of future results. Investment return and principal value will fluctuate, so you may have a gain or loss when shares are sold. Current performance may be higher or lower than that quoted. Visit ssga.com for most recent month-end performance. The market price used to calculate the Market Value return is the midpoint between the highest bid and the lowest offer on the exchange on which the shares of the Fund are listed for trading, as of the time that the Fund’s NAV is calculated. If you trade your shares at another time, your return may differ. Effective March 20, 2015, the SPDR Gold Trust (GLD) adopted the LBMA Gold Price PM as the reference benchmark price of gold in calculating the Net Asset Value (NAV) of the Trust. Prior to that date, the Trust used the London PM Fix as the reference benchmark price in calculating the NAV. ‡The gross expense ratio is the Trust’s annual operating expense ratio.  See the Trust’s most recent prospectus for a definition of Trust expenses. Management Sponsor Gold Custodian Trustee Marketing Agent World Gold Trust Services, LLC HSBC Bank plc BNY Mellon Asset Servicing, a division of The Bank of New York Mellon State Street Global Advisors Funds Distributors, LLC 1Advantages Easily Accessible Secure Transparent Cost Effective Liquid Flexible Listed on the NYSE Arca. The Gold Shares represent fractional, undivided interests in the Trust, the sole assets of which are physical gold bullion and, from time to time, cash. There exists a 24-hour global over-the-counter market for gold bullion, which provides readily available market data. The price, holdings and net asset value of the Gold Shares, as well as market data for the overall gold bullion market, can be tracked daily at spdrgoldshares.com. For many investors, the transaction costs related to the Shares are expected to be lower than the costs associated with the purchase, storage and insurance of physical gold. Structure allows for baskets to be created and redeemed according to market demand, creating liquidity. Gold Shares are listed on the NYSE Arca (Ticker: GLD) and trade the same way ordinary stocks do. It is possible to buy or sell Gold Shares continuously throughout the trading day on the exchange at prices established by the market. Additionally, it is possible to place market, limit and stop-loss orders for Gold Shares.
+
+*****
+COM:
+Direxion Auspice Broad Commodity Strategy ETF
+The Direxion Auspice Broad Commodity Strategy ETF seeks investment results, before fees and expenses, that track the Auspice Broad Commodity Index. There is no guarantee the fund will achieve its stated investment objective.
+
+COM
+NAV (Net Asset Value)
+$28.16
+As of Sep 05, 2025
+1 Day NAV change
+$-0.07(-0.24%)
+As of Sep 05, 2025
+COM
+Pricing & Performance
+Index Information
+Distributions
+Documents
+How to Buy
+Intra-day Value
+COM.IV
+Daily NAV
+$28.16
+Daily Market Price
+$28.14
+Expense Ratio
+(gross/net %)
+0.72 / 0.72*
+Daily Volume
+15,100
+Security Identifier
+25460E307
+Inception Date
+Mar 30, 2017
+Strategy & Benefits
+Strategy Description
+
+A 40 Act, non K-1 generating approach to commodity investing
+Exposure to 12 commodities that can individually be long or flat (if a short signal is triggered the position is moved to cash)
+The ability to make position changes intra-month based on trends
+Month-end review where the position size of each component is modified if volatility exceeds certain predetermined risk levels
+A “smart” contract roll approach designed to select cost effective futures contracts to roll into upon expiration of current contract.
+Why Consider Long/Flat Commodities?
+
+Most traditional commodity funds can only benefit if commodity prices rise. However, these long-only commodity strategies have shown to be inconsistent over time because:
+
+Commodity returns are typically cyclical and sporadic
+Individual commodity sub-sectors tend to perform dissimilarly in different market environments
+Significant draw-downs can be damaging to the long-term performance of a portfolio
+Within the inherently volatile commodity markets, a long/flat approach is potentially more adaptive to whip-sawing market conditions.
+
+Fund Details
+Component Sectors & Current Positioning
+
+Agriculture	Position (Long/Flat)
+Corn	Flat
+Cotton	Flat
+Soybeans	Flat
+Sugar	Flat
+Wheat	Flat
+Energy	
+Crude Light	Long
+Heating Oil	Long
+Natural Gas	Flat
+RBOB Gasoline	Long
+Metals	
+Gold	Long
+Copper	Long
+Silver	Long
+All data as of 9/5/2025 and is subject to change at any time and are not recommendations to buy or sell any security. When the positions within the various components are flat, they will be invested in cash and U.S. Treasury Bills. Individual components may vary based on risk levels.
+
+Pricing & Performance
+NAV and Market Price information as of 09/05/2025.
+
+COM Direxion Auspice Broad Commodity Strategy ETF
+Net Asset Value (NAV)
+$28.16
+Nav
+$-0.07
+Change
+-0.24%
+Change
+Market Price Closing
+$28.14
+Market
+$-0.05
+Change
+-0.18%
+Change
+Premium / Discount
+$-0.02
+Change from Last Day Trading
+Premium/Discount tool
+Growth of Hypothetical $10,000
+Historical Market Prices
+Toggle lines using the buttons below
+
+
+COM
+
+Benchmark
+YTD6M1Y3Y5YSince Inception
+MonthlyQuarterly
+1M	3M	YTD	1Y	3Y	5Y	10Y	Since
+Inception
+(03/30/2017)	Expense Ratio*
+(Gross / Net%)
+COM NAV	
+1.09
+-0.10
+0.72
+1.27
+1.58
+9.86
+—
+5.14
+0.72 / 0.72*
+COM Market Close	
+0.75
+—
+—
+—
+—
+—
+—
+—
+0.72 / 0.72*
+As of August 31, 2025
+
+The Primary Listing Exchange is the NYSE Arca, Inc.
+
+*The Fund’s adviser, Rafferty Asset Management, LLC (“Rafferty”) has entered into an Operating Services Agreement with the Fund. Under this Operating Services Agreement, Rafferty has contractually agreed to pay all expenses of the Fund as long as it is the advisor of the Fund other than the following: management fees, Rule 12b-1 distribution and/or service fees, taxes, swap financing and related costs, dividends or interest on short positions, other interest expenses, brokerage commissions, expenses incurred in connection with any merger or reorganization, acquired fund fees and expenses, and extraordinary expenses. If these expenses were included, the expense ratio would be higher.
+
+The performance data quoted represents past performance. Past performance does not guarantee future results. The investment return and principal value of an investment will fluctuate. An investor’s shares, when redeemed, may be worth more or less than their original cost. Current performance may be lower or higher than the performance quoted. Returns for performance under one year are cumulative, not annualized. For the most recent month-end performance please visit the funds website at www.direxioninvestments.com.
+
+Short-term performance, in particular, is not a good indication of the fund’s future performance, and an investment should not be made based solely on returns. Because of ongoing market volatility, fund performance may be subject to substantial short-term changes. For additional information, see the fund’s prospectus.
+
+Index Information
+The Auspice Broad Commodity Index (ABCERI) is a rules-based long/flat broad commodity index that seeks to capture the majority of the commodity upside returns, while seeking to mitigate downside risk. The Index is made up of a diversified portfolio of 12 commodities futures contracts (Silver, Gold, Copper, Heating Oil, Natural Gas, Gasoline, Crude Oil, Wheat, Soybeans, Corn, Cotton, and Sugar) that based on price trends can individually be Long or Flat (in Cash). One cannot invest directly in an index.
+
+Index Comparison
+Calendar Year Total Returns %
+Return/Risk Characteristics of ABCERI vs Notable Broad Commodity Indices
+
+ABCERI	S&P GSCI4	BCOM5	DBC CI6
+2011	0.54	-1.23	-13.37	-2.44
+2012	-1.29	-0.34	-1.13	3.77
+2013	-3.27	-1.28	-9.58	-6.60
+2014	-8.97	-33.08	-17.04	-26.45
+2015	-13.45	-32.90	-24.70	-26.72
+2016	8.55	11.00	11.40	19.15
+2017	-7.94	4.78	0.75	5.18
+2018	-0.98	-15.43	-12.92	-12.84
+2019	-3.06	15.17	5.44	10.60
+2020	5.92	-23.97	-3.49	-7.85
+2021	28.24	40.29	27.05	42.53
+2022	8.71	23.52	13.79	18.86
+2023	-6.02	-9.11	-12.58	-10.10
+2024	1.67	3.79	0.12	-2.28
+Data Range: 10/01/2011 – 12/31/2024.
+
+Annualized Return1	0.65	-2.82	-0.67	0.49
+Total Return	7.38	-27.00	-7.12	5.58
+Annualized Std. Deviation2	8.37	22.29	14.52	17.95
+Max Drawdown	-31.07%	-75.53%	-53.21%	-56.42%
+Date Range: 10/01/2010 – 06/30/2025
+
+1Annualized Return and past performance does not guarantee future results. Index returns and correlations are historical and are not representative of any Fund performance. Total returns of the Index include reinvested dividends. One cannot invest directly in an index.
+
+2Standard Deviation is a measure of the dispersion of a set of data from its mean.
+
+3Maximum Drawdown is the greatest percent decline from a previous high.
+
+4S&P GSCI Excess Return Index (S&P GSCI), a composite index of commodity sector returns representing an unleveraged, long-only investment in commodity futures that is broadly diversified across the spectrum of commodities
+
+5Bloomberg Commodity Excess Return Index (BCOM), a broadly diversified index that allows investors to track 19 commodity futures through a single, simple measure.
+
+6Deutsche Banc Liquid Commodity Optimum Yield Index (DBC CI), an index composed of futures contracts on 14 of the most heavily-traded and important physical commodities in the world.
+
+ 
+
+Distributions
+Record Date	Ex Date	Pay Date	Income Dividend	Short-Term Capital Gain	Long-Term Capital Gain	Expand
+06/24/2025	06/24/2025	07/01/2025	0.25405	—	—	
++
+03/25/2025	03/25/2025	04/01/2025	0.25428	—	—	
+12/23/2024	12/23/2024	12/31/2024	0.15928	—	—	
+09/24/2024	09/24/2024	10/01/2024	0.32978	—	—	
+
+*****
+DBMF:
+iMGP DBi Managed Futures Strategy ETF DBMF Performance (%) as of 6/30/25 Timeframe Fund NAV Fund Price Bloomberg US Aggregate Bond Index SG CTA Index Morningstar Systematic Trend Category QTD 2.51 2.54 1.21-5.22-3.84 YTD-0.14-0.29 4.02-7.61-5.78 1 Year-9.54-9.63 6.08-11.73-10.76 3 Years-1.61-1.96 2.55-3.23-3.22 5 Years 6.82 6.62-0.73 4.32 2.88 10 Years---------- Since inception 6.68 6.64 1.22 3.49 2.26 Performance for periods greater than one year are annualized. Shares of ETFs are bought and sold at market price (not NAV) and are not individually redeemed from the fund. Any applicable brokerage commissions will reduce returns. Performance data quoted represents past performance and does not guarantee future results. Index performance is not illustrative of fund performance. An investment cannot be made directly in an index. The investment return and principal value of an investment will fluctuate so that an investor's shares, when redeemed, may be worth more or less than their original cost. Current performance of the fund may be lower or higher than the performance quoted. To obtain the performance of the funds as of the most recently completed calendar month, please visit www.imgpfunds.com. Measures of risk Annualized risk measures Fund NAV Fund Price Bloomberg US Aggregate Bond Index SG CTA Index Morningstar Systematic Trend Category Volatility 11.97% 11.76% 6.37% 9.54% 8.51% Sharpe ratio 0.33 0.34-0.56 0.15 0.01 Annualized risk measures Fund vs. Bloomberg US Aggregate Bond Index Fund vs. SG CTA Index Fund vs. Morningstar Systematic Trend Category Tracking error 16.56% 5.88% 5.84% Information ratio 0.46 0.43 0.68 Beta-1.11 1.10 1.25 Correlation-0.59 0.87 0.89 Annualized risk measures are calculated metrics between the respective reference indexes and the fund. Annualized risk measures based on 5-year monthly returns or 3-year returns if less than 5-year history or 1-year if less than 3-year history. About the fund Performance data Data as of 6/30/25, Hypothetical Growth of $100 The iMGP DBi Managed Futures Strategy ETF (the “Fund”) seeks long-term capital appreciation Targets pre-fee returns of the largest Commodity Trading Advisor Hedge Funds by assets A strategy that seeks to perform regardless of the direction of equity markets Exposure built through some of the most liquid US-based futures contracts Optimized portfolio turnover through weekly rebalancing frequency and low transaction costs Contact To learn more, contact our team at (323) 372-1960 or team@imgpfunds.com or visit imgpfunds.com. Fund facts Fund manager DBi Inception date 5/7/19 Fund size 1,168.0 mn CUSIP 56170L828 Ticker DBMF Expense ratio 0.85% Total positions 10 Overall Morningstar Rating™ Among 62 systematic trend funds based on risk-adjusted return. (Data as of 6/30/25)iMGP DBi Managed Futures Strategy ETF Portfolio Breakdown Holdings and sector allocations are subject to change. Asset Class Exposure Fund Sub-Advisors DBi The New York based team of DBi has conducted over a decade of proprietary research into the drivers of hedge fund performance. The firm is an innovator in the liquid alternative space with its first factor based product launched in May 2007. Andrew Beer Mathias Mamou-Mani Portfolio Constituents Security Notional Exposure US 2YR NOTE (CBT) SEP25 84.6% TREASURY BILL 80.0% EURO FX CURR FUT SEP25 37.4% US 10YR NOTE (CBT)SEP25 19.1% S+P500 EMINI FUT SEP25 8.9% MSCI EAFESEP25 7.3% MSCI EMGMKT SEP25 5.6% WTI CRUDEFUTURE SEP25 3.4% GOLD 100 OZ FUTR AUG25 2.6% JPN YEN CURR FUT SEP25-2.1% US LONG BOND(CBT) SEP25-10.3% Main Contributors to Performance Total Effect Commodities 2.0 US Equities 0.8 Non-US Equities 0.1 Fixed Income-0.1 Currencies-1.0
+
+*****
+SWVXX:
+Schwab Prime Advantage Money Fund - Investor
+Type: Mutual Funds Symbol: SWVXX Net Expense Ratio: 0.340%
+Summary
+Objective
+The fund’s goal is to seek the highest current income consistent with stability of capital and liquidity.
+
+Highlights
+Seeks to generate current income while maintaining liquidity
+Invests in high-quality, short-term money market investments issued by U.S. and foreign issuers
+Actively managed, benefiting from extensive credit research and professional money management
+Documents
+SWVXX Prospectus and Other Regulatory Documents
+SWVXX & SNAXX Fact Sheet
+View all documents
+Schwab Asset Management is pleased to announce an update to the dividend distribution date for most of the Schwab Money Funds effective October 2024. Click here for more information.
+
+Jump to section:
+Fund Details
+Performance
+Portfolio
+Distributions
+NAV
+Liquidity
+Net Flows
+Documents
+
+Fund Details
+Fund Profile
+Fund Inception	04/30/1992
+Total Net Assets
+As of 09/05/2025
+$245,146,973,546.88
+Shares Outstanding
+As of 09/05/2025
+245,145,160,666
+Daily Net Shareholder Flows^	$168,074,437.47
+Daily Liquid Assets^	42.56%
+Weekly Liquid Assets^	55.14%
+NAV
+As of 09/05/2025
+$1.00
+Market-Based NAV^
+As of 09/05/2025
+$1.0002
+Daily Distribution	$0.000342567
+Management Style	Active
+Morningstar Category	Prime Money Market
+Product Type	Retail
+The regulatory requirement to maintain Daily Liquid Assets does not apply to tax-exempt money market funds.
+
+^ For further information on Net Shareholder Flows, Liquid Assets, and Market-Based NAV, please visit our Data Point Definitions & Glossary
+Yields
+7-Day Yield (with waivers)
+As of 09/05/2025
+4.15%
+7-Day Yield (without waivers)
+As of 09/05/2025
+4.15%
+The 7-Day Yield is the average income paid out over the previous seven days assuming interest income is not reinvested and it reflects the effect of all applicable waivers.  Absent such waivers, the fund’s yield would have been lower.  The 7-Day Yield (without waivers) is the yield without the effect of all applicable waivers. Schwab Government Money Market ETF is not subject to any contractual, or voluntary fee waivers.
+
+Fees & Minimum
+Gross Expense Ratio	0.350%
+Minimum Initial Investment	No Minimum
+Net Expense Ratio †	0.340%
+Fund Characteristics
+Weighted Average Maturity
+As of 09/05/2025
+29.52 days
+Weighted Average Life
+As of 09/05/2025
+54.94 days
+
+Performance
+Total Return
+Monthly
+Quarterly
+Monthly
+08/31/2025
+SWVXX Total Returns, Monthly
+Bar chart with 2 data series.
+View as data table, SWVXX Total Returns, Monthly
+The chart has 1 X axis displaying categories.
+The chart has 1 Y axis displaying Values. Data ranges from 0.35 to 4.69.
+End of interactive chart.
+Description	Cumulative Returns (%)	Annualized Returns (%)
+1 Month	3 Month	YTD	1 Year	3 Year	5 Year	10 Year	Inception
+SWVXX
++0.35	+1.05	+2.80	+4.41	+4.69	+2.89	+1.97	+2.54
+Annualized returns for periods 1 yr+/cumulative returns for periods less than 1 yr.
+
+Performance data quoted represents past performance and is no guarantee of future results. Investment returns and principal value will fluctuate so that an investor's shares, when sold or redeemed, may be worth more or less than the original cost. Current performance may be lower or higher than the performance quoted.

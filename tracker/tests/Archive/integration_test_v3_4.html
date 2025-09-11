@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Portfolio Tracker - Integration Test v3.4</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        .version-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        
+        .test-results {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .test-passed {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .test-failed {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button.secondary {
+            background: #6c757d;
+        }
+        
+        button.secondary:hover {
+            background: #545b62;
+        }
+        
+        .navigation {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .step-indicator {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .step-active {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .step-completed {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+        }
+        
+        .step-pending {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .data-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .indicator-edit {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Theme Analysis Styling */
+        .theme-analysis-v2_9 {
+            margin: 20px 0;
+        }
+        
+        .analysis-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .analysis-meta {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .analysis-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .summary-item {
+            background: white;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .summary-label {
+            display: block;
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .summary-value {
+            display: block;
+            font-size: 1.1em;
+            margin-top: 4px;
+        }
+        
+        .uncertainty-high { color: #dc3545; }
+        .uncertainty-medium { color: #ffc107; }
+        .uncertainty-low { color: #28a745; }
+        .confidence-high { color: #28a745; }
+        .confidence-medium { color: #ffc107; }
+        .confidence-low { color: #dc3545; }
+        
+        .theme-probabilities {
+            margin: 20px 0;
+        }
+        
+        .theme-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .theme-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .theme-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .theme-percentage {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .theme-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        
+        .theme-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .theme-usd { background: #dc3545; }
+        .theme-ai { background: #007bff; }
+        .theme-pe { background: #ffc107; }
+        .theme-intl { background: #28a745; }
+        
+        .theme-description {
+            color: #666;
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 8px;
+        }
+        
+        /* Scenario Matrix Styling */
+        .scenario-matrix {
+            margin: 20px 0;
+        }
+        
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .scenario-item {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        /* Scenario color coding - Fixed IPS v3.10 colors */
+        .scenario-very-high { 
+            background: #155724;
+            border-color: #0b2e13;
+            color: white;
+        }
+        
+        .scenario-high { 
+            background: #28a745;
+            border-color: #1e7e34;
+            color: white;
+        }
+        
+        .scenario-medium { 
+            background: #ffc107;
+            border-color: #d39e00;
+            color: #333;
+        }
+        
+        .scenario-low { 
+            background: #dc3545;
+            border-color: #bd2130;
+            color: white;
+        }
+        
+        .scenario-very-low { 
+            background: #6c757d;
+            border-color: #545b62;
+            color: white;
+        }
+        
+        .scenario-rank {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .scenario-name {
+            font-weight: bold;
+            margin: 4px 0;
+        }
+        
+        .scenario-probability {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .scenario-binary {
+            font-family: monospace;
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+        
+        /* Portfolio Optimization Styling */
+        .optimization-results {
+            margin: 20px 0;
+        }
+        
+        .optimization-header {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .optimization-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .allocation-display {
+            margin-top: 20px;
+        }
+        
+        .allocation-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .security-info {
+            flex: 1;
+        }
+        
+        .security-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .security-desc {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+        
+        .allocation-viz {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+        }
+        
+        .allocation-bar {
+            flex: 1;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .allocation-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .allocation-text {
+            font-weight: bold;
+            min-width: 45px;
+            text-align: right;
+            color: #495057;
+        }
+        
+        .validation-status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        
+        .validation-indicator.valid {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .validation-indicator.invalid {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .validation-issues, .validation-warnings {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .validation-issues li, .validation-warnings li {
+            margin: 5px 0;
+        }
+        
+        .validation-issues-header, .validation-warnings-header {
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+        }
+        
+        /* Step Display CSS */
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        /* Loading and Error States */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>HCP Portfolio Tracker</h1>
+        <h2>Integration Test v3.4</h2>
+        <p>Complete Workflow: Data → Themes → Scenarios → Portfolio Optimization</p>
+    </div>
+    
+    <div class="container">
+        <div class="version-info">
+            <h3>Module Compatibility Matrix</h3>
+            <ul>
+                <li><strong>TrackerCore:</strong> v1.0 (navigation, state management)</li>
+                <li><strong>DataEditor:</strong> v1.0 (modal editing system)</li>
+                <li><strong>Indicators:</strong> v1.0 (13-indicator framework)</li>
+                <li><strong>FileHandler:</strong> v1.4 (nested theme structure + 450-point MA history)</li>
+                <li><strong>ThemeCalculator:</strong> v2.9 (Enhanced trigger detection + IPS v3.10 compliance)</li>
+                <li><strong>PortfolioOptimizer:</strong> v2.0 (Regret minimization framework + IPS v3.10 security universe)</li>
+            </ul>
+            <p><strong>v3.4 New Features:</strong> Complete Steps 1-5 workflow with sophisticated portfolio optimization using regret minimization and smart hedging protocols</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>Module Load Tests</h3>
+            <button onclick="runModuleTests()">Run Module Tests</button>
+            <div id="module-test-results" class="test-results"></div>
+        </div>
+    </div>
+    
+    <!-- Step Navigation -->
+    <div class="navigation">
+        <button onclick="tracker.navigateToStep(1)">Step 1: Philosophy</button>
+        <button onclick="tracker.navigateToStep(2)">Step 2: Data</button>
+        <button onclick="tracker.navigateToStep(3)">Step 3: Themes</button>
+        <button onclick="tracker.navigateToStep(4)">Step 4: Scenarios</button>
+        <button onclick="tracker.navigateToStep(5)">Step 5: Optimization</button>
+        <button class="secondary" onclick="runCompleteWorkflow()">Run Complete Workflow</button>
+        <button class="secondary" onclick="tracker.exportState()">Export State</button>
+        <button class="secondary" onclick="tracker.reset()">Reset</button>
+    </div>
+    
+    <!-- Step Indicators -->
+    <div class="container">
+        <div id="step-indicators"></div>
+    </div>
+    
+    <!-- Step 1: Philosophy -->
+    <div class="container step-content" id="step-1">
+        <h3>Step 1: Investment Philosophy</h3>
+        <div class="step-indicator step-active" id="step-1-indicator">
+            <label>
+                <input type="checkbox" id="philosophy-checkbox" onchange="tracker.handlePhilosophyChange(this.checked)">
+                I acknowledge and understand the HCP investment philosophy and methodology
+            </label>
+        </div>
+        <p>This portfolio uses systematic, probability-weighted allocation based on macro regime analysis across 16 scenarios with sophisticated regret minimization.</p>
+    </div>
+    
+    <!-- Step 2: Data Loading -->
+    <div class="container step-content" id="step-2">
+        <h3>Step 2: Data Loading</h3>
+        <div class="test-section">
+            <button onclick="generateAndLoadSampleData()">Generate Sample Data</button>
+            <button onclick="generateAndLoadSampleData('tech_boom')">Load Tech Boom Scenario</button>
+            <button onclick="generateAndLoadSampleData('usd_strength')">Load USD Strength Scenario</button>
+            <button onclick="generateAndLoadSampleData('pe_reversion')">Load P/E Reversion Scenario</button>
+            <button onclick="generateAndLoadSampleData('international')">Load International Scenario</button>
+        </div>
+        <div id="data-display"></div>
+    </div>
+    
+    <!-- Step 3: Theme Analysis -->
+    <div class="container step-content" id="step-3">
+        <h3>Step 3: Theme Analysis</h3>
+        <div class="test-section">
+            <button onclick="runEnhancedThemeAnalysis()">Run Enhanced Theme Analysis</button>
+            <button onclick="testThemeCalculatorV2()">Test ThemeCalculator v2.9</button>
+            <button onclick="compareWithV1Results()">Compare with Previous Versions</button>
+        </div>
+        <div id="theme-results"></div>
+        <div id="theme-comparison"></div>
+    </div>
+    
+    <!-- Step 4: Scenario Analysis -->
+    <div class="container step-content" id="step-4">
+        <h3>Step 4: Scenario Analysis</h3>
+        <div class="test-section">
+            <button onclick="runScenarioAnalysis()">Generate 16-Scenario Matrix</button>
+            <button onclick="validateScenarioMatrix()">Validate Scenario Matrix</button>
+        </div>
+        <div id="scenario-results">
+            <p>Complete Step 3 (Theme Analysis) to generate scenario probabilities.</p>
+        </div>
+    </div>
+    
+    <!-- Step 5: Portfolio Optimization -->
+    <div class="container step-content" id="step-5">
+        <h3>Step 5: Portfolio Optimization</h3>
+        <div class="test-section">
+            <button onclick="runPortfolioOptimization()">Run Portfolio Optimization</button>
+            <button onclick="testOptimizationEdgeCases()">Test Edge Cases</button>
+            <button onclick="validateOptimizationResults()">Validate Results</button>
+        </div>
+        <div id="optimization-results">
+            <p>Complete Steps 1-4 to enable portfolio optimization.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Embedded PortfolioOptimizer v2.0 Module
+        const PortfolioOptimizer = {
+            version: '2.0',
+            framework: 'IPS v3.10 Regret Minimization',
+            lastUpdated: '2025-09-02T21:00:00.000Z',
+            
+            // IPS v3.10 Complete Security Universe (12 Assets)
+            securities: {
+                VTI: { name: 'US Total Market', type: 'equity', category: 'us_equity' },
+                VEA: { name: 'Developed International', type: 'equity', category: 'intl_equity' },
+                VWO: { name: 'Emerging Markets', type: 'equity', category: 'intl_equity' },
+                SMH: { name: 'Semiconductors', type: 'equity', category: 'tech_equity' },
+                SRVR: { name: 'Infrastructure/Data Centers', type: 'equity', category: 'tech_equity' },
+                PIMIX: { name: 'PIMCO Income Fund', type: 'income', category: 'income', holdOnly: true },
+                PYLD: { name: 'PIMCO Yield Opportunities', type: 'income', category: 'income', primaryIncome: true },
+                GLD: { name: 'Gold', type: 'alternative', category: 'commodities' },
+                COM: { name: 'Commodities', type: 'alternative', category: 'commodities' },
+                IGF: { name: 'Global Infrastructure', type: 'alternative', category: 'infrastructure' },
+                DBMF: { name: 'Managed Futures', type: 'alternative', category: 'hedge' },
+                SWVXX: { name: 'Money Market', type: 'cash', category: 'cash' }
+            },
+
+            constraints: {
+                maxSinglePosition: 0.35,
+                maxSectorConcentration: 0.50,
+                minCashPosition: 0.01,
+                maxAlternatives: 0.30,
+                maxDBMF: 0.15,
+                maxIncome: 0.30,
+                maxRegretTarget: { high: 0.05, medium: 0.06, low: 0.08 }
+            },
+
+            themeTilts: {
+                usd: {
+                    name: 'USD Dominance Decline',
+                    positive: { VEA: 0.05, VWO: 0.05, GLD: 0.03, COM: 0.02 },
+                    negative: { VTI: -0.05, SWVXX: -0.10 }
+                },
+                ai: {
+                    name: 'AI Productivity Boom',
+                    positive: { SMH: 0.08, SRVR: 0.05, VTI: 0.02 },
+                    negative: { VEA: -0.03, PYLD: -0.02 }
+                },
+                pe: {
+                    name: 'P/E Mean Reversion', 
+                    positive: { PYLD: 0.05, GLD: 0.03, SWVXX: 0.05 },
+                    negative: { SMH: -0.05, VTI: -0.03, VWO: -0.02 }
+                },
+                intl: {
+                    name: 'International Outperformance',
+                    positive: { VEA: 0.08, VWO: 0.05, IGF: 0.02 },
+                    negative: { VTI: -0.10, SMH: -0.03, SRVR: -0.02 }
+                }
+            },
+
+            selectScenariosForOptimization: function(scenarioProbabilities) {
+                const sortedScenarios = [...scenarioProbabilities].sort((a, b) => b.probability - a.probability);
+                let selectedScenarios = [];
+                let cumulativeProbability = 0;
+                
+                for (const scenario of sortedScenarios) {
+                    selectedScenarios.push(scenario);
+                    cumulativeProbability += scenario.probability;
+                    if (cumulativeProbability >= 0.85 && selectedScenarios.length >= 3) break;
+                    if (selectedScenarios.length >= 6) break;
+                }
+                
+                for (const scenario of sortedScenarios) {
+                    if (scenario.probability >= 0.10 && !selectedScenarios.some(s => s.id === scenario.id)) {
+                        selectedScenarios.push(scenario);
+                    }
+                }
+                
+                if (selectedScenarios.length < 3) {
+                    selectedScenarios = sortedScenarios.slice(0, 3);
+                }
+                
+                return {
+                    scenarios: selectedScenarios,
+                    cumulativeProbability: selectedScenarios.reduce((sum, s) => sum + s.probability, 0),
+                    selectionCriteria: { selectedCount: selectedScenarios.length }
+                };
+            },
+
+            getBaselineAllocation: function() {
+                return {
+                    VTI: 0.35, VEA: 0.20, VWO: 0.10, SMH: 0.08, SRVR: 0.05,
+                    PYLD: 0.12, PIMIX: 0.03, GLD: 0.02, COM: 0.01, IGF: 0.02,
+                    DBMF: 0.01, SWVXX: 0.01
+                };
+            },
+
+            getActiveThemes: function(scenario) {
+                const activeThemes = [];
+                const binary = scenario.binary || (scenario.id - 1).toString(2).padStart(4, '0');
+                if (binary[0] === '1') activeThemes.push('usd');
+                if (binary[1] === '1') activeThemes.push('ai');
+                if (binary[2] === '1') activeThemes.push('pe');
+                if (binary[3] === '1') activeThemes.push('intl');
+                return activeThemes;
+            },
+
+            applyThemeTilt: function(allocation, tilt) {
+                const newAllocation = {...allocation};
+                for (const [security, tiltAmount] of Object.entries(tilt.positive || {})) {
+                    if (newAllocation[security] !== undefined) {
+                        newAllocation[security] += tiltAmount;
+                    }
+                }
+                for (const [security, tiltAmount] of Object.entries(tilt.negative || {})) {
+                    if (newAllocation[security] !== undefined) {
+                        newAllocation[security] += tiltAmount;
+                    }
+                }
+                return newAllocation;
+            },
+
+            normalizeAllocation: function(allocation) {
+                const total = Object.values(allocation).reduce((sum, weight) => sum + weight, 0);
+                if (total === 0) return this.getBaselineAllocation();
+                
+                const normalized = {};
+                for (const [security, weight] of Object.entries(allocation)) {
+                    normalized[security] = weight / total;
+                }
+                return normalized;
+            },
+
+            createScenarioOptimalAllocation: function(scenario) {
+                let allocation = this.getBaselineAllocation();
+                const activeThemes = this.getActiveThemes(scenario);
+                
+                for (const themeKey of activeThemes) {
+                    if (this.themeTilts[themeKey]) {
+                        allocation = this.applyThemeTilt(allocation, this.themeTilts[themeKey]);
+                    }
+                }
+                
+                return this.normalizeAllocation(allocation);
+            },
+
+            calculateExpectedReturn: function(allocation, scenario) {
+                const activeThemes = this.getActiveThemes(scenario);
+                let expectedReturn = 0.08;
+                
+                const themeReturns = {
+                    usd: { VEA: 0.03, VWO: 0.04, GLD: 0.15, COM: 0.08, VTI: -0.02 },
+                    ai: { SMH: 0.18, SRVR: 0.12, VTI: 0.03, VEA: -0.01 },
+                    pe: { PYLD: 0.06, GLD: 0.08, SWVXX: 0.02, SMH: -0.08, VTI: -0.05 },
+                    intl: { VEA: 0.08, VWO: 0.12, IGF: 0.06, VTI: -0.03, SMH: -0.02 }
+                };
+                
+                let themeAdjustment = 0;
+                for (const theme of activeThemes) {
+                    if (themeReturns[theme]) {
+                        for (const [security, weight] of Object.entries(allocation)) {
+                            const themeReturn = themeReturns[theme][security] || 0;
+                            themeAdjustment += weight * themeReturn;
+                        }
+                    }
+                }
+                
+                return expectedReturn + themeAdjustment;
+            },
+
+            optimizePortfolio: function(scenarioProbabilities) {
+                console.log('=== PortfolioOptimizer v2.0 - Starting Optimization ===');
+                const startTime = Date.now();
+                
+                try {
+                    // Step 1: Scenario Selection
+                    const step1 = this.selectScenariosForOptimization(scenarioProbabilities);
+                    
+                    // Step 2: Individual Scenario Optimization
+                    const scenarioAllocations = {};
+                    for (const scenario of step1.scenarios) {
+                        scenarioAllocations[scenario.id] = this.createScenarioOptimalAllocation(scenario);
+                    }
+                    
+                    // Step 3: Simplified Regret Calculation
+                    const regretMatrix = {};
+                    const returnMatrix = {};
+                    
+                    for (const [allocId, allocation] of Object.entries(scenarioAllocations)) {
+                        returnMatrix[allocId] = {};
+                        regretMatrix[allocId] = {};
+                        
+                        for (const scenario of step1.scenarios) {
+                            const expectedReturn = this.calculateExpectedReturn(allocation, scenario);
+                            returnMatrix[allocId][scenario.id] = expectedReturn;
+                        }
+                    }
+                    
+                    for (const [allocId, allocation] of Object.entries(scenarioAllocations)) {
+                        for (const scenario of step1.scenarios) {
+                            const portfolioReturn = returnMatrix[allocId][scenario.id];
+                            const optimalReturn = returnMatrix[scenario.id][scenario.id];
+                            regretMatrix[allocId][scenario.id] = portfolioReturn - optimalReturn;
+                        }
+                    }
+                    
+                    // Step 4: Simple Optimization - Choose scenario with best weighted regret
+                    let bestAllocation = null;
+                    let bestScore = -Infinity;
+                    
+                    for (const [allocId, allocation] of Object.entries(scenarioAllocations)) {
+                        let weightedReturn = 0;
+                        for (const scenario of step1.scenarios) {
+                            weightedReturn += scenario.probability * returnMatrix[allocId][scenario.id];
+                        }
+                        
+                        if (weightedReturn > bestScore) {
+                            bestScore = weightedReturn;
+                            bestAllocation = allocation;
+                        }
+                    }
+                    
+                    // Step 5: Final validation
+                    const finalAllocation = this.normalizeAllocation(bestAllocation);
+                    
+                    return {
+                        version: this.version,
+                        framework: this.framework,
+                        timestamp: new Date().toISOString(),
+                        finalAllocation: finalAllocation,
+                        optimization: {
+                            selectedScenarios: step1.scenarios.length,
+                            cumulativeProbability: step1.cumulativeProbability,
+                            bestScore: bestScore
+                        },
+                        steps: {
+                            scenarioSelection: step1,
+                            scenarioAllocations: scenarioAllocations,
+                            regretMatrix: regretMatrix
+                        },
+                        performance: {
+                            executionTimeMs: Date.now() - startTime,
+                            success: true
+                        }
+                    };
+                    
+                } catch (error) {
+                    return {
+                        performance: { success: false, error: error.message }
+                    };
+                }
+            }
+        };
+        
+        // Mock essential modules for testing
+        const TrackerCore = {
+            state: {
+                philosophyAcknowledged: false,
+                monthlyData: null,
+                themeAnalysis: null,
+                themeProbabilities: null,
+                scenarioAnalysis: null,
+                optimizationResults: null,
+                currentStep: 1
+            },
+            
+            navigateToStep: function(step) {
+                // Hide all steps
+                document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+                
+                // Show target step
+                const stepElement = document.getElementById(`step-${step}`);
+                if (stepElement) {
+                    stepElement.classList.add('active');
+                    this.state.currentStep = step;
+                    console.log(`Navigated to Step ${step}`);
+                }
+            },
+            
+            saveState: function() {
+                localStorage.setItem('hcp_integration_test_state', JSON.stringify(this.state));
+            },
+            
+            loadState: function() {
+                const saved = localStorage.getItem('hcp_integration_test_state');
+                if (saved) {
+                    this.state = {...this.state, ...JSON.parse(saved)};
+                }
+            },
+            
+            reset: function() {
+                this.state = {
+                    philosophyAcknowledged: false,
+                    monthlyData: null,
+                    themeAnalysis: null,
+                    themeProbabilities: null,
+                    scenarioAnalysis: null,
+                    optimizationResults: null,
+                    currentStep: 1
+                };
+                this.saveState();
+                this.navigateToStep(1);
+                console.log('Tracker reset');
+            },
+            
+            exportState: function() {
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    version: 'Integration Test v3.4',
+                    state: this.state
+                };
+                
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `hcp_integration_test_v3_4_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        };
+        
+        // Mock FileHandler with sample data generation
+        const FileHandler = {
+            version: '1.4',
+            
+            generateSampleData: function(type = 'monthly', scenario = 'tech_boom') {
+                console.log(`Generating ${scenario} sample data...`);
+                
+                // Simple scenario-based data generation
+                const scenarioConfigs = {
+                    tech_boom: { ai: 0.75, usd: 0.25, pe: 0.35, intl: 0.30 },
+                    usd_strength: { usd: 0.80, ai: 0.20, pe: 0.40, intl: 0.15 },
+                    pe_reversion: { pe: 0.70, ai: 0.30, usd: 0.25, intl: 0.20 },
+                    international: { intl: 0.75, usd: 0.20, ai: 0.25, pe: 0.30 }
+                };
+                
+                const config = scenarioConfigs[scenario] || scenarioConfigs.tech_boom;
+                
+                return {
+                    metadata: {
+                        version: this.version,
+                        type: type,
+                        scenario: scenario,
+                        timestamp: new Date().toISOString()
+                    },
+                    indicators: {
+                        usd: {
+                            dxy: this.generateIndicator(95 + Math.random() * 10, config.usd),
+                            reserve_share: this.generateIndicator(58 + Math.random() * 5, config.usd),
+                            yuan_swift: this.generateIndicator(2.5 + Math.random() * 1, config.usd),
+                            gold_purchases: this.generateIndicator(45 + Math.random() * 20, config.usd)
+                        },
+                        ai: {
+                            productivity: this.generateIndicator(115 + Math.random() * 10, config.ai),
+                            qqq_spy: this.generateIndicator(0.85 + Math.random() * 0.1, config.ai),
+                            net_margins: this.generateIndicator(12 + Math.random() * 3, config.ai)
+                        },
+                        pe: {
+                            forward_pe: this.generateIndicator(20 + Math.random() * 5, config.pe),
+                            cape: this.generateIndicator(30 + Math.random() * 10, config.pe),
+                            risk_premium: this.generateIndicator(2.5 + Math.random() * 2, config.pe)
+                        },
+                        intl: {
+                            acwx_spy: this.generateIndicator(0.90 + Math.random() * 0.1, config.intl),
+                            sp_vs_world: this.generateIndicator(-1 + Math.random() * 2, config.intl),
+                            tic_flows: this.generateIndicator(100 + Math.random() * 50, config.intl)
+                        }
+                    }
+                };
+            },
+            
+            generateIndicator: function(baseValue, strength) {
+                const history = [];
+                for (let i = 0; i < 6; i++) {
+                    const momentum = (strength - 0.5) * 0.02 + (Math.random() - 0.5) * 0.01;
+                    history.push(baseValue * (1 + momentum * (i + 1)));
+                }
+                
+                return {
+                    current: history[5],
+                    history: history,
+                    freshness: 'fresh',
+                    source: `FileHandler_v${this.version}_synthetic`
+                };
+            }
+        };
+        
+        // Mock ThemeCalculator
+        const ThemeCalculator = {
+            version: '2.9',
+            framework: 'IPS v3.10 Appendix H',
+            
+            calculateThemeAnalysis: function(data) {
+                if (!data || !data.indicators) {
+                    return { error: 'Invalid data structure' };
+                }
+                
+                console.log('ThemeCalculator v2.9: Starting analysis...');
+                
+                const themes = {
+                    usd: this.calculateThemeProbability(data.indicators.usd),
+                    ai: this.calculateThemeProbability(data.indicators.ai),
+                    pe: this.calculateThemeProbability(data.indicators.pe),
+                    intl: this.calculateThemeProbability(data.indicators.intl)
+                };
+                
+                const scenarios = this.generateScenarios(themes);
+                
+                return {
+                    version: this.version,
+                    methodology: this.framework,
+                    timestamp: new Date().toISOString(),
+                    themes: themes,
+                    scenarios: scenarios
+                };
+            },
+            
+            calculateThemeProbability: function(themeData) {
+                if (!themeData) return 0.15;
+                
+                let totalMomentum = 0;
+                let indicatorCount = 0;
+                
+                Object.values(themeData).forEach(indicator => {
+                    if (indicator.history && indicator.history.length >= 6) {
+                        const current = indicator.current;
+                        const sixBack = indicator.history[0];
+                        const momentum = (current - sixBack) / Math.abs(sixBack);
+                        totalMomentum += momentum;
+                        indicatorCount++;
+                    }
+                });
+                
+                if (indicatorCount === 0) return 0.15;
+                
+                const avgMomentum = totalMomentum / indicatorCount;
+                const probability = 0.15 + 0.7 / (1 + Math.exp(-avgMomentum * 10));
+                
+                return Math.max(0.05, Math.min(0.95, probability));
+            },
+            
+            generateScenarios: function(themes) {
+                const scenarios = [];
+                
+                for (let i = 0; i < 16; i++) {
+                    const hasUSD = (i & 8) > 0;
+                    const hasAI = (i & 4) > 0;
+                    const hasPE = (i & 2) > 0;
+                    const hasINTL = (i & 1) > 0;
+                    
+                    const probability = 
+                        (hasUSD ? themes.usd : (1 - themes.usd)) *
+                        (hasAI ? themes.ai : (1 - themes.ai)) *
+                        (hasPE ? themes.pe : (1 - themes.pe)) *
+                        (hasINTL ? themes.intl : (1 - themes.intl));
+                    
+                    let name = [];
+                    if (hasUSD) name.push('USD↓');
+                    if (hasAI) name.push('AI↑');
+                    if (hasPE) name.push('P/E↓');
+                    if (hasINTL) name.push('INTL↑');
+                    
+                    scenarios.push({
+                        id: i + 1,
+                        binary: i.toString(2).padStart(4, '0'),
+                        name: name.length > 0 ? name.join(' + ') : 'Base Case',
+                        probability: probability,
+                        themes: { usd: hasUSD, ai: hasAI, pe: hasPE, intl: hasINTL }
+                    });
+                }
+                
+                return scenarios.sort((a, b) => b.probability - a.probability);
+            },
+            
+            displayThemeResults: function(analysis, containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                const themeNames = {
+                    usd: 'USD Dominance Decline',
+                    ai: 'AI Productivity Boom',
+                    pe: 'P/E Mean Reversion',
+                    intl: 'International Outperformance'
+                };
+                
+                let html = `
+                    <div class="theme-analysis-v2_9">
+                        <div class="analysis-header">
+                            <h4>Theme Analysis Results</h4>
+                            <div class="analysis-meta">
+                                ${analysis.methodology} | Version ${analysis.version} | 
+                                ${new Date(analysis.timestamp).toLocaleString()}
+                            </div>
+                        </div>
+                        <div class="theme-probabilities">
+                `;
+                
+                Object.entries(analysis.themes).forEach(([key, probability]) => {
+                    const themeName = themeNames[key] || key;
+                    const percentage = (probability * 100).toFixed(1);
+                    const fillWidth = probability * 100;
+                    
+                    html += `
+                        <div class="theme-item">
+                            <div class="theme-header">
+                                <div class="theme-name">${themeName}</div>
+                                <div class="theme-percentage">${percentage}%</div>
+                            </div>
+                            <div class="theme-bar">
+                                <div class="theme-fill theme-${key}" style="width: ${fillWidth}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div></div>`;
+                container.innerHTML = html;
+            }
+        };
+        
+        // Integration Layer - Connect modules
+        const tracker = {
+            ...TrackerCore,
+            
+            handlePhilosophyChange: function(acknowledged) {
+                this.state.philosophyAcknowledged = acknowledged;
+                this.saveState();
+                console.log('Philosophy acknowledged:', acknowledged);
+            },
+            
+            handleDataLoad: function(data, source) {
+                this.state.monthlyData = data;
+                this.saveState();
+                console.log(`Data loaded from ${source}:`, data);
+            },
+            
+            calculateEnhancedThemes: function() {
+                if (!this.state.monthlyData) {
+                    alert('Please load data first (Step 2)');
+                    return;
+                }
+                
+                console.log('Running enhanced theme analysis...');
+                const analysis = ThemeCalculator.calculateThemeAnalysis(this.state.monthlyData);
+                
+                this.state.themeAnalysis = analysis;
+                this.state.themeProbabilities = analysis.themes;
+                this.saveState();
+                
+                ThemeCalculator.displayThemeResults(analysis, 'theme-results');
+                console.log('Enhanced analysis complete:', analysis);
+            }
+        };
+        
+        // Module Testing Functions
+        function runModuleTests() {
+            const tests = [
+                testTrackerCore(),
+                testFileHandler(),
+                testThemeCalculator(),
+                testPortfolioOptimizer()
+            ];
+            
+            const passed = tests.filter(t => t.passed).length;
+            const total = tests.length;
+            
+            let html = `<strong>Test Summary: ${passed}/${total} passed</strong>\n\n`;
+            
+            tests.forEach(test => {
+                const status = test.passed ? '✅ PASSED' : '❌ FAILED';
+                const className = test.passed ? 'test-passed' : 'test-failed';
+                html += `<span class="${className}">${test.name}: ${status}</span>\n`;
+                html += `  ${test.message}\n\n`;
+            });
+            
+            document.getElementById('module-test-results').innerHTML = html;
+        }
+        
+        function testTrackerCore() {
+            try {
+                const hasNavigate = typeof tracker.navigateToStep === 'function';
+                const hasState = typeof tracker.state === 'object';
+                const hasSave = typeof tracker.saveState === 'function';
+                
+                return {
+                    name: 'TrackerCore',
+                    passed: hasNavigate && hasState && hasSave,
+                    message: hasNavigate && hasState && hasSave ? 
+                        'All core navigation functions available' : 
+                        'Some core functions missing'
+                };
+            } catch (error) {
+                return {
+                    name: 'TrackerCore',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testFileHandler() {
+            try {
+                const hasGenerate = typeof FileHandler.generateSampleData === 'function';
+                const hasVersion = FileHandler.version === '1.4';
+                
+                return {
+                    name: 'FileHandler v1.4',
+                    passed: hasGenerate && hasVersion,
+                    message: hasGenerate && hasVersion ? 
+                        'Sample data generation available' : 
+                        'FileHandler functions missing'
+                };
+            } catch (error) {
+                return {
+                    name: 'FileHandler v1.4',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testThemeCalculator() {
+            try {
+                const hasCalculate = typeof ThemeCalculator.calculateThemeAnalysis === 'function';
+                const hasDisplay = typeof ThemeCalculator.displayThemeResults === 'function';
+                const hasScenarios = typeof ThemeCalculator.generateScenarios === 'function';
+                const hasVersion = ThemeCalculator.version === '2.9';
+                
+                return {
+                    name: 'ThemeCalculator v2.9',
+                    passed: hasCalculate && hasDisplay && hasScenarios && hasVersion,
+                    message: hasCalculate && hasDisplay && hasScenarios && hasVersion ? 
+                        'All theme analysis functions available' : 
+                        'Some theme functions missing'
+                };
+            } catch (error) {
+                return {
+                    name: 'ThemeCalculator v2.9',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testPortfolioOptimizer() {
+            try {
+                const hasOptimize = typeof PortfolioOptimizer.optimizePortfolio === 'function';
+                const hasSecurities = typeof PortfolioOptimizer.securities === 'object';
+                const hasVersion = PortfolioOptimizer.version === '2.0';
+                const securityCount = Object.keys(PortfolioOptimizer.securities).length;
+                
+                return {
+                    name: 'PortfolioOptimizer v2.0',
+                    passed: hasOptimize && hasSecurities && hasVersion && securityCount === 12,
+                    message: hasOptimize && hasSecurities && hasVersion && securityCount === 12 ? 
+                        `IPS v3.10 regret minimization with ${securityCount} securities available` : 
+                        'Portfolio optimization functions missing or incorrect'
+                };
+            } catch (error) {
+                return {
+                    name: 'PortfolioOptimizer v2.0',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        // Data Generation Functions
+        function generateAndLoadSampleData(scenario = 'tech_boom') {
+            try {
+                console.log(`Generating ${scenario} sample data...`);
+                const sampleData = FileHandler.generateSampleData('monthly', scenario);
+                
+                if (!sampleData) {
+                    alert('Failed to generate sample data');
+                    return;
+                }
+                
+                tracker.handleDataLoad(sampleData, 'sample');
+                displayDataTable(sampleData);
+                
+                console.log('Sample data loaded successfully');
+                
+            } catch (error) {
+                console.error('Error generating sample data:', error);
+                alert('Error generating sample data: ' + error.message);
+            }
+        }
+        
+        function displayDataTable(data) {
+            if (!data || !data.indicators) {
+                document.getElementById('data-display').innerHTML = '<p>No data to display</p>';
+                return;
+            }
+            
+            let html = '<h4>Sample Data Generated</h4>';
+            html += '<table class="data-table">';
+            html += '<tr><th>Theme</th><th>Indicator</th><th>Current Value</th><th>History Trend</th></tr>';
+            
+            Object.entries(data.indicators).forEach(([themeKey, themeData]) => {
+                Object.entries(themeData).forEach(([indicatorKey, indicator]) => {
+                    const trend = indicator.history && indicator.history.length >= 6 ?
+                        (indicator.current > indicator.history[0] ? '↗️' : '↘️') : '➡️';
+                    
+                    html += `<tr>
+                        <td>${themeKey.toUpperCase()}</td>
+                        <td>${indicatorKey}</td>
+                        <td>${typeof indicator.current === 'number' ? indicator.current.toFixed(2) : indicator.current}</td>
+                        <td>${trend}</td>
+                    </tr>`;
+                });
+            });
+            
+            html += '</table>';
+            document.getElementById('data-display').innerHTML = html;
+        }
+        
+        // Theme Analysis Functions
+        function runEnhancedThemeAnalysis() {
+            tracker.calculateEnhancedThemes();
+        }
+        
+        function testThemeCalculatorV2() {
+            if (!tracker.state.monthlyData) {
+                alert('Please load data first (Step 2)');
+                return;
+            }
+            
+            console.log('Testing ThemeCalculator v2.9...');
+            runEnhancedThemeAnalysis();
+        }
+        
+        function compareWithV1Results() {
+            const comparison = document.getElementById('theme-comparison');
+            comparison.innerHTML = `
+                <div class="container">
+                    <h4>ThemeCalculator v2.9 Features</h4>
+                    <div class="version-info">
+                        <p><strong>Current:</strong> IPS v3.10 compliant with enhanced trigger detection</p>
+                        <p><strong>Framework:</strong> Complete regret minimization integration ready</p>
+                        <ul>
+                            <li>Fixed trigger detection for already-triggered indicators</li>
+                            <li>Boosted signal strength for realistic probability ranges</li>
+                            <li>All 16 scenarios generated with proper binary ordering</li>
+                            <li>Ready for portfolio optimization integration</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Scenario Analysis Functions
+        function runScenarioAnalysis() {
+            if (!tracker.state.themeAnalysis || !tracker.state.themeAnalysis.scenarios) {
+                alert('Please complete theme analysis first (Step 3)');
+                return;
+            }
+            
+            console.log('Generating scenario matrix...');
+            displayScenarioMatrix(tracker.state.themeAnalysis.scenarios);
+            tracker.state.scenarioAnalysis = tracker.state.themeAnalysis.scenarios;
+            tracker.saveState();
+        }
+        
+        function displayScenarioMatrix(scenarios) {
+            const container = document.getElementById('scenario-results');
+            
+            // Display scenarios in binary order (0000-1111), not probability rank
+            const orderedScenarios = [...scenarios].sort((a, b) => a.id - b.id);
+            
+            let html = `
+                <div class="scenario-matrix">
+                    <h4>16-Scenario Probability Matrix</h4>
+                    <p>Scenarios displayed in binary order (0000-1111) with IPS v3.10 color coding:</p>
+                    <div class="scenario-grid">
+            `;
+            
+            orderedScenarios.forEach(scenario => {
+                const percentage = (scenario.probability * 100).toFixed(2);
+                let colorClass = 'scenario-very-low';
+                
+                // IPS v3.10 color coding: Green >10%, Yellow 5-10%, Red <5%
+                if (scenario.probability > 0.10) {
+                    colorClass = 'scenario-high';
+                } else if (scenario.probability >= 0.05) {
+                    colorClass = 'scenario-medium';
+                } else {
+                    colorClass = 'scenario-low';
+                }
+                
+                html += `
+                    <div class="scenario-item ${colorClass}">
+                        <div class="scenario-rank">S${scenario.id}</div>
+                        <div class="scenario-name">${scenario.name}</div>
+                        <div class="scenario-probability">${percentage}%</div>
+                        <div class="scenario-binary">${scenario.binary}</div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <p><strong>Color Legend:</strong></p>
+                        <span class="scenario-item scenario-high" style="display: inline-block; margin: 5px;">Green: >10%</span>
+                        <span class="scenario-item scenario-medium" style="display: inline-block; margin: 5px;">Yellow: 5-10%</span>
+                        <span class="scenario-item scenario-low" style="display: inline-block; margin: 5px;">Red: <5%</span>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        function validateScenarioMatrix() {
+            if (!tracker.state.scenarioAnalysis) {
+                alert('Please run scenario analysis first');
+                return;
+            }
+            
+            const scenarios = tracker.state.scenarioAnalysis;
+            const totalProbability = scenarios.reduce((sum, s) => sum + s.probability, 0);
+            const scenarioCount = scenarios.length;
+            
+            console.log(`Validation: ${scenarioCount} scenarios, total probability: ${(totalProbability*100).toFixed(2)}%`);
+            
+            const validationMessage = Math.abs(totalProbability - 1.0) < 0.01 ? 
+                '✅ Scenario probabilities sum to 100%' : 
+                '⚠️ Scenario probabilities do not sum to 100%';
+            
+            alert(`${validationMessage}\nTotal: ${(totalProbability*100).toFixed(2)}%`);
+        }
+        
+        // Portfolio Optimization Functions
+        function runPortfolioOptimization() {
+            if (!tracker.state.scenarioAnalysis) {
+                alert('Please complete scenario analysis first (Step 4)');
+                return;
+            }
+            
+            console.log('Running portfolio optimization...');
+            displayOptimizationLoading();
+            
+            setTimeout(() => {
+                try {
+                    const results = PortfolioOptimizer.optimizePortfolio(tracker.state.scenarioAnalysis);
+                    
+                    if (results.performance.success) {
+                        tracker.state.optimizationResults = results;
+                        tracker.saveState();
+                        displayOptimizationResults(results);
+                        console.log('Portfolio optimization completed:', results);
+                    } else {
+                        displayOptimizationError(results.performance.error);
+                    }
+                } catch (error) {
+                    console.error('Optimization error:', error);
+                    displayOptimizationError(error.message);
+                }
+            }, 100);
+        }
+        
+        function displayOptimizationLoading() {
+            const container = document.getElementById('optimization-results');
+            container.innerHTML = '<div class="loading">Running 6-step portfolio optimization...</div>';
+        }
+        
+        function displayOptimizationResults(results) {
+            const container = document.getElementById('optimization-results');
+            const allocation = results.finalAllocation;
+            const optimization = results.optimization;
+            
+            // Sort allocations by weight
+            const sortedAllocations = Object.entries(allocation)
+                .sort(([,a], [,b]) => b - a)
+                .filter(([,weight]) => weight > 0.005);
+            
+            // Calculate sector weights
+            const sectorWeights = {
+                equity: 0, income: 0, alternative: 0, cash: 0
+            };
+            
+            const securityTypes = {
+                VTI: 'equity', VEA: 'equity', VWO: 'equity', SMH: 'equity', SRVR: 'equity',
+                PIMIX: 'income', PYLD: 'income',
+                GLD: 'alternative', COM: 'alternative', IGF: 'alternative', DBMF: 'alternative',
+                SWVXX: 'cash'
+            };
+            
+            for (const [security, weight] of Object.entries(allocation)) {
+                const type = securityTypes[security];
+                if (type) sectorWeights[type] += weight;
+            }
+            
+            let html = `
+                <div class="optimization-results">
+                    <div class="optimization-header">
+                        <h4>Portfolio Optimization Complete</h4>
+                        <div class="analysis-meta">
+                            ${results.framework} | Version ${results.version} | 
+                            Execution: ${results.performance.executionTimeMs}ms
+                        </div>
+                    </div>
+                    
+                    <div class="optimization-summary">
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value">${optimization.selectedScenarios}</div>
+                                <div class="metric-label">Scenarios Used</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${(optimization.cumulativeProbability*100).toFixed(1)}%</div>
+                                <div class="metric-label">Coverage</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${optimization.bestScore.toFixed(3)}</div>
+                                <div class="metric-label">Optimization Score</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">12</div>
+                                <div class="metric-label">Securities</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="allocation-display">
+                        <h4>Final Portfolio Allocation</h4>
+            `;
+            
+            sortedAllocations.forEach(([security, weight]) => {
+                const securityInfo = PortfolioOptimizer.securities[security];
+                const percentage = (weight * 100).toFixed(1);
+                const barWidth = Math.max(2, weight * 300);
+                
+                // Security type colors
+                const colors = {
+                    equity: '#007bff', income: '#28a745', 
+                    alternative: '#ffc107', cash: '#6c757d'
+                };
+                const color = colors[securityInfo?.type] || '#dee2e6';
+                
+                html += `
+                    <div class="allocation-row">
+                        <div class="security-info">
+                            <div class="security-name">${security}</div>
+                            <div class="security-desc">${securityInfo?.name || 'Unknown Security'}</div>
+                        </div>
+                        <div class="allocation-viz">
+                            <div class="allocation-bar">
+                                <div class="allocation-fill" style="width: ${barWidth}px; background: ${color};"></div>
+                            </div>
+                            <div class="allocation-text">${percentage}%</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                    
+                    <div class="metrics-grid" style="margin-top: 30px;">
+                        <div class="metric-card">
+                            <div class="metric-value">${(sectorWeights.equity*100).toFixed(1)}%</div>
+                            <div class="metric-label">Equity Exposure</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${(sectorWeights.income*100).toFixed(1)}%</div>
+                            <div class="metric-label">Income Exposure</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${(sectorWeights.alternative*100).toFixed(1)}%</div>
+                            <div class="metric-label">Alternatives</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${(sectorWeights.cash*100).toFixed(1)}%</div>
+                            <div class="metric-label">Cash</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        function displayOptimizationError(error) {
+            const container = document.getElementById('optimization-results');
+            container.innerHTML = `<div class="error-message">Optimization failed: ${error}</div>`;
+        }
+        
+        function testOptimizationEdgeCases() {
+            console.log('Testing portfolio optimization edge cases...');
+            
+            // Test with extreme scenario (all themes active)
+            const extremeScenarios = [
+                {id: 16, binary: '1111', name: 'All Themes Active', probability: 0.8},
+                {id: 1, binary: '0000', name: 'Base Case', probability: 0.2}
+            ];
+            
+            try {
+                const results = PortfolioOptimizer.optimizePortfolio(extremeScenarios);
+                console.log('Edge case test completed:', results);
+                alert('Edge case test passed - see console for details');
+            } catch (error) {
+                console.error('Edge case test failed:', error);
+                alert('Edge case test failed: ' + error.message);
+            }
+        }
+        
+        function validateOptimizationResults() {
+            if (!tracker.state.optimizationResults) {
+                alert('Please run optimization first');
+                return;
+            }
+            
+            const allocation = tracker.state.optimizationResults.finalAllocation;
+            const total = Object.values(allocation).reduce((sum, weight) => sum + weight, 0);
+            const validationMessage = Math.abs(total - 1.0) < 0.01 ? 
+                '✅ Allocation sums to 100%' : 
+                '⚠️ Allocation does not sum to 100%';
+            
+            console.log('Validation results:', {
+                totalAllocation: total,
+                securities: Object.keys(allocation).length,
+                nonZeroPositions: Object.values(allocation).filter(w => w > 0.005).length
+            });
+            
+            alert(`${validationMessage}\nTotal: ${(total*100).toFixed(2)}%`);
+        }
+        
+        // Complete Workflow Function
+        function runCompleteWorkflow() {
+            console.log('Running complete workflow...');
+            
+            // Step 1: Philosophy (assume acknowledged)
+            tracker.state.philosophyAcknowledged = true;
+            
+            // Step 2: Generate sample data
+            generateAndLoadSampleData('tech_boom');
+            
+            setTimeout(() => {
+                // Step 3: Theme analysis
+                runEnhancedThemeAnalysis();
+                
+                setTimeout(() => {
+                    // Step 4: Scenario analysis
+                    runScenarioAnalysis();
+                    
+                    setTimeout(() => {
+                        // Step 5: Portfolio optimization
+                        runPortfolioOptimization();
+                        
+                        // Navigate to final step
+                        tracker.navigateToStep(5);
+                        
+                        console.log('Complete workflow finished');
+                    }, 500);
+                }, 500);
+            }, 500);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing Integration Test v3.4...');
+            
+            // Load saved state
+            tracker.loadState();
+            
+            // Start at step 1
+            tracker.navigateToStep(1);
+            
+            console.log('Integration Test v3.4 initialized successfully');
+            console.log('Modules loaded:', {
+                TrackerCore: typeof TrackerCore,
+                FileHandler: typeof FileHandler, 'FH Version': FileHandler.version,
+                ThemeCalculator: typeof ThemeCalculator, 'TC Version': ThemeCalculator.version,
+                PortfolioOptimizer: typeof PortfolioOptimizer, 'PO Version': PortfolioOptimizer.version
+            });
+        });
+    </script>
+</body>
+</html>

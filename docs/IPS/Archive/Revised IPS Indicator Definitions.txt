@@ -1,0 +1,185 @@
+Revised Indicator Definitions for IPS v4.3 - Enhanced Responsiveness
+USD Reserve Status Theme
+DXY Index (Leading, 30%)
+
+Calculation: Month-end close value
+Signal Period: 3-month rate of change (shortened from simple level)
+Normalization: 15-year percentiles of 3-month changes
+Rationale: Currency momentum more predictive than absolute level
+
+Real Rate Differential (Concurrent, 40%)
+
+Calculation: US 10Y TIPS - G7 weighted average real yields
+Signal Period: 1-month change in differential
+Normalization: 15-year percentiles of monthly changes
+Rationale: Capital flows respond to rate changes not levels
+
+COFER Reserve Share (Lagging, 30%)
+
+Calculation: Trend acceleration indicator
+
+Short slope: 12-month linear regression
+Long slope: 60-month linear regression
+Signal: (Short slope - Long slope) / |Long slope|
+
+
+Normalization: Map acceleration to -1/+1 scale
+Rationale: Structural decline requires detrending; acceleration captures inflection points
+
+Innovation Environment Theme
+QQQ/SPY Ratio (Leading, 30%)
+
+Calculation: Daily close ratio QQQ/SPY
+Signal Period: 20-day moving average vs 60-day moving average
+Normalization: 15-year percentiles of MA spread
+Rationale: Faster signal while filtering daily noise
+
+Productivity Growth (Concurrent, 40%)
+
+Calculation: YoY % change in output per hour
+Signal Period: 2-quarter moving average (smooths volatility)
+Normalization: 15-year percentiles
+Rationale: Single quarter too noisy, annual too slow
+
+Tech Employment % (Lagging, 30%)
+
+Calculation: USINFO / PAYEMS
+Signal Period: 3-month change in percentage
+Normalization: 15-year percentiles of 3-month changes
+AI Adjustment: Monitor for structural break if employment declines while innovation rises
+Rationale: Captures hiring/firing cycles faster than level
+
+Valuation Theme
+Put/Call Ratio (Leading, 30%)
+
+Calculation: 5-day average centered on month-end (28th to 2nd)
+Signal Period: Inverted ratio (Call/Put for bullish signal)
+Normalization: 15-year percentiles of smoothed monthly values
+Rationale: Reduces single-day noise while maintaining options sentiment signal
+
+Trailing P/E (Concurrent, 40%)
+
+Calculation: S&P 500 index level P/E
+Signal Period: Current vs 3-month average
+Normalization: 15-year percentiles of deviation from 3-month average
+Rationale: Identifies rapid valuation shifts vs slow trend
+
+EPS Delivery (Lagging, 30%)
+
+Calculation: S&P 500 actual EPS / Initial consensus (index level)
+Signal Period: 4-quarter moving average of beat rate
+Normalization: 15-year percentiles
+Rationale: Smooths quarterly volatility, captures execution trends
+
+US Leadership Theme
+SPY/EFA Momentum (Leading, 30%)
+
+Calculation: SPY/EFA price ratio
+Signal Period: 6-month rate of change (reduced from 12)
+Normalization: 15-year percentiles of 6-month momentum
+Rationale: Balances responsiveness with stability
+
+US Market Cap % (Concurrent, 40%)
+
+Calculation: SPY market cap / (SPY + EFA + EEM)
+Signal Period: Month-over-month change in percentage
+Normalization: 15-year percentiles of monthly changes
+Rationale: Captures allocation shifts not just absolute dominance
+
+ETF Flow Differential (Lagging, 30%)
+
+Calculation: Actual fund flows required (not volume)
+Signal Period: 3-month cumulative flows (US - International)
+Data Source: ETF.com, Morningstar Direct, or Bloomberg
+Normalization: 15-year percentiles of 3-month flows
+Fallback: If flows unavailable, use (SPY AUM change - EFA AUM change)
+Rationale: 3-month captures quarterly rebalancing cycles
+
+Implementation Notes
+Responsiveness Improvements:
+
+Average signal lag reduced from ~6 months to ~2 months
+8 of 12 indicators now use change rates vs absolute levels
+Smoothing periods calibrated to balance signal vs noise
+
+GARCH Compatibility:
+
+Change-based indicators better suited for volatility modeling
+Consistent monthly frequency across all indicators
+Minimum 180 monthly observations for all indicators
+
+Data Quality Priorities:
+
+Critical: Source actual ETF flow data
+Important: Implement 5-day Put/Call averaging
+Important: Convert EPS to S&P 500 index level
+Monitor: Tech employment for AI-driven inversion
+
+Transition Probability Impact:
+These shorter periods will increase transition probabilities between states, making the portfolio more dynamic. Consider adjusting rebalancing frequency from quarterly to monthly if volatility increases.
+
+
+### IPS v4.3 Draft Addition - Structural Trend Indicators
+
+#### New Indicator Classification: Trending vs Cyclical
+
+**Problem Statement:**
+Some indicators represent structural trends rather than mean-reverting cycles. COFER USD reserve share, for example, has declined from ~70% to ~58% over 20 years. This isn't a cyclical oscillation but a structural trend. Analyzing it with percentiles or GARCH volatility misrepresents its signal.
+
+**Solution Framework:**
+For trending indicators, compare short-term vs long-term slopes to detect acceleration/deceleration of the trend.
+
+#### Trending Indicator: COFER USD Reserve Share
+
+**Analysis Method:**
+- **Short-term window:** 6 months (captures recent momentum)
+- **Long-term window:** 60 months (5-year structural trend)
+- **Signal calculation:** Acceleration = Short-term slope - Long-term slope
+- **Normalization:** tanh(acceleration / 0.01) for [-1, 1] range
+- **Inversion:** For declining indicators, -signal (deceleration = bullish)
+
+**Interpretation:**
+- **Strong Bullish (+0.5 to +1.0):** USD share decline decelerating significantly
+- **Mild Bullish (+0.2 to +0.5):** USD share decline moderating
+- **Neutral (-0.2 to +0.2):** USD share decline steady
+- **Bearish (-0.5 to -1.0):** USD share decline accelerating
+
+**Rationale:**
+- COFER declining from 70% to 58% isn't inherently bearish
+- What matters is whether the decline is accelerating (bearish) or decelerating (bullish)
+- This captures turning points in structural trends
+
+#### Other Potential Trending Indicators
+
+**Under Investigation:**
+1. **us_market_pct:** US share of global equity markets (likely trending)
+2. **tech_employment_pct:** Technology sector employment (structural digitization trend)
+3. **productivity_growth:** May require hybrid approach (cyclical around trend)
+
+**Classification Criteria:**
+- **Trending:** Long-term directional movement without mean reversion
+- **Cyclical:** Oscillates around stable mean or slow-moving average
+- **Hybrid:** Cyclical variations around structural trend
+
+#### Implementation Notes
+- Maintain full signal strength (no artificial dampening)
+- Leading indicators should not have muted signals
+- Output remains [-1, 1] for consistency with framework
+
+
+### Innovation Theme - Lagging Indicator Change
+
+**Replacing**: tech_employment_pct
+**With**: software_ip_investment_pct
+
+**Rationale**: 
+- Tech employment % has declined since 2012 despite innovation boom
+- Likely reflects classification issues or productivity gains
+- Software/IP investment better captures innovation adoption
+
+**New Indicator**: Software & IP Investment (% of Private Fixed Investment)
+- **Source**: FRED Y033RC1Q027SBEA / W170RC1Q027SBEA
+- **Update Frequency**: Quarterly
+- **History**: 1999-present
+- **Interpretation**: Companies invest in software/IP AFTER innovation proves valuable
+- **Current Level**: ~20% (historical high)

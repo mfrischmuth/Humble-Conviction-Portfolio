@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Portfolio Tracker v6.4 - Clean Modular Integration</title>
+    <!--
+    HCP PORTFOLIO TRACKER v6.4 - CLEAN MODULAR INTEGRATION
+    File: hcp_tracker_v6.4_modular.html
+    Last Updated: 2025-08-31 23:55:00 UTC
+    
+    APPROACH: Uses EXISTING tested modules without modification
+    - FileHandler v1.4 (as provided)
+    - ThemeCalculator v2.9 (as provided)  
+    - DataEditor v1.0 (as provided)
+    - Indicators v1.0 (as provided)
+    
+    BASED ON: v6.3.1 unified features but with proper modular architecture
+    NO CHANGES: to existing module code - integration only
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .version-info {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .step-indicator {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .step-indicator.completed {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .step-indicator.active {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .step-indicator.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Navigation */
+        .navigation {
+            background: #f8f9fa;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .nav-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .nav-button:hover:not(:disabled) {
+            background: #5a67d8;
+        }
+        
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Content Area */
+        .content {
+            padding: 30px;
+            min-height: 400px;
+        }
+        
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        /* Philosophy Step (Step 1) */
+        .philosophy-content {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .philosophy-intro {
+            background: #f0f4ff;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .philosophy-section {
+            margin-bottom: 25px;
+        }
+        
+        .philosophy-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .philosophy-section ul {
+            list-style-position: inside;
+            margin-left: 20px;
+        }
+        
+        .philosophy-section li {
+            margin-bottom: 10px;
+        }
+        
+        .acknowledgment {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        /* Data Import Step (Step 2) */
+        .data-section {
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .file-upload {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload:hover {
+            background: #f0f4ff;
+        }
+        
+        .file-upload.drag-over {
+            background: #f0f4ff;
+            border-color: #5a67d8;
+        }
+        
+        .sample-generator {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border: 1px solid #ffc107;
+        }
+        
+        /* Data Table (FROM v6.0) */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .data-table tr.manual-override {
+            background: #fff3cd !important;
+        }
+        
+        .edit-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .edit-button:hover {
+            background: #5a67d8;
+        }
+        
+        /* Edit Modal (FROM v6.0) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* Theme Analysis Step (Step 3) */
+        .theme-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .theme-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .theme-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .theme-probability {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .indicator-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .indicator-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .indicator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .indicator-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .indicator-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .tier-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .tier-canary {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .tier-primary {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .tier-structural {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+        
+        /* Arrow Visualization (FROM v6.3) */
+        .indicator-bar {
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 4px;
+            position: relative;
+            margin: 10px 0;
+            overflow: visible;
+        }
+        
+        .indicator-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.5s ease;
+        }
+        
+        .arrow-body {
+            height: 4px;
+            background: #667eea;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .arrow-head {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .arrow-positive .arrow-body {
+            background: #28a745;
+        }
+        
+        .arrow-positive .arrow-head {
+            border-color: transparent transparent transparent #28a745;
+        }
+        
+        .arrow-negative .arrow-body {
+            background: #dc3545;
+        }
+        
+        .arrow-negative .arrow-head {
+            border-color: transparent #dc3545 transparent transparent;
+        }
+        
+        /* Status Messages */
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .status-good {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>HCP Portfolio Tracker v6.4</h1>
+            <div class="version-info">
+                Clean Modular Integration | Uses Existing Tested Modules
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="step-indicator active" onclick="tracker.navigateToStep(1)">
+                <div>Step 1</div>
+                <small>Philosophy</small>
+            </div>
+            <div class="step-indicator" onclick="tracker.navigateToStep(2)">
+                <div>Step 2</div>
+                <small>Data</small>
+            </div>
+            <div class="step-indicator" onclick="tracker.navigateToStep(3)">
+                <div>Step 3</div>
+                <small>Analysis</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 4</div>
+                <small>Scenarios</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 5</div>
+                <small>Optimize</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 6</div>
+                <small>Positions</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 7</div>
+                <small>Rebalance</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 8</div>
+                <small>History</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 9</div>
+                <small>Report</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 10</div>
+                <small>Export</small>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-button" id="prev-button" onclick="tracker.previousStep()" disabled>← Previous</button>
+            <div id="step-title">Step 1: Investment Philosophy</div>
+            <button class="nav-button" id="next-button" onclick="tracker.nextStep()" disabled>Next →</button>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Step 1: Philosophy -->
+            <div id="step-1" class="step-content active">
+                <div class="philosophy-content">
+                    <div class="philosophy-intro">
+                        <h2>Welcome to the Humble Conviction Portfolio System</h2>
+                        <p>This Investment Policy Statement outlines a systematic, probability-weighted approach to portfolio management based on macro regime analysis. The framework monitors 13 indicators across 4 themes to determine scenario probabilities and optimize allocation accordingly.</p>
+                    </div>
+                    
+                    <div class="philosophy-section">
+                        <h3>Core Innovation</h3>
+                        <p>Rather than static allocation, the portfolio dynamically adjusts based on the probability-weighted expected outcomes across 16 possible macro scenarios, with risk minimization to protect against scenario divergence.</p>
+                    </div>
+                    
+                    <div class="philosophy-section">
+                        <h3>Core Beliefs</h3>
+                        <ul>
+                            <li>Markets are regime-dependent - Different macro environments require different exposures</li>
+                            <li>Diversification across scenarios beats diversification within a single scenario</li>
+                            <li>Risk management should focus on avoiding catastrophic outcomes in any probable scenario</li>
+                            <li>Systematic beats discretionary - Rules-based approach removes emotional bias</li>
+                            <li>Probability-weighted optimization captures uncertainty better than point forecasts</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="philosophy-section">
+                        <h3>Investment Objectives</h3>
+                        <ul>
+                            <li><strong>Primary:</strong> Achieve 8-12% annual returns across market cycles</li>
+                            <li><strong>Secondary:</strong> Limit maximum drawdown to 15% in any 12-month period</li>
+                            <li><strong>Tertiary:</strong> Maintain liquidity for opportunistic investments</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="acknowledgment">
+                        <label>
+                            <input type="checkbox" id="philosophy-checkbox" onchange="tracker.acknowledgePhilosophy()">
+                            <strong>I understand and acknowledge the investment philosophy</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2: Data Import -->
+            <div id="step-2" class="step-content">
+                <div class="data-section">
+                    <h2>Import Data Files</h2>
+                    <p>The system requires two data files from the HCP Data Collector:</p>
+                    
+                    <!-- Initialization File -->
+                    <div style="margin-bottom: 30px;">
+                        <h3>1. Initialization File (One-Time Setup)</h3>
+                        <p>Contains 24-36 months of historical data for baseline calculations</p>
+                        <div class="file-upload" onclick="document.getElementById('init-file').click()">
+                            <input type="file" id="init-file" accept=".json" style="display: none;" onchange="tracker.handleInitFile(event)">
+                            <div id="init-status">
+                                📁 Click to select initialization file or drag & drop<br>
+                                <small>Format: hcp_data_initialize_YYYYMMDD_HHMMSS.json</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Monthly Update File -->
+                    <div>
+                        <h3>2. Monthly Update File</h3>
+                        <p>Contains current indicator values and 6-month history</p>
+                        <div class="file-upload" onclick="document.getElementById('monthly-file').click()">
+                            <input type="file" id="monthly-file" accept=".json" style="display: none;" onchange="tracker.handleMonthlyFile(event)">
+                            <div id="monthly-status">
+                                📁 Click to select monthly update file or drag & drop<br>
+                                <small>Format: hcp_data_monthly_YYYYMMDD_HHMMSS.json</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample Data Generator -->
+                    <div class="sample-generator">
+                        <h3>🧪 Testing Mode</h3>
+                        <p>Generate sample data with different market scenarios for testing:</p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                            <button class="nav-button" onclick="tracker.generateSampleData('tech_boom')">Tech Boom</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('usd_strength')">USD Strength</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('pe_reversion')">P/E Reversion</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('international')">International</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('mixed')">Mixed Signals</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('random')" style="background: #28a745;">🎲 Random</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Editor Table -->
+                <div id="data-editor-section" style="display: none;">
+                    <h3>Review and Edit Data</h3>
+                    <div id="data-table-container"></div>
+                </div>
+            </div>
+            
+            <!-- Step 3: Theme Analysis -->
+            <div id="step-3" class="step-content">
+                <h2>Theme Analysis & Probabilities</h2>
+                <div id="theme-container">
+                    <!-- Theme cards will be generated here -->
+                </div>
+                <div id="scenario-summary" style="margin-top: 30px;">
+                    <!-- Scenario probabilities will be shown here -->
+                </div>
+            </div>
+            
+            <!-- Steps 4-10: Placeholder -->
+            <div id="step-4" class="step-content">
+                <h2>Step 4: Scenario Analysis</h2>
+                <p>This step will analyze the 16 possible scenarios based on theme combinations.</p>
+            </div>
+            
+            <div id="step-5" class="step-content">
+                <h2>Step 5: Portfolio Optimization</h2>
+                <p>This step will optimize the portfolio allocation based on scenario probabilities.</p>
+            </div>
+            
+            <div id="step-6" class="step-content">
+                <h2>Step 6: Current Positions</h2>
+                <p>Enter your current portfolio positions.</p>
+            </div>
+            
+            <div id="step-7" class="step-content">
+                <h2>Step 7: Rebalancing Trades</h2>
+                <p>Generate the trades needed to reach optimal allocation.</p>
+            </div>
+            
+            <div id="step-8" class="step-content">
+                <h2>Step 8: History</h2>
+                <p>View historical changes and audit trail.</p>
+            </div>
+            
+            <div id="step-9" class="step-content">
+                <h2>Step 9: Report</h2>
+                <p>Generate detailed analysis report.</p>
+            </div>
+            
+            <div id="step-10" class="step-content">
+                <h2>Step 10: Export</h2>
+                <p>Export data and reports.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Edit Indicator</h3>
+                <button onclick="tracker.closeEditModal()" style="float: right;">×</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="nav-button" onclick="tracker.closeEditModal()">Cancel</button>
+                <button class="nav-button" onclick="tracker.saveIndicatorEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- LOAD EXISTING MODULES -->
+    <script>
+        // In deployment, these would be external files:
+        // <script src="file_handler_v1_4.js"></script>
+        // <script src="indicators_v1_0.js"></script>
+        // <script src="data_editor_v1_0.js"></script>
+        // <script src="theme_calculator_v2_9.js"></script>
+        
+        // For artifact demonstration, we'll check for their existence
+        console.log('Checking for existing modules...');
+        console.log('Expected: FileHandler v1.4, Indicators v1.0, DataEditor v1.0, ThemeCalculator v2.9');
+    </script>
+
+    <!-- MAIN TRACKER APPLICATION -->
+    <script>
+        // HCP Portfolio Tracker v6.4 - Clean Integration with Existing Modules
+        const tracker = {
+            version: '6.4',
+            currentStep: 1,
+            completedSteps: [],
+            editingIndicator: null,
+            
+            // State management
+            state: {
+                philosophyAcknowledged: false,
+                initializationData: null,
+                monthlyData: null,
+                dataQuality: {},
+                manualOverrides: {},
+                themeProbabilities: {},
+                scenarioProbabilities: []
+            },
+            
+            // Initialize with existing modules
+            init: function() {
+                console.log(`HCP Portfolio Tracker v${this.version} initializing...`);
+                
+                // Check for required modules
+                this.checkModules();
+                
+                this.loadState();
+                this.updateStepIndicators();
+                this.updateNavigation();
+                this.setupEventListeners();
+                
+                console.log('System initialization complete');
+            },
+            
+            // Check for existing modules
+            checkModules: function() {
+                const requiredModules = [
+                    { name: 'FileHandler', version: '1.4', global: 'FileHandler' },
+                    { name: 'Indicators', version: '1.0', global: 'Indicators' },
+                    { name: 'DataEditor', version: '1.0', global: 'DataEditor' },
+                    { name: 'ThemeCalculator', version: '2.9', global: 'ThemeCalculator' }
+                ];
+                
+                requiredModules.forEach(module => {
+                    if (typeof window[module.global] !== 'undefined') {
+                        console.log(`✓ ${module.name} v${module.version} loaded`);
+                    } else {
+                        console.warn(`⚠ ${module.name} v${module.version} not found - feature will be limited`);
+                    }
+                });
+            },
+            
+            // Setup event listeners
+            setupEventListeners: function() {
+                // Use FileHandler if available, otherwise fallback
+                if (typeof FileHandler !== 'undefined' && FileHandler.setupFileInputs) {
+                    FileHandler.setupFileInputs({
+                        initCallback: this.processInitData.bind(this),
+                        monthlyCallback: this.processMonthlyData.bind(this),
+                        sampleCallback: this.processSampleData.bind(this)
+                    });
+                } else {
+                    // Fallback event listeners
+                    this.setupFallbackListeners();
+                }
+                
+                // Use DataEditor if available
+                if (typeof DataEditor !== 'undefined' && DataEditor.setupModalListeners) {
+                    DataEditor.setupModalListeners();
+                } else {
+                    this.setupModalFallback();
+                }
+            },
+            
+            setupFallbackListeners: function() {
+                // Basic file handling without FileHandler module
+                const initInput = document.getElementById('init-file');
+                const monthlyInput = document.getElementById('monthly-file');
+                
+                if (initInput) {
+                    initInput.addEventListener('change', (event) => this.handleInitFile(event));
+                }
+                
+                if (monthlyInput) {
+                    monthlyInput.addEventListener('change', (event) => this.handleMonthlyFile(event));
+                }
+                
+                console.log('Using fallback file listeners (FileHandler not available)');
+            },
+            
+            setupModalFallback: function() {
+                // Basic modal handling without DataEditor module
+                window.addEventListener('click', (event) => {
+                    const modal = document.getElementById('edit-modal');
+                    if (event.target === modal) {
+                        this.closeEditModal();
+                    }
+                });
+                
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') {
+                        this.closeEditModal();
+                    }
+                });
+                
+                console.log('Using fallback modal listeners (DataEditor not available)');
+            },
+            
+            // Step Navigation (unchanged from v6.3.1)
+            navigateToStep: function(step) {
+                if (step < 1 || step > 10) return;
+                if (!this.canNavigateToStep(step)) return;
+                
+                this.currentStep = step;
+                this.updateStepDisplay();
+                this.updateStepIndicators();
+                this.updateNavigation();
+                this.saveState();
+            },
+            
+            canNavigateToStep: function(step) {
+                if (step === 1) return true;
+                if (step === 2) return this.state.philosophyAcknowledged;
+                if (step === 3) return this.state.monthlyData !== null;
+                if (step > 3) return this.completedSteps.includes(3);
+                return false;
+            },
+            
+            previousStep: function() {
+                if (this.currentStep > 1) {
+                    this.navigateToStep(this.currentStep - 1);
+                }
+            },
+            
+            nextStep: function() {
+                if (this.currentStep < 10 && this.canNavigateToStep(this.currentStep + 1)) {
+                    this.navigateToStep(this.currentStep + 1);
+                }
+            },
+            
+            updateStepDisplay: function() {
+                document.querySelectorAll('.step-content').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                const currentStepEl = document.getElementById(`step-${this.currentStep}`);
+                if (currentStepEl) {
+                    currentStepEl.classList.add('active');
+                }
+                
+                const titles = [
+                    'Investment Philosophy',
+                    'Data Import & Edit',
+                    'Theme Analysis',
+                    'Scenario Analysis',
+                    'Portfolio Optimization',
+                    'Current Positions',
+                    'Rebalancing Trades',
+                    'History',
+                    'Report',
+                    'Export'
+                ];
+                document.getElementById('step-title').textContent = `Step ${this.currentStep}: ${titles[this.currentStep - 1]}`;
+            },
+            
+            updateStepIndicators: function() {
+                document.querySelectorAll('.step-indicator').forEach((el, index) => {
+                    const step = index + 1;
+                    el.classList.remove('active', 'completed', 'locked');
+                    
+                    if (step === this.currentStep) {
+                        el.classList.add('active');
+                    } else if (this.completedSteps.includes(step)) {
+                        el.classList.add('completed');
+                    } else if (!this.canNavigateToStep(step)) {
+                        el.classList.add('locked');
+                    }
+                });
+            },
+            
+            updateNavigation: function() {
+                const prevButton = document.getElementById('prev-button');
+                const nextButton = document.getElementById('next-button');
+                
+                prevButton.disabled = this.currentStep === 1;
+                
+                if (this.currentStep === 1) {
+                    nextButton.disabled = !this.state.philosophyAcknowledged;
+                } else if (this.currentStep === 2) {
+                    nextButton.disabled = !this.state.monthlyData;
+                } else {
+                    nextButton.disabled = !this.canNavigateToStep(this.currentStep + 1);
+                }
+            },
+            
+            // Step 1: Philosophy (unchanged)
+            acknowledgePhilosophy: function() {
+                const checkbox = document.getElementById('philosophy-checkbox');
+                this.state.philosophyAcknowledged = checkbox.checked;
+                
+                if (checkbox.checked && !this.completedSteps.includes(1)) {
+                    this.completedSteps.push(1);
+                }
+                
+                this.updateNavigation();
+                this.saveState();
+            },
+            
+            // Step 2: Data Import - Use existing modules where available
+            handleInitFile: function(event) {
+                if (typeof FileHandler !== 'undefined' && FileHandler.handleInitFile) {
+                    FileHandler.handleInitFile(event, this.processInitData.bind(this));
+                } else {
+                    // Fallback handling
+                    this.fallbackFileHandle(event, 'init');
+                }
+            },
+            
+            handleMonthlyFile: function(event) {
+                if (typeof FileHandler !== 'undefined' && FileHandler.handleMonthlyFile) {
+                    FileHandler.handleMonthlyFile(event, this.processMonthlyData.bind(this));
+                } else {
+                    // Fallback handling
+                    this.fallbackFileHandle(event, 'monthly');
+                }
+            },
+            
+            fallbackFileHandle: function(event, type) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        const statusId = type === 'init' ? 'init-status' : 'monthly-status';
+                        document.getElementById(statusId).innerHTML = 
+                            `<span class="status-good">✅ ${type} data loaded (fallback)</span>`;
+                        
+                        if (type === 'monthly') {
+                            this.processMonthlyData(data, type);
+                        } else {
+                            this.processInitData(data, type);
+                        }
+                    } catch (error) {
+                        alert(`Error parsing ${type} file: ` + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            },
+            
+            generateSampleData: function() {
+                if (typeof FileHandler !== 'undefined' && FileHandler.generateSampleData) {
+                    const sampleData = FileHandler.generateSampleData('monthly', 'tech_boom');
+                    this.processSampleData(sampleData, 'sample');
+                } else {
+                    // Fallback sample generation
+                    this.generateFallbackSampleData();
+                }
+            },
+            
+            generateFallbackSampleData: function() {
+                const sampleData = {
+                    version: '3.8.0',
+                    mode: 'monthly',
+                    timestamp: new Date().toISOString(),
+                    trading_status: 'GREEN',
+                    indicators: {
+                        // Basic sample structure
+                        usd: {
+                            dxy: { current: 97.5, history: new Array(6).fill(0).map(() => 95 + Math.random() * 5) }
+                        },
+                        innovation: {
+                            qqq_spy: { current: 0.78, history: new Array(6).fill(0).map(() => 0.7 + Math.random() * 0.1) }
+                        }
+                    }
+                };
+                
+                document.getElementById('monthly-status').innerHTML = 
+                    '<span class="status-warning">⚠️ Using fallback sample data</span>';
+                
+                this.processSampleData(sampleData, 'sample');
+            },
+            
+            // Process data callbacks
+            processInitData: function(data, type) {
+                this.state.initializationData = data;
+                console.log('Initialization data processed:', type);
+            },
+            
+            processMonthlyData: function(data, type) {
+                this.state.monthlyData = data;
+                this.checkDataComplete();
+                console.log('Monthly data processed:', type);
+            },
+            
+            processSampleData: function(data, type) {
+                this.state.monthlyData = data;
+                this.checkDataComplete();
+                console.log('Sample data processed:', type);
+            },
+            
+            checkDataComplete: function() {
+                if (this.state.monthlyData) {
+                    this.displayDataTable();
+                    
+                    if (!this.completedSteps.includes(2)) {
+                        this.completedSteps.push(2);
+                    }
+                    
+                    this.updateNavigation();
+                    this.updateStepIndicators();
+                    this.saveState();
+                }
+            },
+            
+            // Data Editor - Use existing module where available
+            displayDataTable: function() {
+                if (typeof DataEditor !== 'undefined' && DataEditor.displayDataTable) {
+                    // Use existing DataEditor module
+                    const indicators = typeof Indicators !== 'undefined' ? Indicators : this.getFallbackIndicators();
+                    DataEditor.displayDataTable(this.state.monthlyData, indicators, this.state.manualOverrides);
+                } else {
+                    // Fallback data table display
+                    this.displayFallbackDataTable();
+                }
+                
+                document.getElementById('data-editor-section').style.display = 'block';
+            },
+            
+            displayFallbackDataTable: function() {
+                const container = document.getElementById('data-table-container');
+                
+                let html = '<table class="data-table"><thead><tr>';
+                html += '<th>Theme</th><th>Indicator</th><th>Current Value</th><th>Action</th>';
+                html += '</tr></thead><tbody>';
+                
+                // Simple fallback table
+                html += '<tr><td>Sample</td><td>Demo Indicator</td><td>N/A</td>';
+                html += '<td><button class="edit-button">Edit (Fallback)</button></td></tr>';
+                
+                html += '</tbody></table>';
+                html += '<p><em>Using fallback data table. Load DataEditor v1.0 module for full functionality.</em></p>';
+                
+                container.innerHTML = html;
+            },
+            
+            getFallbackIndicators: function() {
+                // Minimal indicator definitions for fallback
+                return {
+                    definitions: {
+                        usd: {
+                            dxy: { name: 'DXY Index', tier: 'canary' }
+                        },
+                        innovation: {
+                            qqqSpy: { name: 'QQQ/SPY Ratio', tier: 'canary' }
+                        }
+                    }
+                };
+            },
+            
+            // Theme Analysis - Use existing module where available
+            calculateThemes: function() {
+                if (!this.state.monthlyData) return;
+                
+                if (typeof ThemeCalculator !== 'undefined' && ThemeCalculator.calculateThemeAnalysis) {
+                    // Use existing ThemeCalculator module
+                    const indicators = typeof Indicators !== 'undefined' ? Indicators : null;
+                    const analysis = ThemeCalculator.calculateThemeAnalysis(this.state.monthlyData, indicators);
+                    
+                    if (ThemeCalculator.displayThemeResults) {
+                        ThemeCalculator.displayThemeResults(analysis, 'theme-container');
+                    } else {
+                        this.displayThemeResults(analysis);
+                    }
+                } else {
+                    // Fallback theme calculation
+                    this.calculateFallbackThemes();
+                }
+                
+                if (!this.completedSteps.includes(3)) {
+                    this.completedSteps.push(3);
+                }
+                this.updateStepIndicators();
+                this.saveState();
+            },
+            
+            calculateFallbackThemes: function() {
+                const container = document.getElementById('theme-container');
+                container.innerHTML = '<div class="theme-card"><h3>Fallback Theme Analysis</h3><p>Load ThemeCalculator v2.9 module for full functionality.</p></div>';
+            },
+            
+            displayThemeResults: function(analysis) {
+                // Basic theme results display if module doesn't have displayThemeResults
+                const container = document.getElementById('theme-container');
+                let html = '<h3>Theme Analysis Results</h3>';
+                
+                if (analysis && analysis.themes) {
+                    Object.entries(analysis.themes).forEach(([theme, probability]) => {
+                        html += `<div class="theme-card">`;
+                        html += `<div class="theme-header">`;
+                        html += `<div class="theme-name">${theme.toUpperCase()}</div>`;
+                        html += `<div class="theme-probability">${(probability * 100).toFixed(1)}%</div>`;
+                        html += `</div></div>`;
+                    });
+                }
+                
+                container.innerHTML = html;
+            },
+            
+            // Modal functions (use DataEditor if available)
+            openEditModal: function(dataKey, displayName, currentValue) {
+                if (typeof DataEditor !== 'undefined' && DataEditor.openEditModal) {
+                    DataEditor.openEditModal(dataKey, displayName, currentValue);
+                } else {
+                    alert('DataEditor module not available. Cannot edit indicator.');
+                }
+            },
+            
+            closeEditModal: function() {
+                if (typeof DataEditor !== 'undefined' && DataEditor.closeEditModal) {
+                    DataEditor.closeEditModal();
+                } else {
+                    const modal = document.getElementById('edit-modal');
+                    if (modal) modal.style.display = 'none';
+                }
+            },
+            
+            saveIndicatorEdit: function() {
+                if (typeof DataEditor !== 'undefined' && DataEditor.saveIndicatorEdit) {
+                    DataEditor.saveIndicatorEdit(this.state, () => {
+                        this.displayDataTable();
+                        this.calculateThemes();
+                    });
+                } else {
+                    alert('DataEditor module not available. Cannot save changes.');
+                }
+            },
+            
+            // State Persistence (unchanged from v6.3.1)
+            saveState: function() {
+                const stateData = {
+                    version: this.version,
+                    currentStep: this.currentStep,
+                    completedSteps: this.completedSteps,
+                    state: this.state
+                };
+                localStorage.setItem('hcp-tracker-v64-state', JSON.stringify(stateData));
+            },
+            
+            loadState: function() {
+                const saved = localStorage.getItem('hcp-tracker-v64-state');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        if (data.version === this.version) {
+                            this.currentStep = data.currentStep || 1;
+                            this.completedSteps = data.completedSteps || [];
+                            this.state = data.state || this.state;
+                            
+                            if (this.state.philosophyAcknowledged) {
+                                document.getElementById('philosophy-checkbox').checked = true;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error loading saved state:', e);
+                    }
+                }
+            }
+        };
+        
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            tracker.init();
+        });
+        
+        // Make tracker globally available
+        window.tracker = tracker;
+    </script>
+</body>
+</html>

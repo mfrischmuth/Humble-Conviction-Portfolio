@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Tracker - Module Integration Test</title>
+    
+    <!-- Copy CSS from your v6.3.1 file - all the styles between <style> and </style> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .version-info {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .step-indicator {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .step-indicator.active {
+            background: rgba(255,255,255,0.3);
+            font-weight: bold;
+        }
+        
+        .step-indicator.completed {
+            background: rgba(40,167,69,0.8);
+        }
+        
+        .step-indicator.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .step-content {
+            display: none;
+            min-height: 400px;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        .navigation {
+            background: #f8f9fa;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .nav-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        
+        .nav-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .nav-button:hover:not(:disabled) {
+            background: #0056b3;
+        }
+        
+        .file-upload {
+            border: 2px dashed #ccc;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .file-upload:hover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+        
+        .status-good {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .sample-generator {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+        
+        .manual-override {
+            background-color: #fff3cd;
+        }
+        
+        .edit-btn {
+            background: #ffc107;
+            color: black;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .tier-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            margin-left: 5px;
+        }
+        
+        .tier-canary { background: #ff6b6b; color: white; }
+        .tier-primary { background: #4ecdc4; color: white; }
+        .tier-structural { background: #45b7d1; color: white; }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 0;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        .modal-header {
+            background: #007bff;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            text-align: right;
+            border-top: 1px solid #ddd;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        /* Test Results */
+        .test-results {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-success {
+            color: #28a745;
+        }
+        
+        .test-failure {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>HCP Portfolio Tracker - Module Integration Test</h1>
+            <div class="version-info">Testing modular architecture with extracted components</div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="step-indicator" data-step="1">1. Philosophy</div>
+            <div class="step-indicator" data-step="2">2. Data Import</div>
+            <div class="step-indicator" data-step="3">3. Themes</div>
+            <div class="step-indicator" data-step="4">4. Scenarios</div>
+            <div class="step-indicator" data-step="5">5. Optimization</div>
+            <div class="step-indicator" data-step="6">6. Positions</div>
+            <div class="step-indicator" data-step="7">7. Trades</div>
+            <div class="step-indicator" data-step="8">8. History</div>
+            <div class="step-indicator" data-step="9">9. Report</div>
+            <div class="step-indicator" data-step="10">10. Export</div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content">
+            <h2 id="step-title">Module Integration Test</h2>
+            
+            <!-- Test Results Section -->
+            <div class="test-results">
+                <h3>Module Test Results</h3>
+                <div id="test-output">Running tests...</div>
+            </div>
+            
+            <!-- Step 1: Philosophy -->
+            <div id="step-1" class="step-content active">
+                <h2>Step 1: Investment Philosophy Acknowledgment</h2>
+                <p>The HCP strategy is based on macro regime analysis across four key themes.</p>
+                
+                <div style="margin: 20px 0;">
+                    <label>
+                        <input type="checkbox" id="philosophy-checkbox" onchange="handlePhilosophyChange()"> 
+                        I acknowledge and understand the HCP investment philosophy and approach
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Step 2: Data Import -->
+            <div id="step-2" class="step-content">
+                <h2>Step 2: Data Import and Editing</h2>
+                
+                <!-- Monthly Update File -->
+                <div>
+                    <h3>Monthly Update File</h3>
+                    <div class="file-upload" onclick="document.getElementById('monthly-file').click()">
+                        <input type="file" id="monthly-file" accept=".json" style="display: none;">
+                        <div id="monthly-status">
+                            Click to select monthly update file or drag & drop<br>
+                            <small>Format: hcp_data_monthly_YYYYMMDD_HHMMSS.json</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sample Data Generator -->
+                <div class="sample-generator">
+                    <h3>Testing Mode</h3>
+                    <p>Generate sample data for testing purposes</p>
+                    <button class="nav-button" id="generate-sample" onclick="generateTestData()">
+                        Generate Sample Data
+                    </button>
+                </div>
+                
+                <!-- Data Table Container -->
+                <div id="data-table-container"></div>
+            </div>
+            
+            <!-- Step 3: Theme Analysis -->
+            <div id="step-3" class="step-content">
+                <h2>Step 3: Theme Probability Analysis</h2>
+                <p>Calculate probability scores for each of the four investment themes.</p>
+                <div id="theme-results"></div>
+            </div>
+            
+            <!-- Remaining steps (placeholders for now) -->
+            <div id="step-4" class="step-content">
+                <h2>Step 4: Scenario Analysis</h2>
+                <p>This step will be implemented with additional modules.</p>
+            </div>
+            
+            <div id="step-5" class="step-content">
+                <h2>Step 5: Portfolio Optimization</h2>
+                <p>This step will be implemented with additional modules.</p>
+            </div>
+            
+            <div id="step-6" class="step-content">
+                <h2>Step 6: Current Positions</h2>
+                <p>This step will be implemented with additional modules.</p>
+            </div>
+            
+            <div id="step-7" class="step-content">
+                <h2>Step 7: Rebalancing Trades</h2>
+                <p>This step will be implemented with additional modules.</p>
+            </div>
+            
+            <div id="step-8" class="step-content">
+                <h2>Step 8: History</h2>
+                <p>This step will be implemented with additional modules.</p>
+            </div>
+            
+            <div id="step-9" class="step-content">
+                <h2>Step 9: Report</h2>
+                <p>This step will be implemented with additional modules.</p>
+            </div>
+            
+            <div id="step-10" class="step-content">
+                <h2>Step 10: Export</h2>
+                <p>This step will be implemented with additional modules.</p>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="btn-prev" class="nav-button" disabled>← Previous</button>
+            <div>
+                <button class="nav-button" onclick="runModuleTests()">Run Module Tests</button>
+                <button class="nav-button" onclick="tracker.exportState()">Export State</button>
+                <button class="nav-button" onclick="tracker.reset()">Reset</button>
+            </div>
+            <button id="btn-next" class="nav-button" disabled>Next →</button>
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Edit Indicator</h3>
+                <button onclick="DataEditor.closeEditModal()" style="float: right; background: none; border: none; color: white; font-size: 20px;">×</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="nav-button" onclick="DataEditor.closeEditModal()" style="background: #6c757d;">Cancel</button>
+                <button class="nav-button" onclick="saveEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load Module Files -->
+    <script src="../core/tracker_core.js"></script>
+    <script src="../modules/data_editor_v1_0.js"></script>
+    <script src="../modules/indicators_v1_0.js"></script>
+    <script src="../modules/file_handler_v1_0.js"></script>
+    
+    <!-- Integration Layer -->
+    <script>
+        // Create unified tracker object that combines all modules
+        const tracker = {
+            // Core functionality
+            ...TrackerCore,
+            
+            // Module integration
+            indicators: Indicators.definitions,
+            
+            // Override core methods to integrate with modules
+            executeStep: function(step) {
+                switch(step) {
+                    case 2:
+                        // Setup file handlers when entering step 2
+                        FileHandler.setupFileInputs({
+                            monthlyCallback: this.handleDataLoad.bind(this),
+                            sampleCallback: this.handleDataLoad.bind(this)
+                        });
+                        break;
+                    case 3:
+                        if (this.state.monthlyData) {
+                            this.calculateThemes();
+                        }
+                        break;
+                }
+            },
+            
+            // Data loading handler
+            handleDataLoad: function(data, type) {
+                if (type === 'monthly' || type === 'sample') {
+                    this.state.monthlyData = data;
+                    
+                    // Display data table with edit functionality
+                    DataEditor.displayDataTable(
+                        data, 
+                        this.indicators, 
+                        this.state.manualOverrides
+                    );
+                    
+                    // Mark step 2 as complete
+                    if (!this.completedSteps.includes(2)) {
+                        this.completedSteps.push(2);
+                    }
+                    
+                    this.updateNavigation();
+                    this.updateStepIndicators();
+                    this.saveState();
+                }
+            },
+            
+            // Theme calculation (basic implementation)
+            calculateThemes: function() {
+                if (!this.state.monthlyData) return;
+                
+                const themes = ['usd', 'innovation', 'pe', 'international'];
+                const results = {};
+                
+                themes.forEach(theme => {
+                    const result = Indicators.calculateThemeProbability(
+                        this.state.monthlyData.indicators, 
+                        theme
+                    );
+                    results[theme] = result;
+                });
+                
+                this.state.themeProbabilities = results;
+                this.displayThemeResults(results);
+                
+                // Mark step 3 as complete
+                if (!this.completedSteps.includes(3)) {
+                    this.completedSteps.push(3);
+                }
+                
+                this.updateNavigation();
+                this.updateStepIndicators();
+                this.saveState();
+            },
+            
+            // Display theme results
+            displayThemeResults: function(results) {
+                const container = document.getElementById('theme-results');
+                if (!container) return;
+                
+                let html = '<div class="theme-display">';
+                Object.entries(results).forEach(([theme, data]) => {
+                    const percentage = Math.round(data.probability * 100);
+                    html += `
+                        <div class="theme-item">
+                            <div class="theme-name">${theme.toUpperCase()} Theme</div>
+                            <div class="theme-bar">
+                                <div class="theme-fill theme-${theme}" style="width: ${percentage}%">
+                                    ${percentage}% (${data.confidence} confidence)
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            }
+        };
+        
+        // Integration functions that connect modules to UI
+        function handlePhilosophyChange() {
+            const checkbox = document.getElementById('philosophy-checkbox');
+            tracker.state.philosophyAcknowledged = checkbox.checked;
+            
+            if (checkbox.checked && !tracker.completedSteps.includes(1)) {
+                tracker.completedSteps.push(1);
+            } else if (!checkbox.checked) {
+                tracker.completedSteps = tracker.completedSteps.filter(step => step !== 1);
+            }
+            
+            tracker.updateNavigation();
+            tracker.updateStepIndicators();
+            tracker.saveState();
+        }
+        
+        function generateTestData() {
+            const sampleData = FileHandler.generateSampleData('monthly');
+            tracker.handleDataLoad(sampleData, 'sample');
+            
+            document.getElementById('monthly-status').innerHTML = 
+                '<span class="status-good">✅ Sample data generated and loaded</span>';
+        }
+        
+        function saveEdit() {
+            DataEditor.saveIndicatorEdit(tracker.state, function() {
+                // Refresh data table after edit
+                DataEditor.displayDataTable(
+                    tracker.state.monthlyData, 
+                    tracker.indicators, 
+                    tracker.state.manualOverrides
+                );
+                tracker.saveState();
+            });
+        }
+        
+        // Module testing functions
+        function runModuleTests() {
+            const output = document.getElementById('test-output');
+            let results = [];
+            
+            // Test TrackerCore
+            results.push(testTrackerCore());
+            
+            // Test Indicators
+            results.push(testIndicators());
+            
+            // Test DataEditor
+            results.push(testDataEditor());
+            
+            // Test FileHandler
+            results.push(testFileHandler());
+            
+            // Display results
+            const passedTests = results.filter(r => r.passed).length;
+            const totalTests = results.length;
+            
+            let html = `<h4>Test Summary: ${passedTests}/${totalTests} passed</h4>`;
+            results.forEach(result => {
+                const status = result.passed ? 'test-success' : 'test-failure';
+                html += `<div class="${status}">• ${result.name}: ${result.message}</div>`;
+            });
+            
+            output.innerHTML = html;
+        }
+        
+        function testTrackerCore() {
+            try {
+                // Test navigation
+                const canNavigate = TrackerCore.canNavigateToStep(1);
+                const hasState = TrackerCore.state !== undefined;
+                const hasInit = typeof TrackerCore.init === 'function';
+                
+                return {
+                    name: 'TrackerCore',
+                    passed: canNavigate && hasState && hasInit,
+                    message: canNavigate && hasState && hasInit ? 'All core functions working' : 'Some core functions missing'
+                };
+            } catch (error) {
+                return {
+                    name: 'TrackerCore',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testIndicators() {
+            try {
+                const definitions = Indicators.definitions;
+                const hasUSD = definitions.usd !== undefined;
+                const hasInnovation = definitions.innovation !== undefined;
+                const indicatorCount = Indicators.getAllIndicators().length;
+                
+                return {
+                    name: 'Indicators',
+                    passed: hasUSD && hasInnovation && indicatorCount === 13,
+                    message: hasUSD && hasInnovation && indicatorCount === 13 ? 
+                        `13 indicators defined correctly` : 
+                        `Found ${indicatorCount} indicators, expected 13`
+                };
+            } catch (error) {
+                return {
+                    name: 'Indicators',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testDataEditor() {
+            try {
+                const hasModal = typeof DataEditor.openEditModal === 'function';
+                const hasTable = typeof DataEditor.displayDataTable === 'function';
+                const hasSave = typeof DataEditor.saveIndicatorEdit === 'function';
+                
+                return {
+                    name: 'DataEditor',
+                    passed: hasModal && hasTable && hasSave,
+                    message: hasModal && hasTable && hasSave ? 
+                        'All editing functions available' : 
+                        'Some editing functions missing'
+                };
+            } catch (error) {
+                return {
+                    name: 'DataEditor',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testFileHandler() {
+            try {
+                const hasGenerate = typeof FileHandler.generateSampleData === 'function';
+                const hasValidate = typeof FileHandler.validateMonthlyFile === 'function';
+                const hasHandle = typeof FileHandler.handleMonthlyFile === 'function';
+                
+                return {
+                    name: 'FileHandler',
+                    passed: hasGenerate && hasValidate && hasHandle,
+                    message: hasGenerate && hasValidate && hasHandle ? 
+                        'All file functions available' : 
+                        'Some file functions missing'
+                };
+            } catch (error) {
+                return {
+                    name: 'FileHandler',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Run initial module tests
+            setTimeout(runModuleTests, 1000);
+        });
+    </script>
+</body>
+</html>

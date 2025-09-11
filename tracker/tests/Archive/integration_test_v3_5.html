@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Portfolio Tracker - Integration Test v3.5</title>
+    <meta name="description" content="Complete workflow integration test with all production modules">
+    <meta name="version" content="3.5">
+    <meta name="last-updated" content="2025-09-02T22:00:00.000Z">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        .version-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        
+        .test-results {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .test-passed {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .test-failed {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button.secondary {
+            background: #6c757d;
+        }
+        
+        button.secondary:hover {
+            background: #545b62;
+        }
+        
+        button.success {
+            background: #28a745;
+        }
+        
+        button.success:hover {
+            background: #218838;
+        }
+        
+        .navigation {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .step-indicator {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .step-active {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .step-completed {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+        }
+        
+        .step-pending {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .data-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .indicator-edit {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Theme Analysis Styling */
+        .theme-analysis-v2_9 {
+            margin: 20px 0;
+        }
+        
+        .analysis-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .analysis-meta {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .analysis-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .summary-item {
+            background: white;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .summary-label {
+            display: block;
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .summary-value {
+            display: block;
+            font-size: 1.1em;
+            margin-top: 4px;
+        }
+        
+        .uncertainty-high { color: #dc3545; }
+        .uncertainty-medium { color: #ffc107; }
+        .uncertainty-low { color: #28a745; }
+        .confidence-high { color: #28a745; }
+        .confidence-medium { color: #ffc107; }
+        .confidence-low { color: #dc3545; }
+        
+        .theme-probabilities {
+            margin: 20px 0;
+        }
+        
+        .theme-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .theme-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .theme-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .theme-percentage {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .theme-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        
+        .theme-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .theme-usd { background: #dc3545; }
+        .theme-ai { background: #007bff; }
+        .theme-pe { background: #ffc107; }
+        .theme-intl { background: #28a745; }
+        
+        .theme-description {
+            color: #666;
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 8px;
+        }
+        
+        /* Scenario Matrix Styling */
+        .scenario-matrix {
+            margin: 20px 0;
+        }
+        
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .scenario-item {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        /* IPS v3.10 color coding */
+        .scenario-very-high { 
+            background: #155724;
+            border-color: #0b2e13;
+            color: white;
+        }
+        
+        .scenario-high { 
+            background: #28a745;
+            border-color: #1e7e34;
+            color: white;
+        }
+        
+        .scenario-medium { 
+            background: #ffc107;
+            border-color: #d39e00;
+            color: #333;
+        }
+        
+        .scenario-low { 
+            background: #dc3545;
+            border-color: #bd2130;
+            color: white;
+        }
+        
+        .scenario-very-low { 
+            background: #6c757d;
+            border-color: #545b62;
+            color: white;
+        }
+        
+        .scenario-rank {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .scenario-name {
+            font-weight: bold;
+            margin: 4px 0;
+        }
+        
+        .scenario-probability {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .scenario-binary {
+            font-family: monospace;
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+        
+        /* Portfolio Optimization Styling */
+        .optimization-results {
+            margin: 20px 0;
+        }
+        
+        .optimization-header {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .optimization-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .allocation-display {
+            margin-top: 20px;
+        }
+        
+        .allocation-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .security-info {
+            flex: 1;
+        }
+        
+        .security-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .security-desc {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+        
+        .allocation-viz {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+        }
+        
+        .allocation-bar {
+            flex: 1;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .allocation-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .allocation-text {
+            font-weight: bold;
+            min-width: 45px;
+            text-align: right;
+            color: #495057;
+        }
+        
+        .validation-status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        
+        .validation-indicator.valid {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .validation-indicator.invalid {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .validation-issues, .validation-warnings {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .validation-issues li, .validation-warnings li {
+            margin: 5px 0;
+        }
+        
+        .validation-issues-header, .validation-warnings-header {
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+        }
+        
+        /* Step Display CSS */
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        /* Loading and Error States */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        /* Modal Styles for Data Editor */
+        #edit-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 500px;
+            max-width: 90%;
+            border-radius: 8px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .modal-close:hover,
+        .modal-close:focus {
+            color: black;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>HCP Portfolio Tracker</h1>
+        <h2>Integration Test v3.5</h2>
+        <p>Complete Workflow: Data → Themes → Scenarios → Portfolio Optimization</p>
+        <p>All Production Modules Loaded</p>
+    </div>
+    
+    <div class="container">
+        <div class="version-info">
+            <h3>Module Compatibility Matrix</h3>
+            <ul>
+                <li><strong>TrackerCore:</strong> v1.2 (navigation, state management)</li>
+                <li><strong>DataEditor:</strong> v1.0 (modal editing system)</li>
+                <li><strong>Indicators:</strong> v1.0 (13-indicator framework)</li>
+                <li><strong>FileHandler:</strong> v1.5 (momentum-aware data generation)</li>
+                <li><strong>ThemeCalculator:</strong> v2.9 (Enhanced trigger detection + IPS v3.10 compliance)</li>
+                <li><strong>PortfolioOptimizer:</strong> v2.0 (Regret minimization framework + IPS v3.10 security universe)</li>
+            </ul>
+            <p><strong>v3.5 Features:</strong> Properly loads all production modules instead of using mocks. Complete Steps 1-5 workflow with real module integration.</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>Module Load Tests</h3>
+            <button onclick="runModuleTests()">Run Module Tests</button>
+            <button onclick="displayDebugInfo()" class="secondary">Show Debug Info</button>
+            <div id="module-test-results" class="test-results"></div>
+        </div>
+    </div>
+    
+    <!-- Step Navigation -->
+    <div class="navigation">
+        <button onclick="tracker.navigateToStep(1)">Step 1: Philosophy</button>
+        <button onclick="tracker.navigateToStep(2)">Step 2: Data</button>
+        <button onclick="tracker.navigateToStep(3)">Step 3: Themes</button>
+        <button onclick="tracker.navigateToStep(4)">Step 4: Scenarios</button>
+        <button onclick="tracker.navigateToStep(5)">Step 5: Optimization</button>
+        <button class="secondary" onclick="runCompleteWorkflow()">Run Complete Workflow</button>
+        <button class="secondary" onclick="exportState()">Export State</button>
+        <button class="secondary" onclick="resetTracker()">Reset</button>
+    </div>
+    
+    <!-- Step Indicators -->
+    <div class="container">
+        <div id="step-indicators"></div>
+    </div>
+    
+    <!-- Step 1: Philosophy -->
+    <div class="container step-content" id="step-1">
+        <h3>Step 1: Investment Philosophy</h3>
+        <div class="step-indicator step-active" id="step-1-indicator">
+            <label>
+                <input type="checkbox" id="philosophy-checkbox" onchange="handlePhilosophyChange(this.checked)">
+                I acknowledge and understand the HCP investment philosophy and methodology
+            </label>
+        </div>
+        <p>This portfolio uses systematic, probability-weighted allocation based on macro regime analysis across 16 scenarios with sophisticated regret minimization.</p>
+    </div>
+    
+    <!-- Step 2: Data Loading -->
+    <div class="container step-content" id="step-2">
+        <h3>Step 2: Data Loading</h3>
+        <div class="test-section">
+            <button onclick="generateAndLoadSampleData('mixed')">Generate Mixed Data</button>
+            <button onclick="generateAndLoadSampleData('tech_boom')" class="success">Load Tech Boom Scenario</button>
+            <button onclick="generateAndLoadSampleData('usd_strength')">Load USD Strength Scenario</button>
+            <button onclick="generateAndLoadSampleData('pe_reversion')">Load P/E Reversion Scenario</button>
+            <button onclick="generateAndLoadSampleData('international')">Load International Scenario</button>
+        </div>
+        <div id="monthly-status"></div>
+        <div id="data-display"></div>
+        <div id="data-table-container"></div>
+    </div>
+    
+    <!-- Step 3: Theme Analysis -->
+    <div class="container step-content" id="step-3">
+        <h3>Step 3: Theme Analysis</h3>
+        <div class="test-section">
+            <button onclick="runThemeAnalysis()">Run Theme Analysis</button>
+            <button onclick="validateThemeAnalysis()" class="secondary">Validate Results</button>
+            <button onclick="displayThemeDebug()" class="secondary">Debug Theme Calculations</button>
+        </div>
+        <div id="theme-results"></div>
+        <div id="theme-validation"></div>
+    </div>
+    
+    <!-- Step 4: Scenario Analysis -->
+    <div class="container step-content" id="step-4">
+        <h3>Step 4: Scenario Analysis</h3>
+        <div class="test-section">
+            <button onclick="runScenarioAnalysis()">Generate 16-Scenario Matrix</button>
+            <button onclick="validateScenarioMatrix()" class="secondary">Validate Scenario Matrix</button>
+        </div>
+        <div id="scenario-results">
+            <p>Complete Step 3 (Theme Analysis) to generate scenario probabilities.</p>
+        </div>
+    </div>
+    
+    <!-- Step 5: Portfolio Optimization -->
+    <div class="container step-content" id="step-5">
+        <h3>Step 5: Portfolio Optimization</h3>
+        <div class="test-section">
+            <button onclick="runPortfolioOptimization()">Run Portfolio Optimization</button>
+            <button onclick="testOptimizationEdgeCases()" class="secondary">Test Edge Cases</button>
+            <button onclick="validateOptimizationResults()" class="secondary">Validate Results</button>
+        </div>
+        <div id="optimization-results">
+            <p>Complete Steps 1-4 to enable portfolio optimization.</p>
+        </div>
+    </div>
+    
+    <!-- Data Edit Modal -->
+    <div id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Edit Indicator</h3>
+                <span class="modal-close" onclick="DataEditor.closeEditModal()">&times;</span>
+            </div>
+            <div id="modal-body">
+                <!-- DataEditor will populate this -->
+            </div>
+            <div class="modal-footer">
+                <button onclick="saveIndicatorEdit()">Save</button>
+                <button onclick="DataEditor.closeEditModal()" class="secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load Core Modules - CRITICAL: Load actual modules, not mocks -->
+    <script src="../core/tracker_core_v1_2.js"></script>
+    <script src="../modules/indicators_v1_0.js"></script>
+    <script src="../modules/data_editor_v1_0.js"></script>
+    <script src="../modules/file_handler_v1_5.js"></script>
+    <script src="../modules/theme_calculator_v2_9.js"></script>
+    <script src="../modules/portfolio_optimizer_v2_0.js"></script>
+    
+    <script>
+        // Integration Layer - Connect modules to create unified tracker
+        const tracker = {
+            // Inherit from TrackerCore
+            ...TrackerCore,
+            
+            // Module references
+            indicators: Indicators,
+            fileHandler: FileHandler,
+            themeCalculator: ThemeCalculator,
+            dataEditor: DataEditor,
+            portfolioOptimizer: PortfolioOptimizer,
+            
+            // Override navigation to update display
+            navigateToStep: function(step) {
+                // Hide all steps
+                document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+                
+                // Show target step
+                const stepElement = document.getElementById(`step-${step}`);
+                if (stepElement) {
+                    stepElement.classList.add('active');
+                    this.currentStep = step;
+                    console.log(`Navigated to Step ${step}`);
+                }
+                
+                // Call parent navigation
+                if (TrackerCore.navigateToStep) {
+                    TrackerCore.navigateToStep.call(this, step);
+                }
+            }
+        };
+        
+        // Module Testing Functions
+        function runModuleTests() {
+            const tests = [
+                testTrackerCore(),
+                testDataEditor(),
+                testIndicators(),
+                testFileHandler(),
+                testThemeCalculator(),
+                testPortfolioOptimizer()
+            ];
+            
+            const passed = tests.filter(t => t.passed).length;
+            const total = tests.length;
+            
+            let html = `<strong>Test Summary: ${passed}/${total} passed</strong>\n\n`;
+            
+            tests.forEach(test => {
+                const status = test.passed ? '✅ PASSED' : '❌ FAILED';
+                const className = test.passed ? 'test-passed' : 'test-failed';
+                html += `<span class="${className}">${test.name}: ${status}</span>\n`;
+                html += `  ${test.message}\n\n`;
+            });
+            
+            document.getElementById('module-test-results').innerHTML = html;
+        }
+        
+        function testTrackerCore() {
+            try {
+                const hasNavigate = typeof tracker.navigateToStep === 'function';
+                const hasState = typeof tracker.state === 'object';
+                const hasSave = typeof tracker.saveState === 'function';
+                const hasVersion = TrackerCore.version === '1.2';
+                
+                return {
+                    name: 'TrackerCore v1.2',
+                    passed: hasNavigate && hasState && hasSave && hasVersion,
+                    message: hasNavigate && hasState && hasSave && hasVersion ? 
+                        'Core navigation and state management ready' : 
+                        'Some core functions missing'
+                };
+            } catch (error) {
+                return {
+                    name: 'TrackerCore v1.2',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testDataEditor() {
+            try {
+                const hasOpen = typeof DataEditor.openEditModal === 'function';
+                const hasClose = typeof DataEditor.closeEditModal === 'function';
+                const hasSave = typeof DataEditor.saveIndicatorEdit === 'function';
+                const hasVersion = DataEditor.version === '1.0';
+                
+                return {
+                    name: 'DataEditor v1.0',
+                    passed: hasOpen && hasClose && hasSave && hasVersion,
+                    message: hasOpen && hasClose && hasSave && hasVersion ? 
+                        'Modal editing system ready' : 
+                        'Some editing functions missing'
+                };
+            } catch (error) {
+                return {
+                    name: 'DataEditor v1.0',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testIndicators() {
+            try {
+                const hasDefinitions = typeof Indicators.definitions === 'object';
+                const hasValidation = typeof Indicators.validateIndicatorData === 'function';
+                const hasVersion = Indicators.version === '1.0';
+                const indicatorCount = Object.keys(Indicators.definitions).reduce((count, theme) => {
+                    return count + Object.keys(Indicators.definitions[theme]).length;
+                }, 0);
+                
+                return {
+                    name: 'Indicators v1.0',
+                    passed: hasDefinitions && hasValidation && hasVersion && indicatorCount === 13,
+                    message: hasDefinitions && hasValidation && hasVersion && indicatorCount === 13 ? 
+                        `${indicatorCount} indicators defined correctly` : 
+                        'Indicator configuration incomplete'
+                };
+            } catch (error) {
+                return {
+                    name: 'Indicators v1.0',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testFileHandler() {
+            try {
+                const hasGenerate = typeof FileHandler.generateSampleData === 'function';
+                const hasMomentum = typeof FileHandler.createMomentumIndicator === 'function';
+                const hasVersion = FileHandler.version === '1.5';
+                
+                return {
+                    name: 'FileHandler v1.5',
+                    passed: hasGenerate && hasMomentum && hasVersion,
+                    message: hasGenerate && hasMomentum && hasVersion ? 
+                        'Momentum-aware data generation ready' : 
+                        'FileHandler functions missing'
+                };
+            } catch (error) {
+                return {
+                    name: 'FileHandler v1.5',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testThemeCalculator() {
+            try {
+                const hasCalculate = typeof ThemeCalculator.calculateThemeAnalysis === 'function';
+                const hasDisplay = typeof ThemeCalculator.displayThemeResults === 'function';
+                const hasVersion = ThemeCalculator.version === '2.9';
+                const hasFramework = ThemeCalculator.framework === 'IPS v3.10 Appendix H';
+                
+                return {
+                    name: 'ThemeCalculator v2.9',
+                    passed: hasCalculate && hasDisplay && hasVersion && hasFramework,
+                    message: hasCalculate && hasDisplay && hasVersion && hasFramework ? 
+                        'IPS v3.10 compliant analysis ready' : 
+                        'ThemeCalculator configuration incomplete'
+                };
+            } catch (error) {
+                return {
+                    name: 'ThemeCalculator v2.9',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        function testPortfolioOptimizer() {
+            try {
+                const hasOptimize = typeof PortfolioOptimizer.optimizePortfolio === 'function';
+                const hasSecurities = Object.keys(PortfolioOptimizer.securities).length === 12;
+                const hasVersion = PortfolioOptimizer.version === '2.0';
+                const hasRegret = PortfolioOptimizer.framework === 'IPS v3.10 Regret Minimization';
+                
+                return {
+                    name: 'PortfolioOptimizer v2.0',
+                    passed: hasOptimize && hasSecurities && hasVersion && hasRegret,
+                    message: hasOptimize && hasSecurities && hasVersion && hasRegret ? 
+                        'Regret minimization with 12 securities ready' : 
+                        'Portfolio optimization incomplete'
+                };
+            } catch (error) {
+                return {
+                    name: 'PortfolioOptimizer v2.0',
+                    passed: false,
+                    message: 'Error: ' + error.message
+                };
+            }
+        }
+        
+        // Data Generation Functions
+        function generateAndLoadSampleData(scenario = 'tech_boom') {
+            try {
+                console.log(`Generating ${scenario} sample data...`);
+                const sampleData = FileHandler.generateSampleData('monthly', scenario);
+                
+                if (!sampleData) {
+                    alert('Failed to generate sample data');
+                    return;
+                }
+                
+                // Update status
+                document.getElementById('monthly-status').innerHTML = 
+                    `<span class="status-good">✅ ${scenario.replace('_', ' ')} data loaded successfully</span>`;
+                
+                // Store in tracker state
+                tracker.state.monthlyData = sampleData;
+                tracker.state.dataScenario = scenario;
+                tracker.saveState();
+                
+                // Display data
+                displayDataTable(sampleData);
+                
+                // Mark step 2 complete
+                if (!tracker.completedSteps.includes(2)) {
+                    tracker.completedSteps.push(2);
+                }
+                
+                console.log('Sample data loaded successfully');
+                
+            } catch (error) {
+                console.error('Error generating sample data:', error);
+                alert('Error generating sample data: ' + error.message);
+            }
+        }
+        
+        function displayDataTable(data) {
+            if (!data || !data.indicators) {
+                document.getElementById('data-display').innerHTML = '<p>No data to display</p>';
+                return;
+            }
+            
+            let html = '<h4>Generated Data Overview</h4>';
+            html += '<table class="data-table">';
+            html += '<tr><th>Theme</th><th>Indicator</th><th>Current Value</th><th>6-Period Back</th><th>Momentum</th></tr>';
+            
+            Object.entries(data.indicators).forEach(([themeKey, themeData]) => {
+                Object.entries(themeData).forEach(([indicatorKey, indicator]) => {
+                    const current = indicator.current;
+                    const sixBack = indicator.history ? indicator.history[indicator.history.length - 6] : null;
+                    const momentum = sixBack ? ((current - sixBack) / Math.abs(sixBack) * 100).toFixed(1) + '%' : 'N/A';
+                    
+                    html += `<tr>
+                        <td>${themeKey.toUpperCase()}</td>
+                        <td>${indicator.name || indicatorKey}</td>
+                        <td>${typeof current === 'number' ? current.toFixed(2) : current}</td>
+                        <td>${sixBack ? sixBack.toFixed(2) : 'N/A'}</td>
+                        <td>${momentum}</td>
+                    </tr>`;
+                });
+            });
+            
+            html += '</table>';
+            document.getElementById('data-display').innerHTML = html;
+            
+            // Also use DataEditor to display editable table
+            if (DataEditor && DataEditor.displayDataTable) {
+                DataEditor.displayDataTable(data, Indicators, tracker.state.manualOverrides || {});
+            }
+        }
+        
+        // Theme Analysis Functions
+        function runThemeAnalysis() {
+            if (!tracker.state.monthlyData) {
+                alert('Please load data first (Step 2)');
+                return;
+            }
+            
+            console.log('Running theme analysis...');
+            const analysis = ThemeCalculator.calculateThemeAnalysis(tracker.state.monthlyData, Indicators);
+            
+            if (analysis && !analysis.error) {
+                tracker.state.themeAnalysis = analysis;
+                tracker.state.themeProbabilities = analysis.themes;
+                tracker.saveState();
+                
+                ThemeCalculator.displayThemeResults(analysis, 'theme-results');
+                
+                if (!tracker.completedSteps.includes(3)) {
+                    tracker.completedSteps.push(3);
+                }
+                
+                console.log('Theme analysis complete:', analysis);
+            } else {
+                alert('Theme analysis failed: ' + (analysis.error || 'Unknown error'));
+            }
+        }
+        
+        function validateThemeAnalysis() {
+            if (!tracker.state.themeAnalysis) {
+                alert('Please run theme analysis first');
+                return;
+            }
+            
+            const validation = tracker.state.themeAnalysis.validation;
+            const container = document.getElementById('theme-validation');
+            
+            let html = '<div class="validation-status">';
+            html += `<div class="validation-indicator ${validation.valid ? 'valid' : 'invalid'}">`;
+            html += validation.valid ? '✓ All validations passed' : '⚠ Issues detected';
+            html += '</div>';
+            
+            if (validation.issues && validation.issues.length > 0) {
+                html += '<h4>Issues:</h4><ul>';
+                validation.issues.forEach(issue => {
+                    html += `<li>${issue}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            if (validation.warnings && validation.warnings.length > 0) {
+                html += '<h4>Warnings:</h4><ul>';
+                validation.warnings.forEach(warning => {
+                    html += `<li>${warning}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function displayThemeDebug() {
+            console.log('Theme Analysis Debug:', tracker.state.themeAnalysis);
+            alert('Check console for detailed theme analysis debug information');
+        }
+        
+        // Scenario Analysis Functions
+        function runScenarioAnalysis() {
+            if (!tracker.state.themeAnalysis || !tracker.state.themeAnalysis.scenarios) {
+                alert('Please complete theme analysis first (Step 3)');
+                return;
+            }
+            
+            console.log('Displaying scenario matrix...');
+            const scenarios = tracker.state.themeAnalysis.scenarios;
+            tracker.state.scenarioAnalysis = scenarios;
+            tracker.saveState();
+            
+            displayScenarioMatrix(scenarios);
+            
+            if (!tracker.completedSteps.includes(4)) {
+                tracker.completedSteps.push(4);
+            }
+        }
+        
+        function displayScenarioMatrix(scenarios) {
+            const container = document.getElementById('scenario-results');
+            const orderedScenarios = [...scenarios].sort((a, b) => a.id - b.id);
+            
+            let html = `
+                <div class="scenario-matrix">
+                    <h4>16-Scenario Probability Matrix</h4>
+                    <p>Scenarios in binary order (0000-1111) with IPS v3.10 color coding:</p>
+                    <div class="scenario-grid">
+            `;
+            
+            orderedScenarios.forEach(scenario => {
+                const percentage = (scenario.probability * 100).toFixed(2);
+                let colorClass = 'scenario-very-low';
+                
+                if (scenario.probability > 0.10) {
+                    colorClass = 'scenario-high';
+                } else if (scenario.probability >= 0.05) {
+                    colorClass = 'scenario-medium';
+                } else {
+                    colorClass = 'scenario-low';
+                }
+                
+                html += `
+                    <div class="scenario-item ${colorClass}">
+                        <div class="scenario-rank">S${scenario.id}</div>
+                        <div class="scenario-name">${scenario.name}</div>
+                        <div class="scenario-probability">${percentage}%</div>
+                        <div class="scenario-binary">${scenario.binary}</div>
+                    </div>
+                `;
+            });
+            
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+        
+        function validateScenarioMatrix() {
+            if (!tracker.state.scenarioAnalysis) {
+                alert('Please run scenario analysis first');
+                return;
+            }
+            
+            const scenarios = tracker.state.scenarioAnalysis;
+            const totalProbability = scenarios.reduce((sum, s) => sum + s.probability, 0);
+            const scenarioCount = scenarios.length;
+            
+            const validationMessage = Math.abs(totalProbability - 1.0) < 0.01 ? 
+                '✅ Scenario probabilities sum to 100%' : 
+                '⚠ Scenario probabilities do not sum to 100%';
+            
+            alert(`${validationMessage}\nTotal: ${(totalProbability*100).toFixed(2)}%\nScenarios: ${scenarioCount}`);
+        }
+        
+        // Portfolio Optimization Functions
+        function runPortfolioOptimization() {
+            if (!tracker.state.scenarioAnalysis) {
+                alert('Please complete scenario analysis first (Step 4)');
+                return;
+            }
+            
+            console.log('Running portfolio optimization...');
+            const results = PortfolioOptimizer.optimizePortfolio(tracker.state.scenarioAnalysis);
+            
+            if (results.performance.success) {
+                tracker.state.optimizationResults = results;
+                tracker.saveState();
+                
+                displayOptimizationResults(results);
+                
+                if (!tracker.completedSteps.includes(5)) {
+                    tracker.completedSteps.push(5);
+                }
+                
+                console.log('Portfolio optimization completed:', results);
+            } else {
+                alert('Optimization failed: ' + results.performance.error);
+            }
+        }
+        
+        function displayOptimizationResults(results) {
+            const container = document.getElementById('optimization-results');
+            
+            // Use PortfolioOptimizer's display method if available
+            if (PortfolioOptimizer.displayOptimizationResults) {
+                PortfolioOptimizer.displayOptimizationResults(results, 'optimization-results');
+                return;
+            }
+            
+            // Fallback display
+            const allocation = results.finalAllocation;
+            const optimization = results.optimization;
+            
+            let html = `
+                <div class="optimization-results">
+                    <div class="optimization-header">
+                        <h4>Portfolio Optimization Complete</h4>
+                        <div class="analysis-meta">
+                            ${results.framework} | Version ${results.version}
+                        </div>
+                    </div>
+                    
+                    <div class="optimization-summary">
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value">${optimization.selectedScenarios}</div>
+                                <div class="metric-label">Scenarios Used</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${(optimization.cumulativeProbability*100).toFixed(1)}%</div>
+                                <div class="metric-label">Coverage</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${(optimization.maxRegret*100).toFixed(2)}%</div>
+                                <div class="metric-label">Max Regret</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${optimization.hedgingApplied ? 'Yes' : 'No'}</div>
+                                <div class="metric-label">Hedging Applied</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="allocation-display">
+                        <h4>Final Portfolio Allocation</h4>
+            `;
+            
+            const sortedAllocations = Object.entries(allocation)
+                .sort(([,a], [,b]) => b - a)
+                .filter(([,weight]) => weight > 0.005);
+            
+            sortedAllocations.forEach(([security, weight]) => {
+                const securityInfo = PortfolioOptimizer.securities[security];
+                const percentage = (weight * 100).toFixed(1);
+                const barWidth = Math.max(2, weight * 300);
+                
+                html += `
+                    <div class="allocation-row">
+                        <div class="security-info">
+                            <div class="security-name">${security}</div>
+                            <div class="security-desc">${securityInfo?.name || 'Unknown'}</div>
+                        </div>
+                        <div class="allocation-viz">
+                            <div class="allocation-bar">
+                                <div class="allocation-fill" style="width: ${barWidth}px; background: #007bff;"></div>
+                            </div>
+                            <div class="allocation-text">${percentage}%</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div></div>';
+            container.innerHTML = html;
+        }
+        
+        function testOptimizationEdgeCases() {
+            console.log('Testing portfolio optimization edge cases...');
+            
+            const extremeScenarios = [
+                {id: 16, binary: '1111', name: 'All Themes Active', probability: 0.8},
+                {id: 1, binary: '0000', name: 'Base Case', probability: 0.2}
+            ];
+            
+            try {
+                const results = PortfolioOptimizer.optimizePortfolio(extremeScenarios);
+                console.log('Edge case test completed:', results);
+                alert('Edge case test passed - see console for details');
+            } catch (error) {
+                console.error('Edge case test failed:', error);
+                alert('Edge case test failed: ' + error.message);
+            }
+        }
+        
+        function validateOptimizationResults() {
+            if (!tracker.state.optimizationResults) {
+                alert('Please run optimization first');
+                return;
+            }
+            
+            const allocation = tracker.state.optimizationResults.finalAllocation;
+            const total = Object.values(allocation).reduce((sum, weight) => sum + weight, 0);
+            const validationMessage = Math.abs(total - 1.0) < 0.01 ? 
+                '✅ Allocation sums to 100%' : 
+                '⚠ Allocation does not sum to 100%';
+            
+            alert(`${validationMessage}\nTotal: ${(total*100).toFixed(2)}%`);
+        }
+        
+        // Complete Workflow Function
+        function runCompleteWorkflow() {
+            console.log('Running complete workflow...');
+            
+            // Step 1: Philosophy
+            document.getElementById('philosophy-checkbox').checked = true;
+            handlePhilosophyChange(true);
+            
+            setTimeout(() => {
+                // Step 2: Generate sample data
+                generateAndLoadSampleData('tech_boom');
+                
+                setTimeout(() => {
+                    // Step 3: Theme analysis
+                    runThemeAnalysis();
+                    
+                    setTimeout(() => {
+                        // Step 4: Scenario analysis
+                        runScenarioAnalysis();
+                        
+                        setTimeout(() => {
+                            // Step 5: Portfolio optimization
+                            runPortfolioOptimization();
+                            
+                            // Navigate to final step
+                            tracker.navigateToStep(5);
+                            
+                            console.log('Complete workflow finished');
+                            alert('Complete workflow finished successfully!');
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, 500);
+        }
+        
+        // Helper Functions
+        function handlePhilosophyChange(acknowledged) {
+            tracker.state.philosophyAcknowledged = acknowledged;
+            
+            if (acknowledged && !tracker.completedSteps.includes(1)) {
+                tracker.completedSteps.push(1);
+            }
+            
+            tracker.saveState();
+            console.log('Philosophy acknowledged:', acknowledged);
+        }
+        
+        function saveIndicatorEdit() {
+            if (DataEditor.saveIndicatorEdit) {
+                const success = DataEditor.saveIndicatorEdit(tracker.state, () => {
+                    // Refresh display
+                    displayDataTable(tracker.state.monthlyData);
+                });
+                
+                if (success) {
+                    tracker.saveState();
+                }
+            }
+        }
+        
+        function exportState() {
+            tracker.exportState();
+        }
+        
+        function resetTracker() {
+            if (confirm('Are you sure you want to reset all data?')) {
+                tracker.reset();
+                location.reload();
+            }
+        }
+        
+        function displayDebugInfo() {
+            const debugInfo = tracker.getDebugInfo ? tracker.getDebugInfo() : {
+                state: tracker.state,
+                completedSteps: tracker.completedSteps,
+                currentStep: tracker.currentStep
+            };
+            
+            console.log('Debug Info:', debugInfo);
+            alert('Debug information logged to console');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing Integration Test v3.5...');
+            
+            // Initialize tracker if needed
+            if (typeof tracker.init === 'function') {
+                tracker.init();
+            }
+            
+            // Load saved state
+            if (typeof tracker.loadState === 'function') {
+                tracker.loadState();
+            }
+            
+            // Start at step 1
+            tracker.navigateToStep(1);
+            
+            // Setup data editor listeners
+            if (DataEditor && DataEditor.setupModalListeners) {
+                DataEditor.setupModalListeners();
+            }
+            
+            console.log('Integration Test v3.5 initialized successfully');
+            console.log('Modules loaded:', {
+                TrackerCore: TrackerCore.version,
+                FileHandler: FileHandler.version,
+                ThemeCalculator: ThemeCalculator.version,
+                DataEditor: DataEditor.version,
+                Indicators: Indicators.version,
+                PortfolioOptimizer: PortfolioOptimizer.version
+            });
+            
+            // Run initial module test
+            runModuleTests();
+        });
+    </script>
+</body>
+</html>

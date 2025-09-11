@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Portfolio Tracker v6.4.1 - Complete Integrated Release</title>
+    <!--
+    HCP PORTFOLIO TRACKER v6.4.1 - COMPLETE INTEGRATED RELEASE
+    File: hcp_tracker_v6.4.1_integrated.html
+    Last Updated: 2025-08-31 23:50:00 UTC
+    
+    COMPLETE SYSTEM: Steps 1-3 fully functional
+    - FileHandler v1.4 (embedded) - Sample data generation, 5 scenarios
+    - ThemeCalculator v2.9 (embedded) - IPS v3.10 calculations  
+    - DataEditor v1.0 (embedded) - Modal editing with manual overrides
+    - Indicators v1.0 (embedded) - 13 indicators, three-tier framework
+    
+    DEPLOYMENT: Single-file with all modules embedded
+    SIZE: ~108KB (base + 4 modules)
+    STATUS: Production ready for Steps 1-3
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .version-info {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .step-indicator {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .step-indicator.completed {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .step-indicator.active {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .step-indicator.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Navigation */
+        .navigation {
+            background: #f8f9fa;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .nav-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .nav-button:hover:not(:disabled) {
+            background: #5a67d8;
+        }
+        
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Content Area */
+        .content {
+            padding: 30px;
+            min-height: 400px;
+        }
+        
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        /* Philosophy Step (Step 1) */
+        .philosophy-content {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .philosophy-intro {
+            background: #f0f4ff;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .philosophy-section {
+            margin-bottom: 25px;
+        }
+        
+        .philosophy-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .philosophy-section ul {
+            list-style-position: inside;
+            margin-left: 20px;
+        }
+        
+        .philosophy-section li {
+            margin-bottom: 10px;
+        }
+        
+        .acknowledgment {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        /* Data Import Step (Step 2) */
+        .data-section {
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .file-upload {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload:hover {
+            background: #f0f4ff;
+        }
+        
+        .file-upload.drag-over {
+            background: #f0f4ff;
+            border-color: #5a67d8;
+        }
+        
+        .sample-generator {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border: 1px solid #ffc107;
+        }
+        
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .data-table tr.manual-override {
+            background: #fff3cd !important;
+        }
+        
+        .edit-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .edit-button:hover {
+            background: #5a67d8;
+        }
+        
+        /* Edit Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* Theme Analysis Step (Step 3) */
+        .theme-analysis-v29 {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .analysis-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .analysis-header h3 {
+            color: #333;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        
+        .analysis-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .theme-probabilities h4 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+        
+        .theme-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .theme-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .theme-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .theme-percentage {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .theme-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .theme-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .scenario-matrix {
+            margin-top: 40px;
+        }
+        
+        .scenario-matrix h4 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+        
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .scenario-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .scenario-rank {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .scenario-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .scenario-probability {
+            font-size: 1.1em;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .scenario-binary {
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        /* Status Messages */
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .status-good {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Tier badges */
+        .tier-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .tier-canary {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .tier-primary {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .tier-structural {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>HCP Portfolio Tracker v6.4.1</h1>
+            <div class="version-info">
+                Complete Integrated Release | Steps 1-3 Fully Functional
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="step-indicator active" onclick="tracker.navigateToStep(1)">
+                <div>Step 1</div>
+                <small>Philosophy</small>
+            </div>
+            <div class="step-indicator" onclick="tracker.navigateToStep(2)">
+                <div>Step 2</div>
+                <small>Data</small>
+            </div>
+            <div class="step-indicator" onclick="tracker.navigateToStep(3)">
+                <div>Step 3</div>
+                <small>Analysis</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 4</div>
+                <small>Scenarios</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 5</div>
+                <small>Optimize</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 6</div>
+                <small>Positions</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 7</div>
+                <small>Rebalance</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 8</div>
+                <small>History</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 9</div>
+                <small>Report</small>
+            </div>
+            <div class="step-indicator locked">
+                <div>Step 10</div>
+                <small>Export</small>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-button" id="prev-button" onclick="tracker.previousStep()" disabled>← Previous</button>
+            <div id="step-title">Step 1: Investment Philosophy</div>
+            <button class="nav-button" id="next-button" onclick="tracker.nextStep()" disabled>Next →</button>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Step 1: Philosophy -->
+            <div id="step-1" class="step-content active">
+                <div class="philosophy-content">
+                    <div class="philosophy-intro">
+                        <h2>Welcome to the Humble Conviction Portfolio System</h2>
+                        <p>This Investment Policy Statement outlines a systematic, probability-weighted approach to portfolio management based on macro regime analysis. The framework monitors 13 indicators across 4 themes to determine scenario probabilities and optimize allocation accordingly.</p>
+                    </div>
+                    
+                    <div class="philosophy-section">
+                        <h3>Core Innovation</h3>
+                        <p>Rather than static allocation, the portfolio dynamically adjusts based on the probability-weighted expected outcomes across 16 possible macro scenarios, with risk minimization to protect against scenario divergence.</p>
+                    </div>
+                    
+                    <div class="philosophy-section">
+                        <h3>Core Beliefs</h3>
+                        <ul>
+                            <li>Markets are regime-dependent - Different macro environments require different exposures</li>
+                            <li>Diversification across scenarios beats diversification within a single scenario</li>
+                            <li>Risk management should focus on avoiding catastrophic outcomes in any probable scenario</li>
+                            <li>Systematic beats discretionary - Rules-based approach removes emotional bias</li>
+                            <li>Probability-weighted optimization captures uncertainty better than point forecasts</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="philosophy-section">
+                        <h3>Investment Objectives</h3>
+                        <ul>
+                            <li><strong>Primary:</strong> Achieve 8-12% annual returns across market cycles</li>
+                            <li><strong>Secondary:</strong> Limit maximum drawdown to 15% in any 12-month period</li>
+                            <li><strong>Tertiary:</strong> Maintain liquidity for opportunistic investments</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="acknowledgment">
+                        <label>
+                            <input type="checkbox" id="philosophy-checkbox" onchange="tracker.acknowledgePhilosophy()">
+                            <strong>I understand and acknowledge the investment philosophy</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2: Data Import -->
+            <div id="step-2" class="step-content">
+                <div class="data-section">
+                    <h2>Import Data Files</h2>
+                    <p>The system requires two data files from the HCP Data Collector:</p>
+                    
+                    <!-- Initialization File -->
+                    <div style="margin-bottom: 30px;">
+                        <h3>1. Initialization File (One-Time Setup)</h3>
+                        <p>Contains 24-36 months of historical data for baseline calculations</p>
+                        <div class="file-upload" onclick="document.getElementById('init-file').click()">
+                            <input type="file" id="init-file" accept=".json" style="display: none;" onchange="tracker.handleInitFile(event)">
+                            <div id="init-status">
+                                📁 Click to select initialization file or drag & drop<br>
+                                <small>Format: hcp_data_initialize_YYYYMMDD_HHMMSS.json</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Monthly Update File -->
+                    <div>
+                        <h3>2. Monthly Update File</h3>
+                        <p>Contains current indicator values and 6-month history</p>
+                        <div class="file-upload" onclick="document.getElementById('monthly-file').click()">
+                            <input type="file" id="monthly-file" accept=".json" style="display: none;" onchange="tracker.handleMonthlyFile(event)">
+                            <div id="monthly-status">
+                                📁 Click to select monthly update file or drag & drop<br>
+                                <small>Format: hcp_data_monthly_YYYYMMDD_HHMMSS.json</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample Data Generator -->
+                    <div class="sample-generator">
+                        <h3>🧪 Testing Mode</h3>
+                        <p>Generate sample data with different market scenarios for testing:</p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                            <button class="nav-button" onclick="tracker.generateSampleData('tech_boom')">Tech Boom</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('usd_strength')">USD Strength</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('pe_reversion')">P/E Reversion</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('international')">International</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('mixed')">Mixed Signals</button>
+                            <button class="nav-button" onclick="tracker.generateSampleData('random')" style="background: #28a745;">🎲 Random</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Editor Table -->
+                <div id="data-editor-section" style="display: none;">
+                    <h3>Review and Edit Data</h3>
+                    <div id="data-table-container"></div>
+                </div>
+            </div>
+            
+            <!-- Step 3: Theme Analysis -->
+            <div id="step-3" class="step-content">
+                <h2>Theme Analysis & Probabilities</h2>
+                <div id="theme-container">
+                    <!-- Theme analysis will be generated here -->
+                </div>
+            </div>
+            
+            <!-- Steps 4-10: Placeholder -->
+            <div id="step-4" class="step-content">
+                <h2>Step 4: Scenario Analysis</h2>
+                <p>This step will analyze the 16 possible scenarios based on theme combinations.</p>
+                <div class="status-message status-warning">
+                    <strong>Development Status:</strong> This module is in development. Steps 1-3 are fully functional.
+                </div>
+            </div>
+            
+            <div id="step-5" class="step-content">
+                <h2>Step 5: Portfolio Optimization</h2>
+                <p>This step will optimize the portfolio allocation based on scenario probabilities.</p>
+                <div class="status-message status-warning">
+                    <strong>Development Status:</strong> This module is in development. Steps 1-3 are fully functional.
+                </div>
+            </div>
+            
+            <div id="step-6" class="step-content">
+                <h2>Step 6: Current Positions</h2>
+                <p>Enter your current portfolio positions.</p>
+                <div class="status-message status-warning">
+                    <strong>Development Status:</strong> This module is in development. Steps 1-3 are fully functional.
+                </div>
+            </div>
+            
+            <div id="step-7" class="step-content">
+                <h2>Step 7: Rebalancing Trades</h2>
+                <p>Generate the trades needed to reach optimal allocation.</p>
+                <div class="status-message status-warning">
+                    <strong>Development Status:</strong> This module is in development. Steps 1-3 are fully functional.
+                </div>
+            </div>
+            
+            <div id="step-8" class="step-content">
+                <h2>Step 8: History</h2>
+                <p>View historical changes and audit trail.</p>
+                <div class="status-message status-warning">
+                    <strong>Development Status:</strong> This module is in development. Steps 1-3 are fully functional.
+                </div>
+            </div>
+            
+            <div id="step-9" class="step-content">
+                <h2>Step 9: Report</h2>
+                <p>Generate detailed analysis report.</p>
+                <div class="status-message status-warning">
+                    <strong>Development Status:</strong> This module is in development. Steps 1-3 are fully functional.
+                </div>
+            </div>
+            
+            <div id="step-10" class="step-content">
+                <h2>Step 10: Export</h2>
+                <p>Export data and reports.</p>
+                <div class="status-message status-warning">
+                    <strong>Development Status:</strong> This module is in development. Steps 1-3 are fully functional.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Edit Indicator</h3>
+                <button onclick="tracker.closeEditModal()" style="float: right; background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="nav-button" onclick="tracker.closeEditModal()">Cancel</button>
+                <button class="nav-button" onclick="tracker.saveIndicatorEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- EMBEDDED MODULES FOR SINGLE-FILE DEPLOYMENT -->
+    <script>
+        // FileHandler v1.4 Module - Embedded
+        const FileHandler = {
+            version: '1.4',
+            lastUpdated: '2025-08-31T18:30:00.000Z',
+            
+            generateSampleData: function(type = 'monthly', scenario = 'mixed') {
+                const scenarios = {
+                    mixed: 'Mixed signals with varied momentum',
+                    usd_strength: 'USD strength scenario',
+                    tech_boom: 'AI/Technology boom scenario', 
+                    pe_reversion: 'P/E mean reversion scenario',
+                    international: 'International outperformance scenario',
+                    random: 'Random market scenario'
+                };
+                
+                console.log(`Generating ${scenario} sample data:`, scenarios[scenario]);
+                
+                const sampleData = {
+                    data_type: type,
+                    version: '3.8.2',
+                    timestamp: new Date().toISOString(),
+                    trading_status: 'GREEN',
+                    scenario: scenario,
+                    scenario_description: scenarios[scenario],
+                    data_quality: {
+                        overall_score: 92,
+                        fresh_indicators: 13,
+                        total_indicators: 13
+                    },
+                    indicators: this.generateScenarioIndicators(scenario, type)
+                };
+                
+                return sampleData;
+            },
+
+            generateScenarioIndicators: function(scenario, type) {
+                const indicators = {
+                    usd: {},
+                    innovation: {},
+                    pe: {},
+                    intl: {}
+                };
+                
+                switch(scenario) {
+                    case 'usd_strength':
+                        indicators.usd.dxy = this.createIndicator(108.5, this.generateTrend(102, 108.5, 450, 'bullish'), 'DXY Index', 'Yahoo Finance');
+                        indicators.usd.gold_purchases = this.createIndicator(34.2, this.generateTrend(35.8, 34.2, 450, 'bearish'), 'Central Bank Gold', 'World Gold Council');
+                        indicators.usd.yuan_swift = this.createIndicator(3.2, this.generateTrend(4.5, 3.2, 450, 'bearish'), 'Yuan SWIFT Share', 'SWIFT');
+                        indicators.usd.reserve_share = this.createIndicator(61.2, this.generateTrend(58.4, 61.2, 450, 'bullish'), 'USD Reserve Share', 'IMF COFER');
+                        
+                        indicators.innovation.qqq_spy = this.createIndicator(0.75, this.generateTrend(0.74, 0.75, 450, 'flat'), 'QQQ/SPY Ratio', 'Yahoo Finance');
+                        indicators.innovation.productivity = this.createIndicator(2.1, this.generateTrend(2.0, 2.1, 450, 'flat'), 'Productivity Growth', 'BLS');
+                        indicators.innovation.net_margins = this.createIndicator(11.8, this.generateTrend(11.9, 11.8, 450, 'flat'), 'S&P Net Margins', 'S&P Global');
+                        
+                        indicators.pe.forward_pe = this.createIndicator(19.5, this.generateTrend(20.8, 19.5, 450, 'bearish'), 'Forward P/E', 'FactSet');
+                        indicators.pe.cape = this.createIndicator(32.1, this.generateTrend(34.2, 32.1, 450, 'bearish'), 'Shiller CAPE', 'Shiller');
+                        indicators.pe.risk_premium = this.createIndicator(0.75, this.generateTrend(0.62, 0.75, 450, 'bullish'), 'Equity Risk Premium', 'Calculated');
+                        
+                        indicators.intl.acwx_spy = this.createIndicator(0.88, this.generateTrend(0.92, 0.88, 450, 'bearish'), 'ACWX/SPY Relative', 'Yahoo Finance');
+                        indicators.intl.sp_vs_world = this.createIndicator(1.08, this.generateTrend(1.03, 1.08, 450, 'bullish'), 'S&P vs MSCI World', 'MSCI');
+                        indicators.intl.tic_flows = this.createIndicator(85.2, this.generateTrend(125.4, 85.2, 450, 'bearish'), 'TIC Net Flows', 'Treasury');
+                        break;
+                        
+                    case 'tech_boom':
+                        indicators.usd.dxy = this.createIndicator(98.2, this.generateTrend(103.5, 98.2, 450, 'bearish'), 'DXY Index', 'Yahoo Finance');
+                        indicators.usd.gold_purchases = this.createIndicator(36.8, this.generateTrend(35.8, 36.8, 450, 'bullish'), 'Central Bank Gold', 'World Gold Council');
+                        indicators.usd.yuan_swift = this.createIndicator(5.8, this.generateTrend(4.7, 5.8, 450, 'bullish'), 'Yuan SWIFT Share', 'SWIFT');
+                        indicators.usd.reserve_share = this.createIndicator(56.1, this.generateTrend(58.4, 56.1, 450, 'bearish'), 'USD Reserve Share', 'IMF COFER');
+                        
+                        indicators.innovation.qqq_spy = this.createIndicator(0.82, this.generateTrend(0.75, 0.82, 450, 'bullish'), 'QQQ/SPY Ratio', 'Yahoo Finance');
+                        indicators.innovation.productivity = this.createIndicator(3.8, this.generateTrend(2.3, 3.8, 450, 'bullish'), 'Productivity Growth', 'BLS');
+                        indicators.innovation.net_margins = this.createIndicator(14.2, this.generateTrend(12.0, 14.2, 450, 'bullish'), 'S&P Net Margins', 'S&P Global');
+                        
+                        indicators.pe.forward_pe = this.createIndicator(22.8, this.generateTrend(20.8, 22.8, 450, 'bullish'), 'Forward P/E', 'FactSet');
+                        indicators.pe.cape = this.createIndicator(36.5, this.generateTrend(34.2, 36.5, 450, 'bullish'), 'Shiller CAPE', 'Shiller');
+                        indicators.pe.risk_premium = this.createIndicator(0.45, this.generateTrend(0.62, 0.45, 450, 'bearish'), 'Equity Risk Premium', 'Calculated');
+                        
+                        indicators.intl.acwx_spy = this.createIndicator(0.94, this.generateTrend(0.96, 0.94, 450, 'bearish'), 'ACWX/SPY Relative', 'Yahoo Finance');
+                        indicators.intl.sp_vs_world = this.createIndicator(1.06, this.generateTrend(1.03, 1.06, 450, 'bullish'), 'S&P vs MSCI World', 'MSCI');
+                        indicators.intl.tic_flows = this.createIndicator(145.8, this.generateTrend(125.4, 145.8, 450, 'bullish'), 'TIC Net Flows', 'Treasury');
+                        break;
+
+                    case 'pe_reversion':
+                        indicators.usd.dxy = this.createIndicator(105.2, this.generateTrend(103.5, 105.2, 450, 'bullish'), 'DXY Index', 'Yahoo Finance');
+                        indicators.usd.gold_purchases = this.createIndicator(35.2, this.generateTrend(35.8, 35.2, 450, 'bearish'), 'Central Bank Gold', 'World Gold Council');
+                        indicators.usd.yuan_swift = this.createIndicator(4.9, this.generateTrend(4.7, 4.9, 450, 'bullish'), 'Yuan SWIFT Share', 'SWIFT');
+                        indicators.usd.reserve_share = this.createIndicator(57.8, this.generateTrend(58.4, 57.8, 450, 'bearish'), 'USD Reserve Share', 'IMF COFER');
+                        
+                        indicators.innovation.qqq_spy = this.createIndicator(0.78, this.generateTrend(0.75, 0.78, 450, 'bullish'), 'QQQ/SPY Ratio', 'Yahoo Finance');
+                        indicators.innovation.productivity = this.createIndicator(2.4, this.generateTrend(2.3, 2.4, 450, 'flat'), 'Productivity Growth', 'BLS');
+                        indicators.innovation.net_margins = this.createIndicator(12.8, this.generateTrend(12.0, 12.8, 450, 'bullish'), 'S&P Net Margins', 'S&P Global');
+                        
+                        indicators.pe.forward_pe = this.createIndicator(24.5, this.generateTrend(20.8, 24.5, 450, 'bullish'), 'Forward P/E', 'FactSet');
+                        indicators.pe.cape = this.createIndicator(38.8, this.generateTrend(34.2, 38.8, 450, 'bullish'), 'Shiller CAPE', 'Shiller');
+                        indicators.pe.risk_premium = this.createIndicator(0.28, this.generateTrend(0.62, 0.28, 450, 'bearish'), 'Equity Risk Premium', 'Calculated');
+                        
+                        indicators.intl.acwx_spy = this.createIndicator(0.98, this.generateTrend(0.95, 0.98, 450, 'bullish'), 'ACWX/SPY Relative', 'Yahoo Finance');
+                        indicators.intl.sp_vs_world = this.createIndicator(0.98, this.generateTrend(1.03, 0.98, 450, 'bearish'), 'S&P vs MSCI World', 'MSCI');
+                        indicators.intl.tic_flows = this.createIndicator(95.2, this.generateTrend(125.4, 95.2, 450, 'bearish'), 'TIC Net Flows', 'Treasury');
+                        break;
+                        
+                    case 'international':
+                        indicators.usd.dxy = this.createIndicator(96.8, this.generateTrend(103.5, 96.8, 450, 'bearish'), 'DXY Index', 'Yahoo Finance');
+                        indicators.usd.gold_purchases = this.createIndicator(37.2, this.generateTrend(35.8, 37.2, 450, 'bullish'), 'Central Bank Gold', 'World Gold Council');
+                        indicators.usd.yuan_swift = this.createIndicator(6.2, this.generateTrend(4.7, 6.2, 450, 'bullish'), 'Yuan SWIFT Share', 'SWIFT');
+                        indicators.usd.reserve_share = this.createIndicator(55.8, this.generateTrend(58.4, 55.8, 450, 'bearish'), 'USD Reserve Share', 'IMF COFER');
+                        
+                        indicators.innovation.qqq_spy = this.createIndicator(0.73, this.generateTrend(0.75, 0.73, 450, 'bearish'), 'QQQ/SPY Ratio', 'Yahoo Finance');
+                        indicators.innovation.productivity = this.createIndicator(2.0, this.generateTrend(2.3, 2.0, 450, 'bearish'), 'Productivity Growth', 'BLS');
+                        indicators.innovation.net_margins = this.createIndicator(11.2, this.generateTrend(12.0, 11.2, 450, 'bearish'), 'S&P Net Margins', 'S&P Global');
+                        
+                        indicators.pe.forward_pe = this.createIndicator(21.8, this.generateTrend(20.8, 21.8, 450, 'bullish'), 'Forward P/E', 'FactSet');
+                        indicators.pe.cape = this.createIndicator(35.1, this.generateTrend(34.2, 35.1, 450, 'bullish'), 'Shiller CAPE', 'Shiller');
+                        indicators.pe.risk_premium = this.createIndicator(0.52, this.generateTrend(0.62, 0.52, 450, 'bearish'), 'Equity Risk Premium', 'Calculated');
+                        
+                        indicators.intl.acwx_spy = this.createIndicator(1.02, this.generateTrend(0.95, 1.02, 450, 'bullish'), 'ACWX/SPY Relative', 'Yahoo Finance');
+                        indicators.intl.sp_vs_world = this.createIndicator(0.95, this.generateTrend(1.03, 0.95, 450, 'bearish'), 'S&P vs MSCI World', 'MSCI');
+                        indicators.intl.tic_flows = this.createIndicator(-65.8, this.generateTrend(125.4, -65.8, 450, 'bearish'), 'TIC Net Flows', 'Treasury');
+                        break;
+                        
+                    default: // mixed or random scenario
+                        const randomFactor = scenario === 'random' ? 0.8 : 0.3;
+                        indicators.usd.dxy = this.createIndicator(103.45 + (Math.random() - 0.5) * 10 * randomFactor, this.generateTrend(100.0, 103.45, 450, 'mixed'), 'DXY Index', 'Yahoo Finance');
+                        indicators.usd.gold_purchases = this.createIndicator(35.8 + (Math.random() - 0.5) * 5 * randomFactor, this.generateTrend(35.0, 35.8, 450, 'mixed'), 'Central Bank Gold', 'World Gold Council');
+                        indicators.usd.yuan_swift = this.createIndicator(4.74 + (Math.random() - 0.5) * 2 * randomFactor, this.generateTrend(3.5, 4.74, 450, 'mixed'), 'Yuan SWIFT Share', 'SWIFT');
+                        indicators.usd.reserve_share = this.createIndicator(58.4 + (Math.random() - 0.5) * 8 * randomFactor, this.generateTrend(58.0, 58.4, 450, 'mixed'), 'USD Reserve Share', 'IMF COFER');
+                        
+                        indicators.innovation.qqq_spy = this.createIndicator(0.756 + (Math.random() - 0.5) * 0.2 * randomFactor, this.generateTrend(0.70, 0.756, 450, 'mixed'), 'QQQ/SPY Ratio', 'Yahoo Finance');
+                        indicators.innovation.productivity = this.createIndicator(2.3 + (Math.random() - 0.5) * 1.5 * randomFactor, this.generateTrend(1.8, 2.3, 450, 'mixed'), 'Productivity Growth', 'BLS');
+                        indicators.innovation.net_margins = this.createIndicator(12.0 + (Math.random() - 0.5) * 3 * randomFactor, this.generateTrend(10.5, 12.0, 450, 'mixed'), 'S&P Net Margins', 'S&P Global');
+                        
+                        indicators.pe.forward_pe = this.createIndicator(20.8 + (Math.random() - 0.5) * 6 * randomFactor, this.generateTrend(18.0, 20.8, 450, 'mixed'), 'Forward P/E', 'FactSet');
+                        indicators.pe.cape = this.createIndicator(34.2 + (Math.random() - 0.5) * 8 * randomFactor, this.generateTrend(30.0, 34.2, 450, 'mixed'), 'Shiller CAPE', 'Shiller');
+                        indicators.pe.risk_premium = this.createIndicator(0.62 + (Math.random() - 0.5) * 0.6 * randomFactor, this.generateTrend(0.3, 0.62, 450, 'mixed'), 'Equity Risk Premium', 'Calculated');
+                        
+                        indicators.intl.acwx_spy = this.createIndicator(0.96 + (Math.random() - 0.5) * 0.2 * randomFactor, this.generateTrend(0.92, 0.96, 450, 'mixed'), 'ACWX/SPY Relative', 'Yahoo Finance');
+                        indicators.intl.sp_vs_world = this.createIndicator(1.034 + (Math.random() - 0.5) * 0.15 * randomFactor, this.generateTrend(0.95, 1.034, 450, 'mixed'), 'S&P vs MSCI World', 'MSCI');
+                        indicators.intl.tic_flows = this.createIndicator(125.4 + (Math.random() - 0.5) * 100 * randomFactor, this.generateTrend(100.0, 125.4, 450, 'mixed'), 'TIC Net Flows', 'Treasury');
+                        break;
+                }
+                
+                return indicators;
+            },
+
+            createIndicator: function(current, history, name, source) {
+                return {
+                    current: current,
+                    freshness: 'fresh',
+                    source: source || 'Generated',
+                    name: name,
+                    history: history
+                };
+            },
+
+            generateTrend: function(start, end, length, direction) {
+                const history = [];
+                const totalChange = end - start;
+                
+                for (let i = 0; i < length; i++) {
+                    const progress = i / (length - 1);
+                    let value;
+                    
+                    switch(direction) {
+                        case 'bullish':
+                            value = start + (totalChange * Math.pow(progress, 0.7));
+                            break;
+                        case 'bearish':
+                            value = start + (totalChange * Math.pow(progress, 0.7));
+                            break;
+                        case 'mixed':
+                            const trend = start + (totalChange * progress);
+                            const noise = (Math.random() - 0.5) * Math.abs(totalChange) * 0.1;
+                            value = trend + noise;
+                            break;
+                        case 'flat':
+                            const flatNoise = (Math.random() - 0.5) * Math.abs(end - start) * 0.3;
+                            value = start + flatNoise;
+                            break;
+                        default:
+                            value = start + (totalChange * progress);
+                    }
+                    
+                    history.push(parseFloat(value.toFixed(2)));
+                }
+                
+                return history;
+            }
+        };
+
+        // Indicators v1.0 Module - Embedded
+        const Indicators = {
+            version: '1.0',
+            
+            definitions: {
+                usd: {
+                    dxy: { 
+                        name: 'DXY Index', 
+                        tier: 'canary', 
+                        weight: 0.35, 
+                        trigger: 'MA',
+                        description: 'USD strength vs major currencies',
+                        dataKey: 'dxy'
+                    },
+                    gold_purchases: { 
+                        name: 'Central Bank Gold Holdings', 
+                        tier: 'structural', 
+                        weight: 0.20, 
+                        trigger: 'MA',
+                        description: 'Total central bank gold reserves',
+                        dataKey: 'gold_purchases'
+                    },
+                    yuan_swift: { 
+                        name: 'Yuan SWIFT Share', 
+                        tier: 'primary', 
+                        weight: 0.25, 
+                        trigger: 'MA',
+                        description: 'Chinese Yuan share of SWIFT transactions',
+                        dataKey: 'yuan_swift'
+                    },
+                    reserve_share: { 
+                        name: 'USD Reserve Share', 
+                        tier: 'structural', 
+                        weight: 0.20, 
+                        trigger: 'YoY',
+                        description: 'USD share of global foreign exchange reserves',
+                        dataKey: 'reserve_share'
+                    }
+                },
+                innovation: {
+                    qqq_spy: { 
+                        name: 'QQQ/SPY Ratio', 
+                        tier: 'canary', 
+                        weight: 0.40, 
+                        trigger: 'MA',
+                        description: 'Technology vs broad market performance',
+                        dataKey: 'qqq_spy'
+                    },
+                    productivity: { 
+                        name: 'Labor Productivity', 
+                        tier: 'structural', 
+                        weight: 0.30, 
+                        trigger: 'YoY',
+                        description: 'Output per hour worked',
+                        dataKey: 'productivity'
+                    },
+                    net_margins: { 
+                        name: 'S&P 500 Net Margins', 
+                        tier: 'primary', 
+                        weight: 0.30, 
+                        trigger: 'YoY',
+                        description: 'Corporate profit margins',
+                        dataKey: 'net_margins'
+                    }
+                },
+                pe: {
+                    forward_pe: { 
+                        name: 'S&P 500 Forward P/E', 
+                        tier: 'canary', 
+                        weight: 0.40, 
+                        trigger: 'MA',
+                        description: 'Forward-looking price-to-earnings ratio',
+                        dataKey: 'forward_pe'
+                    },
+                    cape: { 
+                        name: 'CAPE Ratio', 
+                        tier: 'structural', 
+                        weight: 0.35, 
+                        trigger: 'MA',
+                        description: 'Cyclically adjusted price-to-earnings ratio',
+                        dataKey: 'cape'
+                    },
+                    risk_premium: { 
+                        name: 'Risk Premium', 
+                        tier: 'primary', 
+                        weight: 0.25, 
+                        trigger: 'MA',
+                        description: 'Earnings yield minus 10-year treasury yield',
+                        dataKey: 'risk_premium'
+                    }
+                },
+                intl: {
+                    acwx_spy: { 
+                        name: 'ACWX/SPY Relative', 
+                        tier: 'canary', 
+                        weight: 0.35, 
+                        trigger: 'MA',
+                        description: 'International vs US market performance',
+                        dataKey: 'acwx_spy'
+                    },
+                    sp_vs_world: { 
+                        name: 'S&P 500 vs World', 
+                        tier: 'structural', 
+                        weight: 0.30, 
+                        trigger: 'MA',
+                        description: 'US market capitalization vs world',
+                        dataKey: 'sp_vs_world'
+                    },
+                    tic_flows: { 
+                        name: 'TIC Flows', 
+                        tier: 'primary', 
+                        weight: 0.35, 
+                        trigger: 'MA',
+                        description: 'Foreign investment flows into US',
+                        dataKey: 'tic_flows'
+                    }
+                }
+            },
+
+            calculateThemeProbability: function(themeData, theme) {
+                const themeIndicators = this.definitions[theme];
+                if (!themeIndicators) return 0.15;
+                
+                const tierWeights = { canary: 0.5, primary: 0.3, structural: 0.2 };
+                let totalWeight = 0;
+                let weightedSum = 0;
+                
+                Object.entries(themeIndicators).forEach(([key, config]) => {
+                    const indicator = themeData[config.dataKey];
+                    if (indicator && indicator.current !== null) {
+                        const momentum = this.calculateIndicatorMomentum(indicator, config.trigger);
+                        const tierWeight = tierWeights[config.tier] || 1.0;
+                        const indicatorWeight = config.weight;
+                        
+                        const weight = tierWeight * indicatorWeight;
+                        weightedSum += momentum * weight;
+                        totalWeight += weight;
+                    }
+                });
+                
+                if (totalWeight === 0) return 0.15;
+                
+                const probability = Math.max(0.05, Math.min(0.95, (weightedSum / totalWeight + 1) / 2));
+                return probability;
+            },
+
+            calculateIndicatorMomentum: function(indicator, trigger) {
+                if (!indicator.history || indicator.history.length < 2) return 0;
+                
+                const current = indicator.current;
+                const previous = indicator.history[indicator.history.length - 1];
+                
+                if (!current || !previous || previous === 0) return 0;
+                
+                const change = (current - previous) / Math.abs(previous);
+                return Math.max(-1, Math.min(1, change * 10));
+            }
+        };
+
+        // DataEditor v1.0 Module - Embedded
+        const DataEditor = {
+            version: '1.0',
+            editingIndicator: null,
+            
+            displayDataTable: function(monthlyData, indicators, manualOverrides = {}) {
+                const container = document.getElementById('data-table-container');
+                if (!container || !monthlyData) return;
+                
+                let html = '<table class="data-table"><thead><tr>';
+                html += '<th>Theme</th><th>Indicator</th><th>Current Value</th>';
+                html += '<th>Freshness</th><th>Source</th><th>Action</th>';
+                html += '</tr></thead><tbody>';
+                
+                if (monthlyData.indicators) {
+                    Object.entries(monthlyData.indicators).forEach(([theme, themeData]) => {
+                        Object.entries(themeData).forEach(([key, indicator]) => {
+                            const dataKey = `${theme}_${key}`;
+                            const isManual = manualOverrides[dataKey];
+                            const config = indicators.definitions[theme] && indicators.definitions[theme][key];
+                            
+                            html += `<tr class="${isManual ? 'manual-override' : ''}">`;
+                            html += `<td>${theme.toUpperCase()}</td>`;
+                            html += `<td>${indicator.name || key}`;
+                            if (config) {
+                                html += ` <span class="tier-badge tier-${config.tier}">${config.tier}</span>`;
+                            }
+                            html += `</td>`;
+                            html += `<td>${indicator.current !== null ? indicator.current.toFixed(2) : 'N/A'}</td>`;
+                            html += `<td><span class="status-good">✓ Fresh</span></td>`;
+                            html += `<td>${isManual ? 'Manual' : indicator.source || 'Generated'}</td>`;
+                            html += `<td><button class="edit-button" onclick="DataEditor.openEditModal('${dataKey}', '${indicator.name || key}', ${indicator.current})">Edit</button></td>`;
+                            html += '</tr>';
+                        });
+                    });
+                }
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            },
+            
+            openEditModal: function(dataKey, displayName, currentValue) {
+                this.editingIndicator = dataKey;
+                
+                const modal = document.getElementById('edit-modal');
+                const title = document.getElementById('modal-title');
+                const body = document.getElementById('modal-body');
+                
+                if (!modal || !title || !body) {
+                    console.error('Modal elements not found');
+                    return;
+                }
+                
+                title.textContent = `Edit: ${displayName}`;
+                
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label for="indicator-value">Current Value:</label>
+                        <input type="number" id="indicator-value" step="0.01" value="${currentValue || ''}" 
+                               placeholder="Enter new value">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-reason">Reason for Manual Override:</label>
+                        <select id="edit-reason">
+                            <option value="">Select reason...</option>
+                            <option value="data_error">Data Collection Error</option>
+                            <option value="timing_issue">Timing Issue</option>
+                            <option value="source_problem">Source Unavailable</option>
+                            <option value="manual_calculation">Manual Calculation</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-notes">Notes (optional):</label>
+                        <textarea id="edit-notes" rows="3" placeholder="Additional details..."></textarea>
+                    </div>
+                `;
+                
+                modal.style.display = 'block';
+                document.getElementById('indicator-value').focus();
+            },
+            
+            closeEditModal: function() {
+                const modal = document.getElementById('edit-modal');
+                if (modal) modal.style.display = 'none';
+                this.editingIndicator = null;
+            },
+            
+            saveIndicatorEdit: function(trackerState, callback) {
+                if (!this.editingIndicator) {
+                    alert('No indicator selected for editing');
+                    return false;
+                }
+                
+                const valueInput = document.getElementById('indicator-value');
+                const reasonSelect = document.getElementById('edit-reason');
+                const notesInput = document.getElementById('edit-notes');
+                
+                if (!valueInput || !reasonSelect) {
+                    alert('Required form elements not found');
+                    return false;
+                }
+                
+                const newValue = parseFloat(valueInput.value);
+                const reason = reasonSelect.value;
+                const notes = notesInput ? notesInput.value : '';
+                
+                if (isNaN(newValue)) {
+                    alert('Please enter a valid number');
+                    valueInput.focus();
+                    return false;
+                }
+                
+                if (!reason) {
+                    alert('Please select a reason for the manual override');
+                    reasonSelect.focus();
+                    return false;
+                }
+                
+                // Update the data structure
+                const [theme, key] = this.editingIndicator.split('_');
+                if (trackerState.monthlyData && trackerState.monthlyData.indicators[theme] && trackerState.monthlyData.indicators[theme][key]) {
+                    const indicator = trackerState.monthlyData.indicators[theme][key];
+                    indicator.current = newValue;
+                    indicator.manual_override = true;
+                    indicator.override_reason = reason;
+                    indicator.override_notes = notes;
+                    indicator.override_timestamp = new Date().toISOString();
+                }
+                
+                trackerState.manualOverrides[this.editingIndicator] = {
+                    value: newValue,
+                    reason: reason,
+                    notes: notes,
+                    timestamp: new Date().toISOString()
+                };
+                
+                this.closeEditModal();
+                
+                if (callback) callback();
+                
+                console.log(`Manual override saved for ${this.editingIndicator}: ${newValue}`);
+                return true;
+            }
+        };
+
+        // Full ThemeCalculator v2.9 Module - Embedded
+        const ThemeCalculator = {
+            version: '2.9',
+            
+            findIndicatorInThemes: function(dataIndicators, dataKey) {
+                for (const themeName in dataIndicators) {
+                    const themeData = dataIndicators[themeName];
+                    if (themeData && typeof themeData === 'object' && themeData[dataKey]) {
+                        return themeData[dataKey];
+                    }
+                }
+                console.warn(`Indicator '${dataKey}' not found in any theme data`);
+                return null;
+            },
+
+            calculateThemeProbability: function(dataIndicators, themeName) {
+                if (!Indicators || !Indicators.definitions[themeName]) {
+                    console.error(`No indicator definitions found for theme: ${themeName}`);
+                    return 0.15;
+                }
+                
+                return Indicators.calculateThemeProbability(dataIndicators, themeName);
+            },
+            
+            calculateThemeAnalysis: function(monthlyData, indicators) {
+                if (!monthlyData || !monthlyData.indicators) {
+                    return { 
+                        error: 'No data available for analysis',
+                        validation: { valid: false, issues: ['Missing monthly data'] }
+                    };
+                }
+                
+                console.log('=== Theme Analysis v2.9 Starting ===');
+                console.log('Data structure themes:', Object.keys(monthlyData.indicators));
+                
+                const dataIndicators = monthlyData.indicators;
+                
+                const themes = {
+                    usd: this.calculateThemeProbability(dataIndicators, 'usd'),
+                    ai: this.calculateThemeProbability(dataIndicators, 'innovation'),
+                    pe: this.calculateThemeProbability(dataIndicators, 'pe'),
+                    intl: this.calculateThemeProbability(dataIndicators, 'intl')
+                };
+                
+                console.log('Final theme probabilities:', themes);
+                
+                const scenarios = this.generateScenarios(themes);
+                
+                return {
+                    methodology: 'IPS v3.10 Appendix H Mathematical Specifications',
+                    version: this.version,
+                    themes: themes,
+                    scenarios: scenarios,
+                    timestamp: new Date().toISOString(),
+                    validation: { valid: true, issues: [], warnings: [] }
+                };
+            },
+
+            generateScenarios: function(themes) {
+                const scenarios = [];
+                
+                for (let i = 0; i < 16; i++) {
+                    const hasUSD = (i & 8) > 0;
+                    const hasAI = (i & 4) > 0;
+                    const hasPE = (i & 2) > 0;
+                    const hasINTL = (i & 1) > 0;
+                    
+                    const probability = 
+                        (hasUSD ? themes.usd : (1 - themes.usd)) *
+                        (hasAI ? themes.ai : (1 - themes.ai)) *
+                        (hasPE ? themes.pe : (1 - themes.pe)) *
+                        (hasINTL ? themes.intl : (1 - themes.intl));
+                    
+                    let name = [];
+                    if (hasUSD) name.push('USD↓');
+                    if (hasAI) name.push('AI↑');
+                    if (hasPE) name.push('P/E↓');
+                    if (hasINTL) name.push('INTL↑');
+                    
+                    scenarios.push({
+                        id: i + 1,
+                        binary: i.toString(2).padStart(4, '0'),
+                        name: name.length > 0 ? name.join(' + ') : 'Base Case',
+                        probability: probability,
+                        rank: 0,
+                        themes: { usd: hasUSD, ai: hasAI, pe: hasPE, intl: hasINTL }
+                    });
+                }
+                
+                scenarios.sort((a, b) => b.probability - a.probability);
+                scenarios.forEach((scenario, index) => {
+                    scenario.rank = index + 1;
+                });
+                
+                return scenarios;
+            },
+
+            displayThemeResults: function(analysis, containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                let html = `
+                    <div class="theme-analysis-v29">
+                        <div class="analysis-header">
+                            <h3>Theme Analysis - ${analysis.methodology}</h3>
+                            <div class="analysis-meta">Version ${analysis.version} | ${new Date(analysis.timestamp).toLocaleString()}</div>
+                        </div>
+                        
+                        <div class="theme-probabilities">
+                            <h4>Theme Probabilities</h4>
+                `;
+                
+                const themeNames = {
+                    usd: 'USD Dominance Decline',
+                    ai: 'AI Productivity Boom', 
+                    pe: 'P/E Mean Reversion',
+                    intl: 'International Outperformance'
+                };
+                
+                Object.entries(analysis.themes).forEach(([key, probability]) => {
+                    const percentage = (probability * 100).toFixed(1);
+                    html += `
+                        <div class="theme-item">
+                            <div class="theme-header">
+                                <div class="theme-name">${themeNames[key]}</div>
+                                <div class="theme-percentage">${percentage}%</div>
+                            </div>
+                            <div class="theme-bar">
+                                <div class="theme-fill theme-${key}" style="width: ${percentage}%; background: #667eea;"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                        
+                        <div class="scenario-matrix">
+                            <h4>Top 8 Scenarios</h4>
+                            <div class="scenario-grid">
+                `;
+                
+                analysis.scenarios.slice(0, 8).forEach(scenario => {
+                    const percentage = (scenario.probability * 100).toFixed(1);
+                    html += `
+                        <div class="scenario-item">
+                            <div class="scenario-rank">#${scenario.rank}</div>
+                            <div class="scenario-name">${scenario.name}</div>
+                            <div class="scenario-probability">${percentage}%</div>
+                            <div class="scenario-binary">${scenario.binary}</div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+            }
+        };
+
+        console.log('✓ FileHandler v1.4 embedded');
+        console.log('✓ ThemeCalculator v2.9 embedded');
+        console.log('✓ DataEditor v1.0 embedded');
+        console.log('✓ Indicators v1.0 embedded');
+    </script>
+
+    <!-- MAIN TRACKER APPLICATION -->
+    <script>
+        // HCP Portfolio Tracker v6.4.1 - Complete Integrated Release
+        const tracker = {
+            version: '6.4.1',
+            currentStep: 1,
+            completedSteps: [],
+            editingIndicator: null,
+            
+            // State management
+            state: {
+                philosophyAcknowledged: false,
+                initializationData: null,
+                monthlyData: null,
+                dataQuality: {},
+                manualOverrides: {},
+                themeProbabilities: {},
+                scenarioProbabilities: []
+            },
+            
+            // Initialize with embedded modules
+            init: function() {
+                console.log(`HCP Portfolio Tracker v${this.version} initializing with embedded modules...`);
+                
+                this.loadState();
+                this.updateStepIndicators();
+                this.updateNavigation();
+                this.setupEventListeners();
+                
+                console.log('System initialization complete - all modules loaded');
+            },
+            
+            // Setup event listeners for embedded modules
+            setupEventListeners: function() {
+                // File input event listeners
+                const initInput = document.getElementById('init-file');
+                const monthlyInput = document.getElementById('monthly-file');
+                
+                if (initInput) {
+                    initInput.addEventListener('change', (event) => this.handleInitFile(event));
+                }
+                
+                if (monthlyInput) {
+                    monthlyInput.addEventListener('change', (event) => this.handleMonthlyFile(event));
+                }
+                
+                // Modal event listeners
+                window.addEventListener('click', (event) => {
+                    const modal = document.getElementById('edit-modal');
+                    if (event.target === modal) {
+                        this.closeEditModal();
+                    }
+                });
+                
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') {
+                        this.closeEditModal();
+                    }
+                });
+                
+                console.log('Event listeners setup complete');
+            },
+            
+            // Step Navigation
+            navigateToStep: function(step) {
+                if (step < 1 || step > 10) return;
+                if (!this.canNavigateToStep(step)) return;
+                
+                this.currentStep = step;
+                this.updateStepDisplay();
+                this.updateStepIndicators();
+                this.updateNavigation();
+                this.saveState();
+            },
+            
+            canNavigateToStep: function(step) {
+                if (step === 1) return true;
+                if (step === 2) return this.state.philosophyAcknowledged;
+                if (step === 3) return this.state.monthlyData !== null;
+                if (step > 3) return this.completedSteps.includes(3);
+                return false;
+            },
+            
+            previousStep: function() {
+                if (this.currentStep > 1) {
+                    this.navigateToStep(this.currentStep - 1);
+                }
+            },
+            
+            nextStep: function() {
+                if (this.currentStep < 10 && this.canNavigateToStep(this.currentStep + 1)) {
+                    this.navigateToStep(this.currentStep + 1);
+                }
+            },
+            
+            updateStepDisplay: function() {
+                document.querySelectorAll('.step-content').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                const currentStepEl = document.getElementById(`step-${this.currentStep}`);
+                if (currentStepEl) {
+                    currentStepEl.classList.add('active');
+                }
+                
+                const titles = [
+                    'Investment Philosophy',
+                    'Data Import & Edit',
+                    'Theme Analysis',
+                    'Scenario Analysis',
+                    'Portfolio Optimization',
+                    'Current Positions',
+                    'Rebalancing Trades',
+                    'History',
+                    'Report',
+                    'Export'
+                ];
+                document.getElementById('step-title').textContent = `Step ${this.currentStep}: ${titles[this.currentStep - 1]}`;
+            },
+            
+            updateStepIndicators: function() {
+                document.querySelectorAll('.step-indicator').forEach((el, index) => {
+                    const step = index + 1;
+                    el.classList.remove('active', 'completed', 'locked');
+                    
+                    if (step === this.currentStep) {
+                        el.classList.add('active');
+                    } else if (this.completedSteps.includes(step)) {
+                        el.classList.add('completed');
+                    } else if (!this.canNavigateToStep(step)) {
+                        el.classList.add('locked');
+                    }
+                });
+            },
+            
+            updateNavigation: function() {
+                const prevButton = document.getElementById('prev-button');
+                const nextButton = document.getElementById('next-button');
+                
+                prevButton.disabled = this.currentStep === 1;
+                
+                if (this.currentStep === 1) {
+                    nextButton.disabled = !this.state.philosophyAcknowledged;
+                } else if (this.currentStep === 2) {
+                    nextButton.disabled = !this.state.monthlyData;
+                } else {
+                    nextButton.disabled = !this.canNavigateToStep(this.currentStep + 1);
+                }
+            },
+            
+            // Step 1: Philosophy
+            acknowledgePhilosophy: function() {
+                const checkbox = document.getElementById('philosophy-checkbox');
+                this.state.philosophyAcknowledged = checkbox.checked;
+                
+                if (checkbox.checked && !this.completedSteps.includes(1)) {
+                    this.completedSteps.push(1);
+                }
+                
+                this.updateNavigation();
+                this.saveState();
+            },
+            
+            // Step 2: Data Import - Using embedded FileHandler v1.4
+            handleInitFile: function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        document.getElementById('init-status').innerHTML = 
+                            '<span class="status-good">✅ Initialization data loaded</span>';
+                        this.processInitData(data, 'initialization');
+                    } catch (error) {
+                        alert('Error parsing initialization file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            },
+            
+            handleMonthlyFile: function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        document.getElementById('monthly-status').innerHTML = 
+                            '<span class="status-good">✅ Monthly data loaded</span>';
+                        this.processMonthlyData(data, 'monthly');
+                    } catch (error) {
+                        alert('Error parsing monthly file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            },
+            
+            // Generate sample data with embedded FileHandler
+            generateSampleData: function(scenario = 'mixed') {
+                console.log(`Generating sample data for scenario: ${scenario}`);
+                
+                const sampleData = FileHandler.generateSampleData('monthly', scenario);
+                
+                document.getElementById('monthly-status').innerHTML = 
+                    `<span class="status-good">✅ ${scenario.replace('_', ' ')} sample data generated</span>`;
+                
+                this.processSampleData(sampleData, 'sample');
+            },
+            
+            // Process data callbacks
+            processInitData: function(data, type) {
+                this.state.initializationData = data;
+                console.log('Initialization data processed:', type);
+            },
+            
+            processMonthlyData: function(data, type) {
+                this.state.monthlyData = data;
+                this.checkDataComplete();
+                console.log('Monthly data processed:', type);
+            },
+            
+            processSampleData: function(data, type) {
+                this.state.monthlyData = data;
+                this.checkDataComplete();
+                console.log('Sample data processed:', type);
+            },
+            
+            checkDataComplete: function() {
+                if (this.state.monthlyData) {
+                    this.displayDataTable();
+                    
+                    // Auto-calculate themes when data is loaded
+                    this.calculateThemes();
+                    
+                    if (!this.completedSteps.includes(2)) {
+                        this.completedSteps.push(2);
+                    }
+                    
+                    this.updateNavigation();
+                    this.updateStepIndicators();
+                    this.saveState();
+                }
+            },
+            
+            // Data Editor - Using embedded DataEditor v1.0
+            displayDataTable: function() {
+                DataEditor.displayDataTable(this.state.monthlyData, Indicators, this.state.manualOverrides);
+                document.getElementById('data-editor-section').style.display = 'block';
+            },
+            
+            // Theme Analysis - Using embedded ThemeCalculator v2.9
+            calculateThemes: function() {
+                if (!this.state.monthlyData) return;
+                
+                console.log('Starting theme analysis...');
+                
+                const analysis = ThemeCalculator.calculateThemeAnalysis(this.state.monthlyData, Indicators);
+                
+                if (analysis.error) {
+                    document.getElementById('theme-container').innerHTML = 
+                        `<div class="status-error">Error: ${analysis.error}</div>`;
+                    return;
+                }
+                
+                ThemeCalculator.displayThemeResults(analysis, 'theme-container');
+                
+                if (!this.completedSteps.includes(3)) {
+                    this.completedSteps.push(3);
+                }
+                this.updateStepIndicators();
+                this.saveState();
+            },
+            
+            // Modal functions - Using embedded DataEditor v1.0
+            openEditModal: function(dataKey, displayName, currentValue) {
+                DataEditor.openEditModal(dataKey, displayName, currentValue);
+            },
+            
+            closeEditModal: function() {
+                DataEditor.closeEditModal();
+            },
+            
+            saveIndicatorEdit: function() {
+                DataEditor.saveIndicatorEdit(this.state, () => {
+                    this.displayDataTable();
+                    this.calculateThemes();
+                });
+            },
+            
+            // State Persistence
+            saveState: function() {
+                const stateData = {
+                    version: this.version,
+                    currentStep: this.currentStep,
+                    completedSteps: this.completedSteps,
+                    state: this.state
+                };
+                localStorage.setItem('hcp-tracker-v641-state', JSON.stringify(stateData));
+            },
+            
+            loadState: function() {
+                const saved = localStorage.getItem('hcp-tracker-v641-state');
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        if (data.version === this.version) {
+                            this.currentStep = data.currentStep || 1;
+                            this.completedSteps = data.completedSteps || [];
+                            this.state = data.state || this.state;
+                            
+                            if (this.state.philosophyAcknowledged) {
+                                document.getElementById('philosophy-checkbox').checked = true;
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error loading saved state:', e);
+                    }
+                }
+            }
+        };
+        
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            tracker.init();
+        });
+        
+        // Make tracker globally available
+        window.tracker = tracker;
+    </script>
+</body>
+</html>

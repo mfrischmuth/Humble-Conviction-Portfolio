@@ -1,0 +1,164 @@
+{
+  "metadata": {
+    "version": "4.2.0",
+    "ips_version": "4.2",
+    "collector_version": "4.2.5",
+    "created": "2025-09-07T14:01:23.355666",
+    "last_updated": "2025-09-07T14:01:23.355677",
+    "description": "HCP Master Data - IPS v4.2 Clean Implementation",
+    "data_dir": "C:\\Users\\markf\\OneDrive\\Documents\\GitHub\\Humble-Conviction-Portfolio\\data_collector\\Outputs",
+    "indicators": {
+      "total": 12,
+      "automated": 11,
+      "manual": 1,
+      "themes": 4
+    }
+  },
+  "indicator_mapping": {
+    "usd_dominance": {
+      "leading": "dxy_index",
+      "concurrent": "real_rate_differential",
+      "lagging": "cofer_usd"
+    },
+    "innovation": {
+      "leading": "qqq_spy_ratio",
+      "concurrent": "productivity_growth",
+      "lagging": "tech_employment_pct"
+    },
+    "valuation": {
+      "leading": "put_call_ratio",
+      "concurrent": "trailing_pe",
+      "lagging": "eps_delivery"
+    },
+    "us_leadership": {
+      "leading": "spy_efa_momentum",
+      "concurrent": "us_market_pct",
+      "lagging": "etf_flow_differential"
+    }
+  },
+  "historical_data": {
+    "cofer_usd": {
+      "2020-Q1": 60.91,
+      "2020-Q2": 60.52,
+      "2020-Q3": 60.01,
+      "2020-Q4": 59.79,
+      "2021-Q1": 59.74,
+      "2021-Q2": 59.58,
+      "2021-Q3": 59.46,
+      "2021-Q4": 59.17,
+      "2022-Q1": 58.88,
+      "2022-Q2": 59.02,
+      "2022-Q3": 60.02,
+      "2022-Q4": 59.92,
+      "2023-Q1": 59.54,
+      "2023-Q2": 59.41,
+      "2023-Q3": 59.18,
+      "2023-Q4": 58.42,
+      "2024-Q1": 58.94,
+      "2024-Q2": 58.15,
+      "2024-Q3": 57.28,
+      "2024-Q4": 57.79,
+      "2025-Q1": 57.74
+    }
+  },
+  "auto_data": {},
+  "data_sources": {
+    "dxy_index": {
+      "source": "Yahoo Finance",
+      "ticker": "DX=F",
+      "frequency": "daily",
+      "automation": "full"
+    },
+    "real_rate_differential": {
+      "source": "FRED",
+      "series": "DFII10",
+      "frequency": "daily",
+      "automation": "full"
+    },
+    "cofer_usd": {
+      "source": "IMF COFER",
+      "frequency": "quarterly",
+      "automation": "manual",
+      "next_update": "2025-10-31"
+    },
+    "qqq_spy_ratio": {
+      "source": "Yahoo Finance",
+      "tickers": [
+        "QQQ",
+        "SPY"
+      ],
+      "frequency": "daily",
+      "automation": "full"
+    },
+    "productivity_growth": {
+      "source": "FRED",
+      "series": "OPHNFB",
+      "frequency": "quarterly",
+      "automation": "full"
+    },
+    "tech_employment_pct": {
+      "source": "FRED",
+      "series": [
+        "USINFO",
+        "PAYEMS"
+      ],
+      "frequency": "monthly",
+      "automation": "full"
+    },
+    "put_call_ratio": {
+      "source": "Yahoo Options",
+      "ticker": "SPY",
+      "frequency": "daily",
+      "automation": "full"
+    },
+    "trailing_pe": {
+      "source": "Yahoo Finance",
+      "ticker": "SPY",
+      "frequency": "daily",
+      "automation": "full"
+    },
+    "eps_delivery": {
+      "source": "Calculated",
+      "tickers": [
+        "AAPL",
+        "MSFT",
+        "GOOGL",
+        "AMZN",
+        "NVDA"
+      ],
+      "frequency": "quarterly",
+      "automation": "semi"
+    },
+    "spy_efa_momentum": {
+      "source": "Yahoo Finance",
+      "tickers": [
+        "SPY",
+        "EFA"
+      ],
+      "frequency": "daily",
+      "automation": "full"
+    },
+    "us_market_pct": {
+      "source": "Calculated",
+      "formula": "SPY/(SPY+EFA)*100",
+      "frequency": "daily",
+      "automation": "full"
+    },
+    "etf_flow_differential": {
+      "source": "Volume Proxy",
+      "tickers": [
+        "SPY",
+        "EFA"
+      ],
+      "frequency": "daily",
+      "automation": "full"
+    }
+  },
+  "collection_status": {
+    "last_successful_run": null,
+    "last_attempt": null,
+    "indicators_collected": 0,
+    "garch_ready": 0,
+    "failures": []
+  }
+}

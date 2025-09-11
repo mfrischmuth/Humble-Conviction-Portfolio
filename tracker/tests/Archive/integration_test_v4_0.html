@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Three-State Framework Integration Test v4.0</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .controls button:hover {
+            background: #5a67d8;
+        }
+        
+        .controls select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-section h3 {
+            color: #667eea;
+            margin-top: 0;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .indicator-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .indicator-card.leading { border-left-color: #48bb78; }
+        .indicator-card.concurrent { border-left-color: #4299e1; }
+        .indicator-card.lagging { border-left-color: #ed8936; }
+        
+        .indicator-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .indicator-percentiles {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #718096;
+        }
+        
+        .percentile-bar {
+            height: 20px;
+            background: linear-gradient(to right, #fee, #ffa, #efe);
+            border-radius: 4px;
+            position: relative;
+            margin: 10px 0;
+        }
+        
+        .percentile-marker {
+            position: absolute;
+            top: -5px;
+            width: 2px;
+            height: 30px;
+            background: #333;
+        }
+        
+        .tercile-marker {
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 20px;
+            background: #999;
+            opacity: 0.5;
+        }
+        
+        .theme-analysis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .theme-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .theme-value-bar {
+            height: 30px;
+            background: linear-gradient(to right, #fee 0%, #fff 50%, #efe 100%);
+            border-radius: 5px;
+            position: relative;
+            margin: 15px 0;
+        }
+        
+        .theme-value-marker {
+            position: absolute;
+            top: -10px;
+            width: 4px;
+            height: 50px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+        
+        .state-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .state-low { background: #fee4e2; color: #dc2626; }
+        .state-neutral { background: #fef3c7; color: #d97706; }
+        .state-high { background: #d1fae5; color: #059669; }
+        
+        .scenario-display {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .scenario-number {
+            font-size: 48px;
+            font-weight: bold;
+        }
+        
+        .scenario-description {
+            font-size: 18px;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+        
+        .transition-matrix {
+            overflow-x: auto;
+        }
+        
+        .transition-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .transition-table th, .transition-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .transition-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .probability-high { background: #d1fae5; }
+        .probability-medium { background: #fef3c7; }
+        .probability-low { background: #fee4e2; }
+        
+        .console-output {
+            background: #1a202c;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .error { color: #fc8181; }
+        .warning { color: #f6e05e; }
+        .success { color: #68d391; }
+        .info { color: #63b3ed; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>HCP Three-State Framework Integration Test</h1>
+        <p>Testing Indicators v2.0 + ThemeCalculator v3.0 + FileHandler v2.0</p>
+        <p>IPS v4.0 Framework: 12 indicators → 4 themes → 81 scenarios</p>
+    </div>
+
+    <div class="controls">
+        <select id="scenario-select">
+            <option value="current_market">Current Market (Sept 2025)</option>
+            <option value="tech_boom">Technology Boom</option>
+            <option value="risk_off">Risk-Off Environment</option>
+            <option value="dollar_decline">Dollar Decline</option>
+        </select>
+        <button onclick="runTest()">Run Full Test</button>
+        <button onclick="testDataGeneration()">Test Data Generation</button>
+        <button onclick="testIndicatorCalculation()">Test Indicator Processing</button>
+        <button onclick="testThemeCalculation()">Test Theme Calculation</button>
+        <button onclick="testTransitions()">Test Transition Probabilities</button>
+        <button onclick="clearOutput()">Clear Output</button>
+    </div>
+
+    <div id="test-output"></div>
+
+    <div class="test-section">
+        <h3>Console Output</h3>
+        <div id="console" class="console-output"></div>
+    </div>
+
+    <script>
+        // Embed the three modules directly for testing
+        
+        // ============ INDICATORS v2.0 ============
+        const Indicators = {
+            version: '2.0',
+            framework: 'IPS v4.0 Three-State Framework',
+            
+            definitions: {
+                usd: {
+                    dxy: { 
+                        name: 'DXY Index', 
+                        temporal: 'leading', 
+                        weight: 0.30,
+                        description: 'FX market expectations for USD strength',
+                        dataKey: 'dxy'
+                    },
+                    realRate: { 
+                        name: 'Real Rate Differential', 
+                        temporal: 'concurrent', 
+                        weight: 0.40,
+                        description: 'US 10yr real yield minus G10 average',
+                        dataKey: 'real_rate_diff'
+                    },
+                    cofer: { 
+                        name: 'IMF COFER Reserve Share', 
+                        temporal: 'lagging', 
+                        weight: 0.30,
+                        description: 'USD share of central bank reserves',
+                        dataKey: 'cofer_usd'
+                    }
+                },
+                innovation: {
+                    arkkSpy: { 
+                        name: 'ARKK/SPY Ratio', 
+                        temporal: 'leading', 
+                        weight: 0.30,
+                        description: 'Innovation sentiment vs broad market',
+                        dataKey: 'arkk_spy'
+                    },
+                    productivity: { 
+                        name: 'US Productivity Growth', 
+                        temporal: 'concurrent', 
+                        weight: 0.40,
+                        description: 'Nonfarm output per hour YoY',
+                        dataKey: 'productivity'
+                    },
+                    rdRevenue: { 
+                        name: 'Corporate R&D/Revenue', 
+                        temporal: 'lagging', 
+                        weight: 0.30,
+                        description: 'S&P 500 R&D intensity',
+                        dataKey: 'rd_revenue'
+                    }
+                },
+                pe: {
+                    putCall: { 
+                        name: 'Equity Put/Call Ratio', 
+                        temporal: 'leading', 
+                        weight: 0.30,
+                        description: 'Options positioning sentiment (inverted)',
+                        dataKey: 'put_call',
+                        inverted: true
+                    },
+                    forwardPe: { 
+                        name: 'S&P 500 Forward P/E', 
+                        temporal: 'concurrent', 
+                        weight: 0.40,
+                        description: '12-month forward earnings multiple',
+                        dataKey: 'forward_pe'
+                    },
+                    epsDelivery: { 
+                        name: '12M EPS Delivery Rate', 
+                        temporal: 'lagging', 
+                        weight: 0.30,
+                        description: 'Actual vs expected EPS ratio',
+                        dataKey: 'eps_delivery'
+                    }
+                },
+                usLeadership: {
+                    spyVxus: { 
+                        name: 'SPY/VXUS Momentum', 
+                        temporal: 'leading', 
+                        weight: 0.30,
+                        description: '3-month relative performance',
+                        dataKey: 'spy_vxus_momentum'
+                    },
+                    marketCapShare: { 
+                        name: 'US Market Cap % Global', 
+                        temporal: 'concurrent', 
+                        weight: 0.40,
+                        description: 'US share of world equity market cap',
+                        dataKey: 'us_market_cap_pct'
+                    },
+                    etfFlows: { 
+                        name: 'Cumulative ETF Flows', 
+                        temporal: 'lagging', 
+                        weight: 0.30,
+                        description: '12M US vs International flows',
+                        dataKey: 'etf_flow_differential'
+                    }
+                }
+            },
+
+            temporalWeights: {
+                leading: 0.30,
+                concurrent: 0.40,
+                lagging: 0.30
+            },
+
+            calculateContinuousThemeValue: function(indicatorData, theme) {
+                const themeIndicators = this.definitions[theme];
+                if (!themeIndicators) return 0;
+                
+                let weightedSum = 0;
+                let totalWeight = 0;
+                
+                Object.entries(themeIndicators).forEach(([key, config]) => {
+                    const indicator = indicatorData[config.dataKey];
+                    
+                    if (indicator && indicator.value !== null && indicator.percentiles) {
+                        const continuousValue = this.calculateContinuousPosition(
+                            indicator.value, 
+                            indicator.percentiles
+                        );
+                        
+                        const adjustedValue = config.inverted ? -continuousValue : continuousValue;
+                        const weight = this.temporalWeights[config.temporal] * config.weight;
+                        
+                        weightedSum += adjustedValue * weight;
+                        totalWeight += weight;
+                    }
+                });
+                
+                return totalWeight > 0 ? weightedSum / totalWeight : 0;
+            },
+
+            calculateContinuousPosition: function(value, percentiles) {
+                if (!percentiles) return 0;
+                
+                if (value <= percentiles.p33) {
+                    const range = percentiles.p33 - percentiles.min;
+                    if (range === 0) return -0.67;
+                    const position = (value - percentiles.min) / range;
+                    return -1 + (position * 0.67);
+                } else if (value >= percentiles.p67) {
+                    const range = percentiles.max - percentiles.p67;
+                    if (range === 0) return 0.67;
+                    const position = (value - percentiles.p67) / range;
+                    return 0.33 + (position * 0.67);
+                } else {
+                    const range = percentiles.p67 - percentiles.p33;
+                    if (range === 0) return 0;
+                    const position = (value - percentiles.p33) / range;
+                    return -0.33 + (position * 0.67);
+                }
+            }
+        };
+
+        // ============ THEMECALCULATOR v3.0 (Partial - Key Functions) ============
+        const ThemeCalculator = {
+            version: '3.0',
+            framework: 'IPS v4.0 Three-State Framework',
+            
+            calculateThemeValues: function(indicatorData) {
+                if (!indicatorData) return null;
+                
+                const themes = {};
+                const themeNames = ['usd', 'innovation', 'pe', 'usLeadership'];
+                
+                themeNames.forEach(theme => {
+                    themes[theme] = Indicators.calculateContinuousThemeValue(
+                        indicatorData.indicators,
+                        theme
+                    );
+                });
+                
+                return themes;
+            },
+
+            getState: function(value) {
+                if (value <= -0.33) return -1;
+                if (value >= 0.33) return 1;
+                return 0;
+            },
+
+            getCurrentScenario: function(themeValues) {
+                const states = {
+                    usd: this.getState(themeValues.usd),
+                    innovation: this.getState(themeValues.innovation),
+                    pe: this.getState(themeValues.pe),
+                    usLeadership: this.getState(themeValues.usLeadership)
+                };
+                
+                const index = (states.usd + 1) * 27 +
+                             (states.innovation + 1) * 9 +
+                             (states.pe + 1) * 3 +
+                             (states.usLeadership + 1);
+                
+                return {
+                    number: index + 1,
+                    states: states,
+                    description: this.describeScenario(states)
+                };
+            },
+
+            describeScenario: function(states) {
+                const descriptions = {
+                    usd: { '-1': 'USD weak', '0': 'USD stable', '1': 'USD strong' },
+                    innovation: { '-1': 'Innovation low', '0': 'Innovation normal', '1': 'Innovation high' },
+                    pe: { '-1': 'Valuations low', '0': 'Valuations normal', '1': 'Valuations high' },
+                    usLeadership: { '-1': 'US lagging', '0': 'Balanced global', '1': 'US leading' }
+                };
+                
+                const parts = [];
+                Object.entries(states).forEach(([theme, state]) => {
+                    parts.push(descriptions[theme][state]);
+                });
+                
+                return parts.join(', ');
+            }
+        };
+
+        // ============ FILEHANDLER v2.0 (Partial - Key Functions) ============
+        const FileHandler = {
+            version: '2.0',
+            
+            scenarios: {
+                'current_market': {
+                    name: 'Current Market Conditions',
+                    values: {
+                        dxy: 104.5, real_rate_diff: 1.8, cofer_usd: 58.5,
+                        arkk_spy: 0.42, productivity: 2.1, rd_revenue: 0.031,
+                        put_call: 1.15, forward_pe: 19.5, eps_delivery: 0.97,
+                        spy_vxus_momentum: 0.08, us_market_cap_pct: 62.5, etf_flow_differential: 15.2
+                    }
+                },
+                'tech_boom': {
+                    name: 'Technology Boom',
+                    values: {
+                        dxy: 102.0, real_rate_diff: 0.5, cofer_usd: 59.0,
+                        arkk_spy: 0.68, productivity: 3.8, rd_revenue: 0.045,
+                        put_call: 0.65, forward_pe: 24.5, eps_delivery: 1.08,
+                        spy_vxus_momentum: 0.12, us_market_cap_pct: 64.0, etf_flow_differential: 28.5
+                    }
+                },
+                'risk_off': {
+                    name: 'Risk-Off Environment',
+                    values: {
+                        dxy: 108.5, real_rate_diff: 2.5, cofer_usd: 61.0,
+                        arkk_spy: 0.31, productivity: 0.8, rd_revenue: 0.025,
+                        put_call: 1.85, forward_pe: 15.2, eps_delivery: 0.88,
+                        spy_vxus_momentum: -0.05, us_market_cap_pct: 58.5, etf_flow_differential: -12.3
+                    }
+                },
+                'dollar_decline': {
+                    name: 'Dollar Decline Scenario',
+                    values: {
+                        dxy: 96.5, real_rate_diff: -0.3, cofer_usd: 55.2,
+                        arkk_spy: 0.45, productivity: 2.3, rd_revenue: 0.032,
+                        put_call: 0.95, forward_pe: 18.0, eps_delivery: 1.02,
+                        spy_vxus_momentum: -0.08, us_market_cap_pct: 56.0, etf_flow_differential: -22.5
+                    }
+                }
+            },
+
+            generatePercentiles: function(indicatorKey, currentValue) {
+                const ranges = {
+                    dxy: { min: 89, max: 114, median: 100 },
+                    real_rate_diff: { min: -2.0, max: 3.5, median: 0.8 },
+                    cofer_usd: { min: 54, max: 72, median: 60 },
+                    arkk_spy: { min: 0.25, max: 0.85, median: 0.48 },
+                    productivity: { min: -1.5, max: 4.5, median: 2.0 },
+                    rd_revenue: { min: 0.020, max: 0.048, median: 0.032 },
+                    put_call: { min: 0.55, max: 2.2, median: 1.05 },
+                    forward_pe: { min: 13.5, max: 26.0, median: 18.0 },
+                    eps_delivery: { min: 0.85, max: 1.15, median: 1.00 },
+                    spy_vxus_momentum: { min: -0.15, max: 0.20, median: 0.03 },
+                    us_market_cap_pct: { min: 52, max: 65, median: 58 },
+                    etf_flow_differential: { min: -35, max: 40, median: 5 }
+                };
+
+                const range = ranges[indicatorKey] || { min: 0, max: 100, median: 50 };
+                const position = (currentValue - range.min) / (range.max - range.min);
+                
+                let p33, p67;
+                if (position < 0.33) {
+                    p33 = currentValue + (range.median - currentValue) * 0.3;
+                    p67 = range.median + (range.max - range.median) * 0.3;
+                } else if (position > 0.67) {
+                    p33 = range.min + (range.median - range.min) * 0.7;
+                    p67 = currentValue - (currentValue - range.median) * 0.3;
+                } else {
+                    p33 = range.min + (range.median - range.min) * 0.6;
+                    p67 = range.median + (range.max - range.median) * 0.4;
+                }
+
+                return { min: range.min, p33: p33, p67: p67, max: range.max };
+            },
+
+            generateTestData: function(scenarioName) {
+                const scenario = this.scenarios[scenarioName];
+                if (!scenario) return null;
+                
+                const data = {
+                    metadata: {
+                        scenario: scenarioName,
+                        description: scenario.name
+                    },
+                    indicators: {}
+                };
+                
+                Object.entries(scenario.values).forEach(([key, value]) => {
+                    data.indicators[key] = {
+                        value: value,
+                        percentiles: this.generatePercentiles(key, value)
+                    };
+                });
+                
+                return data;
+            }
+        };
+
+        // ============ TEST FUNCTIONS ============
+        
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = `[${timestamp}] ${message}\n`;
+            const span = `<span class="${type}">${entry}</span>`;
+            console.innerHTML += span;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('test-output').innerHTML = '';
+            document.getElementById('console').innerHTML = '';
+        }
+
+        function runTest() {
+            clearOutput();
+            log('Starting comprehensive test...', 'info');
+            
+            testDataGeneration();
+            testIndicatorCalculation();
+            testThemeCalculation();
+            testTransitions();
+            
+            log('✓ All tests completed', 'success');
+        }
+
+        function testDataGeneration() {
+            log('Testing data generation...', 'info');
+            const output = document.getElementById('test-output');
+            
+            const scenarioName = document.getElementById('scenario-select').value;
+            const data = FileHandler.generateTestData(scenarioName);
+            
+            if (!data) {
+                log('✗ Failed to generate data', 'error');
+                return;
+            }
+            
+            log(`✓ Generated data for ${scenarioName}`, 'success');
+            
+            // Display indicators
+            let html = `
+                <div class="test-section">
+                    <h3>Generated Data: ${data.metadata.description}</h3>
+                    <div class="indicators-grid">
+            `;
+            
+            Object.entries(data.indicators).forEach(([key, indicator]) => {
+                const temporal = getIndicatorTemporal(key);
+                const position = ((indicator.value - indicator.percentiles.min) / 
+                                 (indicator.percentiles.max - indicator.percentiles.min)) * 100;
+                
+                html += `
+                    <div class="indicator-card ${temporal}">
+                        <div class="indicator-name">${key.replace(/_/g, ' ').toUpperCase()}</div>
+                        <div class="indicator-value">${indicator.value.toFixed(2)}</div>
+                        <div class="percentile-bar">
+                            <div class="tercile-marker" style="left: 33.3%"></div>
+                            <div class="tercile-marker" style="left: 66.7%"></div>
+                            <div class="percentile-marker" style="left: ${position}%"></div>
+                        </div>
+                        <div class="indicator-percentiles">
+                            <span>Min: ${indicator.percentiles.min.toFixed(2)}</span>
+                            <span>P33: ${indicator.percentiles.p33.toFixed(2)}</span>
+                            <span>P67: ${indicator.percentiles.p67.toFixed(2)}</span>
+                            <span>Max: ${indicator.percentiles.max.toFixed(2)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div></div>';
+            output.innerHTML = html;
+        }
+
+        function testIndicatorCalculation() {
+            log('Testing indicator processing...', 'info');
+            
+            const scenarioName = document.getElementById('scenario-select').value;
+            const data = FileHandler.generateTestData(scenarioName);
+            
+            // Test continuous position calculation
+            Object.entries(data.indicators).forEach(([key, indicator]) => {
+                const position = Indicators.calculateContinuousPosition(
+                    indicator.value, 
+                    indicator.percentiles
+                );
+                log(`${key}: value=${indicator.value.toFixed(2)}, position=${position.toFixed(3)}`, 'info');
+            });
+            
+            log('✓ Indicator processing complete', 'success');
+        }
+
+        function testThemeCalculation() {
+            log('Testing theme calculations...', 'info');
+            const output = document.getElementById('test-output');
+            
+            const scenarioName = document.getElementById('scenario-select').value;
+            const data = FileHandler.generateTestData(scenarioName);
+            const themeValues = ThemeCalculator.calculateThemeValues(data);
+            
+            if (!themeValues) {
+                log('✗ Failed to calculate themes', 'error');
+                return;
+            }
+            
+            const scenario = ThemeCalculator.getCurrentScenario(themeValues);
+            
+            // Display scenario
+            let html = output.innerHTML + `
+                <div class="test-section">
+                    <h3>Theme Analysis</h3>
+                    <div class="scenario-display">
+                        <div class="scenario-number">Scenario #${scenario.number}</div>
+                        <div class="scenario-description">${scenario.description}</div>
+                    </div>
+                    <div class="theme-analysis">
+            `;
+            
+            Object.entries(themeValues).forEach(([theme, value]) => {
+                const state = ThemeCalculator.getState(value);
+                const stateClass = state === -1 ? 'low' : state === 1 ? 'high' : 'neutral';
+                const stateLabel = state === -1 ? 'Low' : state === 1 ? 'High' : 'Neutral';
+                const position = ((value + 1) / 2) * 100;
+                
+                html += `
+                    <div class="theme-card">
+                        <h4>${theme.toUpperCase()}</h4>
+                        <div>Value: ${value.toFixed(3)}</div>
+                        <div class="theme-value-bar">
+                            <div class="tercile-marker" style="left: 33.3%"></div>
+                            <div class="tercile-marker" style="left: 66.7%"></div>
+                            <div class="theme-value-marker" style="left: ${position}%"></div>
+                        </div>
+                        <div>
+                            State: <span class="state-indicator state-${stateClass}">${stateLabel} (${state})</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div></div>';
+            output.innerHTML = html;
+            
+            log(`✓ Calculated scenario #${scenario.number}: ${scenario.description}`, 'success');
+        }
+
+        function testTransitions() {
+            log('Testing transition calculations...', 'info');
+            const output = document.getElementById('test-output');
+            
+            // Test all scenarios to ensure they produce different results
+            const scenarios = ['current_market', 'tech_boom', 'risk_off', 'dollar_decline'];
+            const results = [];
+            
+            scenarios.forEach(scenarioName => {
+                const data = FileHandler.generateTestData(scenarioName);
+                const themeValues = ThemeCalculator.calculateThemeValues(data);
+                const scenario = ThemeCalculator.getCurrentScenario(themeValues);
+                
+                results.push({
+                    name: scenarioName,
+                    number: scenario.number,
+                    themes: themeValues,
+                    states: scenario.states
+                });
+                
+                log(`${scenarioName}: Scenario #${scenario.number}`, 'info');
+            });
+            
+            // Display comparison
+            let html = output.innerHTML + `
+                <div class="test-section">
+                    <h3>Scenario Comparison</h3>
+                    <div class="transition-matrix">
+                        <table class="transition-table">
+                            <tr>
+                                <th>Scenario</th>
+                                <th>#</th>
+                                <th>USD</th>
+                                <th>Innovation</th>
+                                <th>P/E</th>
+                                <th>US Leadership</th>
+                            </tr>
+            `;
+            
+            results.forEach(result => {
+                html += `
+                    <tr>
+                        <td>${result.name}</td>
+                        <td>${result.number}</td>
+                        <td class="${getStateClass(result.states.usd)}">${result.states.usd}</td>
+                        <td class="${getStateClass(result.states.innovation)}">${result.states.innovation}</td>
+                        <td class="${getStateClass(result.states.pe)}">${result.states.pe}</td>
+                        <td class="${getStateClass(result.states.usLeadership)}">${result.states.usLeadership}</td>
+                    </tr>
+                `;
+            });
+            
+            html += '</table></div></div>';
+            output.innerHTML = html;
+            
+            log('✓ Transition testing complete', 'success');
+        }
+
+        function getIndicatorTemporal(key) {
+            const mapping = {
+                'dxy': 'leading', 'arkk_spy': 'leading', 'put_call': 'leading', 'spy_vxus_momentum': 'leading',
+                'real_rate_diff': 'concurrent', 'productivity': 'concurrent', 'forward_pe': 'concurrent', 'us_market_cap_pct': 'concurrent',
+                'cofer_usd': 'lagging', 'rd_revenue': 'lagging', 'eps_delivery': 'lagging', 'etf_flow_differential': 'lagging'
+            };
+            return mapping[key] || 'unknown';
+        }
+
+        function getStateClass(state) {
+            if (state === -1) return 'state-low';
+            if (state === 1) return 'state-high';
+            return 'state-neutral';
+        }
+
+        // Auto-run on load
+        window.addEventListener('DOMContentLoaded', function() {
+            log('Integration Test v4.0 Ready', 'success');
+            log('Select a scenario and click "Run Full Test" to begin', 'info');
+        });
+    </script>
+</body>
+</html>

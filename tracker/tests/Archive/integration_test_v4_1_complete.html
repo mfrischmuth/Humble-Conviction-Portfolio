@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Three-State Framework Integration Test v4.1 - Complete</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .controls button:hover {
+            background: #5a67d8;
+        }
+        
+        .controls select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-section h3 {
+            color: #667eea;
+            margin-top: 0;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        .scenario-display {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .scenario-number {
+            font-size: 48px;
+            font-weight: bold;
+        }
+        
+        .scenario-description {
+            font-size: 18px;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+        
+        .transition-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .transition-table th, .transition-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .transition-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .probability-high { background: #d1fae5; }
+        .probability-medium { background: #fef3c7; }
+        .probability-low { background: #fee4e2; }
+        
+        .state-low { background: #fee4e2; color: #dc2626; }
+        .state-neutral { background: #fef3c7; color: #d97706; }
+        .state-high { background: #d1fae5; color: #059669; }
+        
+        .theme-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .theme-analysis {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .console-output {
+            background: #1a202c;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .error { color: #fc8181; }
+        .warning { color: #f6e05e; }
+        .success { color: #68d391; }
+        .info { color: #63b3ed; }
+        
+        .current-row {
+            background: #e6f3ff !important;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>HCP Three-State Framework Integration Test v4.1</h1>
+        <p>Complete Test Suite with Scenario Transition Probabilities</p>
+        <p>IPS v4.0 Framework: 12 indicators → 4 themes → 81 scenarios</p>
+    </div>
+
+    <div class="controls">
+        <select id="scenario-select">
+            <option value="current_market">Current Market (Sept 2025)</option>
+            <option value="tech_boom">Technology Boom</option>
+            <option value="risk_off">Risk-Off Environment</option>
+            <option value="dollar_decline">Dollar Decline</option>
+        </select>
+        <button onclick="runCompleteTest()">Run Complete Analysis</button>
+        <button onclick="clearOutput()">Clear Output</button>
+    </div>
+
+    <div id="test-output"></div>
+
+    <div class="test-section">
+        <h3>Console Output</h3>
+        <div id="console" class="console-output"></div>
+    </div>
+
+    <script>
+        // Utility functions
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = `[${timestamp}] ${message}\n`;
+            const span = `<span class="${type}">${entry}</span>`;
+            console.innerHTML += span;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('test-output').innerHTML = '';
+            document.getElementById('console').innerHTML = '';
+            log('Output cleared', 'info');
+        }
+
+        // Main test data and scenarios
+        const marketScenarios = {
+            'current_market': {
+                name: 'Current Market Conditions',
+                values: {
+                    dxy: 104.5, real_rate_diff: 1.8, cofer_usd: 58.5,
+                    arkk_spy: 0.42, productivity: 2.1, rd_revenue: 0.031,
+                    put_call: 1.15, forward_pe: 19.5, eps_delivery: 0.97,
+                    spy_vxus_momentum: 0.08, us_market_cap_pct: 62.5, etf_flow_differential: 15.2
+                }
+            },
+            'tech_boom': {
+                name: 'Technology Boom',
+                values: {
+                    dxy: 102.0, real_rate_diff: 0.5, cofer_usd: 59.0,
+                    arkk_spy: 0.68, productivity: 3.8, rd_revenue: 0.045,
+                    put_call: 0.65, forward_pe: 24.5, eps_delivery: 1.08,
+                    spy_vxus_momentum: 0.12, us_market_cap_pct: 64.0, etf_flow_differential: 28.5
+                }
+            },
+            'risk_off': {
+                name: 'Risk-Off Environment',
+                values: {
+                    dxy: 108.5, real_rate_diff: 2.5, cofer_usd: 61.0,
+                    arkk_spy: 0.31, productivity: 0.8, rd_revenue: 0.025,
+                    put_call: 1.85, forward_pe: 15.2, eps_delivery: 0.88,
+                    spy_vxus_momentum: -0.05, us_market_cap_pct: 58.5, etf_flow_differential: -12.3
+                }
+            },
+            'dollar_decline': {
+                name: 'Dollar Decline Scenario',
+                values: {
+                    dxy: 96.5, real_rate_diff: -0.3, cofer_usd: 55.2,
+                    arkk_spy: 0.45, productivity: 2.3, rd_revenue: 0.032,
+                    put_call: 0.95, forward_pe: 18.0, eps_delivery: 1.02,
+                    spy_vxus_momentum: -0.08, us_market_cap_pct: 56.0, etf_flow_differential: -22.5
+                }
+            }
+        };
+
+        // Percentile ranges for each indicator
+        const indicatorRanges = {
+            dxy: { min: 89, max: 114, median: 100 },
+            real_rate_diff: { min: -2.0, max: 3.5, median: 0.8 },
+            cofer_usd: { min: 54, max: 72, median: 60 },
+            arkk_spy: { min: 0.25, max: 0.85, median: 0.48 },
+            productivity: { min: -1.5, max: 4.5, median: 2.0 },
+            rd_revenue: { min: 0.020, max: 0.048, median: 0.032 },
+            put_call: { min: 0.55, max: 2.2, median: 1.05 },
+            forward_pe: { min: 13.5, max: 26.0, median: 18.0 },
+            eps_delivery: { min: 0.85, max: 1.15, median: 1.00 },
+            spy_vxus_momentum: { min: -0.15, max: 0.20, median: 0.03 },
+            us_market_cap_pct: { min: 52, max: 65, median: 58 },
+            etf_flow_differential: { min: -35, max: 40, median: 5 }
+        };
+
+        // Generate percentiles for an indicator value
+        function generatePercentiles(indicatorKey, currentValue) {
+            const range = indicatorRanges[indicatorKey];
+            if (!range) return { min: 0, p33: 33, p67: 67, max: 100 };
+            
+            const position = (currentValue - range.min) / (range.max - range.min);
+            let p33, p67;
+            
+            if (position < 0.33) {
+                p33 = currentValue + (range.median - currentValue) * 0.3;
+                p67 = range.median + (range.max - range.median) * 0.3;
+            } else if (position > 0.67) {
+                p33 = range.min + (range.median - range.min) * 0.7;
+                p67 = currentValue - (currentValue - range.median) * 0.3;
+            } else {
+                p33 = range.min + (range.median - range.min) * 0.6;
+                p67 = range.median + (range.max - range.median) * 0.4;
+            }
+            
+            return { min: range.min, p33: p33, p67: p67, max: range.max };
+        }
+
+        // Calculate continuous position in distribution
+        function calculateContinuousPosition(value, percentiles) {
+            if (!percentiles) return 0;
+            
+            if (value <= percentiles.p33) {
+                const range = percentiles.p33 - percentiles.min;
+                if (range === 0) return -0.67;
+                const position = (value - percentiles.min) / range;
+                return -1 + (position * 0.67);
+            } else if (value >= percentiles.p67) {
+                const range = percentiles.max - percentiles.p67;
+                if (range === 0) return 0.67;
+                const position = (value - percentiles.p67) / range;
+                return 0.33 + (position * 0.67);
+            } else {
+                const range = percentiles.p67 - percentiles.p33;
+                if (range === 0) return 0;
+                const position = (value - percentiles.p33) / range;
+                return -0.33 + (position * 0.67);
+            }
+        }
+
+        // Calculate theme value from indicators
+        function calculateThemeValue(indicators, theme) {
+            const themeIndicators = {
+                usd: ['dxy', 'real_rate_diff', 'cofer_usd'],
+                innovation: ['arkk_spy', 'productivity', 'rd_revenue'],
+                pe: ['put_call', 'forward_pe', 'eps_delivery'],
+                usLeadership: ['spy_vxus_momentum', 'us_market_cap_pct', 'etf_flow_differential']
+            };
+            
+            const weights = {
+                usd: [0.30, 0.40, 0.30],
+                innovation: [0.30, 0.40, 0.30],
+                pe: [0.30, 0.40, 0.30],
+                usLeadership: [0.30, 0.40, 0.30]
+            };
+            
+            const keys = themeIndicators[theme];
+            const themeWeights = weights[theme];
+            let weightedSum = 0;
+            let totalWeight = 0;
+            
+            keys.forEach((key, index) => {
+                const indicator = indicators[key];
+                if (indicator && indicator.value !== null) {
+                    const position = calculateContinuousPosition(indicator.value, indicator.percentiles);
+                    // Invert put_call ratio
+                    const adjustedPosition = (key === 'put_call') ? -position : position;
+                    weightedSum += adjustedPosition * themeWeights[index];
+                    totalWeight += themeWeights[index];
+                }
+            });
+            
+            return totalWeight > 0 ? weightedSum / totalWeight : 0;
+        }
+
+        // Get state from continuous value
+        function getState(value) {
+            if (value <= -0.33) return -1;
+            if (value >= 0.33) return 1;
+            return 0;
+        }
+
+        // Calculate current scenario number
+        function getCurrentScenario(themeValues) {
+            const states = {
+                usd: getState(themeValues.usd),
+                innovation: getState(themeValues.innovation),
+                pe: getState(themeValues.pe),
+                usLeadership: getState(themeValues.usLeadership)
+            };
+            
+            const index = (states.usd + 1) * 27 +
+                         (states.innovation + 1) * 9 +
+                         (states.pe + 1) * 3 +
+                         (states.usLeadership + 1);
+            
+            return {
+                number: index + 1,
+                states: states,
+                description: describeScenario(states)
+            };
+        }
+
+        // Describe scenario in words
+        function describeScenario(states) {
+            const descriptions = {
+                usd: { '-1': 'USD weak', '0': 'USD stable', '1': 'USD strong' },
+                innovation: { '-1': 'Innovation low', '0': 'Innovation normal', '1': 'Innovation high' },
+                pe: { '-1': 'Valuations low', '0': 'Valuations normal', '1': 'Valuations high' },
+                usLeadership: { '-1': 'US lagging', '0': 'Balanced global', '1': 'US leading' }
+            };
+            
+            const parts = [];
+            ['usd', 'innovation', 'pe', 'usLeadership'].forEach(theme => {
+                parts.push(descriptions[theme][states[theme]]);
+            });
+            
+            return parts.join(', ');
+        }
+
+        // Calculate theme transition probabilities (simplified for testing)
+        function calculateThemeTransitions(themeValue, theme) {
+            const currentState = getState(themeValue);
+            
+            // Simple mock transition probabilities based on current position
+            let probabilities = { toLow: 0, toNeutral: 0, toHigh: 0 };
+            
+            if (currentState === -1) {
+                probabilities.toLow = 0.50;
+                probabilities.toNeutral = 0.35;
+                probabilities.toHigh = 0.15;
+            } else if (currentState === 0) {
+                probabilities.toLow = 0.25;
+                probabilities.toNeutral = 0.50;
+                probabilities.toHigh = 0.25;
+            } else {
+                probabilities.toLow = 0.15;
+                probabilities.toNeutral = 0.35;
+                probabilities.toHigh = 0.50;
+            }
+            
+            // Adjust based on how far from boundaries
+            const distToLower = Math.abs(themeValue - (-0.33));
+            const distToUpper = Math.abs(themeValue - 0.33);
+            
+            if (themeValue < -0.33 && distToLower > 0.3) {
+                probabilities.toLow += 0.15;
+                probabilities.toNeutral -= 0.15;
+            } else if (themeValue > 0.33 && distToUpper > 0.3) {
+                probabilities.toHigh += 0.15;
+                probabilities.toNeutral -= 0.15;
+            }
+            
+            // Normalize
+            const total = probabilities.toLow + probabilities.toNeutral + probabilities.toHigh;
+            probabilities.toLow /= total;
+            probabilities.toNeutral /= total;
+            probabilities.toHigh /= total;
+            
+            return {
+                currentState: currentState,
+                currentValue: themeValue,
+                probabilities: probabilities
+            };
+        }
+
+        // Calculate all 81 scenario probabilities
+        function calculateScenarioTransitionProbabilities(themeTransitions) {
+            const scenarios = [];
+            
+            for (let usd = -1; usd <= 1; usd++) {
+                for (let innovation = -1; innovation <= 1; innovation++) {
+                    for (let pe = -1; pe <= 1; pe++) {
+                        for (let usLeadership = -1; usLeadership <= 1; usLeadership++) {
+                            let probability = 1.0;
+                            
+                            // USD probability
+                            if (usd === -1) probability *= themeTransitions.usd.probabilities.toLow;
+                            else if (usd === 0) probability *= themeTransitions.usd.probabilities.toNeutral;
+                            else probability *= themeTransitions.usd.probabilities.toHigh;
+                            
+                            // Innovation probability
+                            if (innovation === -1) probability *= themeTransitions.innovation.probabilities.toLow;
+                            else if (innovation === 0) probability *= themeTransitions.innovation.probabilities.toNeutral;
+                            else probability *= themeTransitions.innovation.probabilities.toHigh;
+                            
+                            // P/E probability
+                            if (pe === -1) probability *= themeTransitions.pe.probabilities.toLow;
+                            else if (pe === 0) probability *= themeTransitions.pe.probabilities.toNeutral;
+                            else probability *= themeTransitions.pe.probabilities.toHigh;
+                            
+                            // US Leadership probability
+                            if (usLeadership === -1) probability *= themeTransitions.usLeadership.probabilities.toLow;
+                            else if (usLeadership === 0) probability *= themeTransitions.usLeadership.probabilities.toNeutral;
+                            else probability *= themeTransitions.usLeadership.probabilities.toHigh;
+                            
+                            const index = (usd + 1) * 27 + (innovation + 1) * 9 + (pe + 1) * 3 + (usLeadership + 1);
+                            
+                            scenarios.push({
+                                number: index + 1,
+                                states: { usd, innovation, pe, usLeadership },
+                                probability: probability,
+                                description: describeScenario({ usd, innovation, pe, usLeadership })
+                            });
+                        }
+                    }
+                }
+            }
+            
+            // Sort by probability
+            scenarios.sort((a, b) => b.probability - a.probability);
+            
+            // Calculate cumulative
+            let cumulative = 0;
+            scenarios.forEach(scenario => {
+                cumulative += scenario.probability;
+                scenario.cumulative = cumulative;
+            });
+            
+            return scenarios;
+        }
+
+        // Main test function
+        function runCompleteTest() {
+            clearOutput();
+            log('Starting complete analysis...', 'info');
+            
+            const scenarioName = document.getElementById('scenario-select').value;
+            const scenario = marketScenarios[scenarioName];
+            
+            if (!scenario) {
+                log('Invalid scenario selected', 'error');
+                return;
+            }
+            
+            log(`Analyzing: ${scenario.name}`, 'info');
+            
+            // Prepare indicator data
+            const indicators = {};
+            Object.entries(scenario.values).forEach(([key, value]) => {
+                indicators[key] = {
+                    value: value,
+                    percentiles: generatePercentiles(key, value)
+                };
+            });
+            
+            // Calculate theme values
+            const themeValues = {
+                usd: calculateThemeValue(indicators, 'usd'),
+                innovation: calculateThemeValue(indicators, 'innovation'),
+                pe: calculateThemeValue(indicators, 'pe'),
+                usLeadership: calculateThemeValue(indicators, 'usLeadership')
+            };
+            
+            // Get current scenario
+            const currentScenario = getCurrentScenario(themeValues);
+            
+            // Calculate theme transitions
+            const themeTransitions = {
+                usd: calculateThemeTransitions(themeValues.usd, 'usd'),
+                innovation: calculateThemeTransitions(themeValues.innovation, 'innovation'),
+                pe: calculateThemeTransitions(themeValues.pe, 'pe'),
+                usLeadership: calculateThemeTransitions(themeValues.usLeadership, 'usLeadership')
+            };
+            
+            // Calculate scenario probabilities
+            const scenarioProbs = calculateScenarioTransitionProbabilities(themeTransitions);
+            
+            // Find scenarios that sum to 85%
+            const likelyScenarios = [];
+            for (const scenario of scenarioProbs) {
+                likelyScenarios.push(scenario);
+                if (scenario.cumulative >= 0.85) break;
+            }
+            
+            // Display results
+            const output = document.getElementById('test-output');
+            let html = `
+                <div class="test-section">
+                    <h3>Current State Analysis</h3>
+                    <div class="scenario-display">
+                        <div class="scenario-number">Scenario #${currentScenario.number}</div>
+                        <div class="scenario-description">${currentScenario.description}</div>
+                    </div>
+                    <div class="theme-analysis">
+                        <div class="theme-card">
+                            <h4>USD</h4>
+                            <p>Value: ${themeValues.usd.toFixed(3)} | State: ${getState(themeValues.usd)}</p>
+                        </div>
+                        <div class="theme-card">
+                            <h4>Innovation</h4>
+                            <p>Value: ${themeValues.innovation.toFixed(3)} | State: ${getState(themeValues.innovation)}</p>
+                        </div>
+                        <div class="theme-card">
+                            <h4>P/E</h4>
+                            <p>Value: ${themeValues.pe.toFixed(3)} | State: ${getState(themeValues.pe)}</p>
+                        </div>
+                        <div class="theme-card">
+                            <h4>US Leadership</h4>
+                            <p>Value: ${themeValues.usLeadership.toFixed(3)} | State: ${getState(themeValues.usLeadership)}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="test-section">
+                    <h3>6-Month Scenario Transition Probabilities</h3>
+                    <p><strong>Most Likely Future Scenarios</strong> (≥85% cumulative probability)</p>
+                    <table class="transition-table">
+                        <tr>
+                            <th>Rank</th>
+                            <th>Scenario #</th>
+                            <th>Description</th>
+                            <th>Probability</th>
+                            <th>Cumulative</th>
+                        </tr>
+            `;
+            
+            likelyScenarios.forEach((scenario, index) => {
+                const isCurrent = scenario.number === currentScenario.number;
+                const rowClass = isCurrent ? 'current-row' : '';
+                const probClass = scenario.probability > 0.10 ? 'probability-high' : 
+                                 scenario.probability > 0.05 ? 'probability-medium' : 
+                                 'probability-low';
+                
+                html += `
+                    <tr class="${rowClass}">
+                        <td>${index + 1}</td>
+                        <td>${scenario.number}${isCurrent ? ' (current)' : ''}</td>
+                        <td style="text-align: left;">${scenario.description}</td>
+                        <td class="${probClass}">${(scenario.probability * 100).toFixed(2)}%</td>
+                        <td>${(scenario.cumulative * 100).toFixed(1)}%</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </table>
+                    <p style="margin-top: 15px;">
+                        <strong>Summary:</strong><br>
+                        • ${likelyScenarios.length} scenarios capture ${(likelyScenarios[likelyScenarios.length - 1].cumulative * 100).toFixed(1)}% probability<br>
+                        • Top scenario: #${scenarioProbs[0].number} with ${(scenarioProbs[0].probability * 100).toFixed(2)}% probability<br>
+                        • Current scenario persistence: ${(scenarioProbs.find(s => s.number === currentScenario.number)?.probability * 100 || 0).toFixed(2)}%
+                    </p>
+                </div>
+            `;
+            
+            output.innerHTML = html;
+            
+            log(`✓ Analysis complete - ${likelyScenarios.length} scenarios for optimization`, 'success');
+            log(`✓ Current: #${currentScenario.number}, Most likely: #${scenarioProbs[0].number}`, 'success');
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', function() {
+            log('Integration Test v4.1 Ready', 'success');
+            log('Select scenario and click "Run Complete Analysis"', 'info');
+        });
+    </script>
+</body>
+</html>

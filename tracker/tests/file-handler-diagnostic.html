@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP File Handler Diagnostic Tool v1.0</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            margin: 0;
+            color: white;
+            font-size: 2em;
+        }
+        
+        .version-info {
+            color: rgba(255,255,255,0.9);
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        
+        .controls {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #444;
+        }
+        
+        .test-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .status.pending { background: #555; color: #ccc; }
+        .status.running { background: #f59e0b; color: white; }
+        .status.success { background: #10b981; color: white; }
+        .status.warning { background: #f59e0b; color: white; }
+        .status.error { background: #ef4444; color: white; }
+        
+        .test-details {
+            margin-top: 15px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .detail-item {
+            margin: 8px 0;
+            padding: 8px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            border-left: 3px solid #444;
+        }
+        
+        .detail-item.success { border-left-color: #10b981; }
+        .detail-item.warning { border-left-color: #f59e0b; }
+        .detail-item.error { border-left-color: #ef4444; }
+        .detail-item.info { border-left-color: #3b82f6; }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        input[type="file"] {
+            padding: 10px;
+            background: #1a1a1a;
+            border: 2px solid #444;
+            border-radius: 5px;
+            color: #e0e0e0;
+            margin-right: 10px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .summary-card {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .summary-label {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .code-block {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #333;
+        }
+        
+        pre {
+            margin: 0;
+            color: #e0e0e0;
+        }
+        
+        .highlight { color: #f59e0b; font-weight: bold; }
+        .success-text { color: #10b981; }
+        .error-text { color: #ef4444; }
+        .warning-text { color: #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 HCP File Handler Diagnostic Tool</h1>
+        <div class="version-info">
+            Version 1.0 | Last Updated: 2025-09-09T08:00:00Z<br>
+            Testing File Handler v3.2 against Data Collector v5.1.1 format
+        </div>
+    </div>
+
+    <div class="controls">
+        <h2>Test Controls</h2>
+        <input type="file" id="fileInput" accept=".json">
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="runSelectedTest()">Run Selected Test</button>
+        <button onclick="clearResults()">Clear Results</button>
+        <button onclick="loadSampleData()">Load Sample Data</button>
+    </div>
+
+    <div id="testResults"></div>
+
+    <script>
+        // Embedded File Handler v3.2 (corrected version)
+        const FileHandler = {
+            version: '3.2',
+            framework: 'IPS v4.2 Practical Implementation',
+            
+            indicatorStructure: {
+                usd: {
+                    leading: 'dxy_index',
+                    concurrent: 'real_rate_differential', 
+                    lagging: 'cofer_usd'
+                },
+                innovation: {
+                    leading: 'qqq_spy_ratio',
+                    concurrent: 'productivity_growth',
+                    lagging: 'tech_employment_pct'
+                },
+                valuation: {
+                    leading: 'put_call_ratio',
+                    concurrent: 'trailing_pe',
+                    lagging: 'eps_delivery'
+                },
+                usLeadership: {
+                    leading: 'spy_efa_momentum',
+                    concurrent: 'us_market_pct',
+                    lagging: 'etf_flow_differential'
+                }
+            },
+            
+            loadMasterData: async function(fileOrData) {
+                try {
+                    let rawData;
+                    
+                    if (fileOrData instanceof File) {
+                        const text = await fileOrData.text();
+                        rawData = JSON.parse(text);
+                    } else if (typeof fileOrData === 'string') {
+                        if (fileOrData.startsWith('{')) {
+                            rawData = JSON.parse(fileOrData);
+                        } else {
+                            const response = await fetch(fileOrData);
+                            rawData = await response.json();
+                        }
+                    } else {
+                        rawData = fileOrData;
+                    }
+                    
+                    if (!rawData.indicators || !rawData.metadata) {
+                        throw new Error('Invalid data structure: missing indicators or metadata');
+                    }
+                    
+                    return this.processRawData(rawData);
+                    
+                } catch (error) {
+                    console.error('Error loading master data:', error);
+                    throw error;
+                }
+            },
+            
+            processRawData: function(rawData) {
+                const processed = {
+                    metadata: {
+                        ...rawData.metadata,
+                        processed_at: new Date().toISOString(),
+                        file_handler_version: this.version
+                    },
+                    indicators: {},
+                    themes: {
+                        usd: {},
+                        innovation: {},
+                        valuation: {},
+                        usLeadership: {}
+                    },
+                    history: {}
+                };
+                
+                // DIAGNOSTIC: Log the structure we're working with
+                console.log('Processing raw data structure:', Object.keys(rawData.indicators));
+                
+                // FIXED: Handle nested structure
+                // The JSON has indicators.usd.dxy_index, not indicators.dxy_index
+                Object.entries(this.indicatorStructure).forEach(([theme, temporals]) => {
+                    Object.entries(temporals).forEach(([temporal, indicatorKey]) => {
+                        // Look for the indicator in the nested structure
+                        const themeData = rawData.indicators[theme];
+                        if (themeData && themeData[indicatorKey]) {
+                            const data = themeData[indicatorKey];
+                            
+                            // Calculate percentiles from history
+                            const history = data.monthly_history || data.quarterly_history || [];
+                            const percentiles = this.calculatePercentiles(history);
+                            
+                            // Calculate current percentile rank
+                            const percentileRank = this.getPercentileRank(data.current_value, percentiles);
+                            
+                            // Create indicator object
+                            const indicator = {
+                                value: data.current_value,
+                                percentiles: percentiles,
+                                percentileRank: percentileRank,
+                                history: history,
+                                dates: data.monthly_dates || data.quarterly_dates || [],
+                                source: data.source,
+                                lastUpdated: data.last_updated,
+                                dataQuality: data.data_quality,
+                                dataPoints: data.data_points
+                            };
+                            
+                            // Store in main indicators (flat structure)
+                            processed.indicators[indicatorKey] = indicator;
+                            
+                            // Store in theme structure
+                            processed.themes[theme][temporal] = indicator;
+                            
+                            // Store history
+                            if (history.length > 0) {
+                                processed.history[indicatorKey] = {
+                                    values: history,
+                                    dates: indicator.dates,
+                                    frequency: data.monthly_history ? 'monthly' : 'quarterly'
+                                };
+                            }
+                        }
+                    });
+                });
+                
+                return processed;
+            },
+            
+            calculatePercentiles: function(history) {
+                if (!history || history.length < 5) {
+                    return null;
+                }
+                
+                const sorted = history
+                    .filter(v => v !== null && !isNaN(v))
+                    .sort((a, b) => a - b);
+                
+                if (sorted.length === 0) {
+                    return null;
+                }
+                
+                const getPercentile = (p) => {
+                    const index = (sorted.length - 1) * p;
+                    const lower = Math.floor(index);
+                    const upper = Math.ceil(index);
+                    const weight = index % 1;
+                    
+                    if (lower === upper) {
+                        return sorted[lower];
+                    }
+                    return sorted[lower] * (1 - weight) + sorted[upper] * weight;
+                };
+                
+                return {
+                    min: sorted[0],
+                    p10: getPercentile(0.10),
+                    p25: getPercentile(0.25),
+                    p33: getPercentile(0.33),
+                    p50: getPercentile(0.50),
+                    p67: getPercentile(0.67),
+                    p75: getPercentile(0.75),
+                    p90: getPercentile(0.90),
+                    max: sorted[sorted.length - 1],
+                    count: sorted.length
+                };
+            },
+            
+            getPercentileRank: function(value, percentiles) {
+                if (!percentiles || value === null || value === undefined) {
+                    return null;
+                }
+                
+                if (value <= percentiles.min) return 0;
+                if (value >= percentiles.max) return 100;
+                
+                const points = [
+                    { p: 0, v: percentiles.min },
+                    { p: 10, v: percentiles.p10 },
+                    { p: 25, v: percentiles.p25 },
+                    { p: 33, v: percentiles.p33 },
+                    { p: 50, v: percentiles.p50 },
+                    { p: 67, v: percentiles.p67 },
+                    { p: 75, v: percentiles.p75 },
+                    { p: 90, v: percentiles.p90 },
+                    { p: 100, v: percentiles.max }
+                ];
+                
+                for (let i = 0; i < points.length - 1; i++) {
+                    if (value >= points[i].v && value <= points[i + 1].v) {
+                        const range = points[i + 1].v - points[i].v;
+                        const position = value - points[i].v;
+                        const pRange = points[i + 1].p - points[i].p;
+                        return points[i].p + (position / range) * pRange;
+                    }
+                }
+                
+                return 50;
+            }
+        };
+
+        // Test Suite
+        const testSuite = {
+            rawData: null,
+            processedData: null,
+            
+            tests: [
+                {
+                    name: "File Structure Validation",
+                    description: "Validate JSON file structure and required fields",
+                    run: async function(data) {
+                        const results = [];
+                        
+                        // Check top-level structure
+                        results.push({
+                            type: data.metadata ? 'success' : 'error',
+                            message: `Metadata section: ${data.metadata ? 'Found' : 'Missing'}`
+                        });
+                        
+                        results.push({
+                            type: data.indicators ? 'success' : 'error',
+                            message: `Indicators section: ${data.indicators ? 'Found' : 'Missing'}`
+                        });
+                        
+                        if (data.metadata) {
+                            results.push({
+                                type: 'info',
+                                message: `Data version: ${data.metadata.version || 'Unknown'}`
+                            });
+                            results.push({
+                                type: 'info',
+                                message: `IPS version: ${data.metadata.ips_version || 'Unknown'}`
+                            });
+                            results.push({
+                                type: 'info',
+                                message: `Last updated: ${data.metadata.last_updated || 'Unknown'}`
+                            });
+                        }
+                        
+                        // Check indicator structure
+                        if (data.indicators) {
+                            const themes = Object.keys(data.indicators);
+                            results.push({
+                                type: 'info',
+                                message: `Found themes: ${themes.join(', ')}`
+                            });
+                            
+                            // Check for expected themes
+                            const expectedThemes = ['usd', 'innovation', 'valuation', 'usLeadership'];
+                            expectedThemes.forEach(theme => {
+                                const found = themes.includes(theme);
+                                results.push({
+                                    type: found ? 'success' : 'error',
+                                    message: `Theme '${theme}': ${found ? 'Found' : 'Missing'}`
+                                });
+                            });
+                        }
+                        
+                        return {
+                            status: results.some(r => r.type === 'error') ? 'error' : 'success',
+                            results: results
+                        };
+                    }
+                },
+                
+                {
+                    name: "Indicator Mapping Test",
+                    description: "Test mapping of nested indicators to flat structure",
+                    run: async function(data) {
+                        const results = [];
+                        let foundCount = 0;
+                        let missingCount = 0;
+                        
+                        // Check each expected indicator
+                        Object.entries(FileHandler.indicatorStructure).forEach(([theme, temporals]) => {
+                            results.push({
+                                type: 'info',
+                                message: `=== Theme: ${theme} ===`
+                            });
+                            
+                            Object.entries(temporals).forEach(([temporal, indicatorKey]) => {
+                                // Check if indicator exists in nested structure
+                                const exists = data.indicators && 
+                                             data.indicators[theme] && 
+                                             data.indicators[theme][indicatorKey];
+                                
+                                if (exists) {
+                                    foundCount++;
+                                    const indicator = data.indicators[theme][indicatorKey];
+                                    results.push({
+                                        type: 'success',
+                                        message: `✓ ${indicatorKey} (${temporal}): Value=${indicator.current_value}, History=${indicator.monthly_history?.length || indicator.quarterly_history?.length || 0} points`
+                                    });
+                                } else {
+                                    missingCount++;
+                                    results.push({
+                                        type: 'error',
+                                        message: `✗ ${indicatorKey} (${temporal}): Not found in ${theme}`
+                                    });
+                                }
+                            });
+                        });
+                        
+                        results.push({
+                            type: 'info',
+                            message: `Summary: ${foundCount} found, ${missingCount} missing`
+                        });
+                        
+                        return {
+                            status: missingCount > 0 ? 'error' : 'success',
+                            results: results
+                        };
+                    }
+                },
+                
+                {
+                    name: "Data Processing Test",
+                    description: "Test FileHandler.processRawData function",
+                    run: async function(data) {
+                        const results = [];
+                        
+                        try {
+                            // Attempt to process the data
+                            const processed = FileHandler.processRawData(data);
+                            testSuite.processedData = processed;
+                            
+                            results.push({
+                                type: 'success',
+                                message: 'Data processing completed successfully'
+                            });
+                            
+                            // Check processed structure
+                            const indicatorCount = Object.keys(processed.indicators).length;
+                            results.push({
+                                type: indicatorCount > 0 ? 'success' : 'warning',
+                                message: `Processed ${indicatorCount} indicators`
+                            });
+                            
+                            // Check themes
+                            Object.entries(processed.themes).forEach(([theme, indicators]) => {
+                                const count = Object.keys(indicators).length;
+                                results.push({
+                                    type: count === 3 ? 'success' : count > 0 ? 'warning' : 'error',
+                                    message: `Theme '${theme}': ${count}/3 indicators`
+                                });
+                            });
+                            
+                            // Check history
+                            const historyCount = Object.keys(processed.history).length;
+                            results.push({
+                                type: historyCount > 0 ? 'success' : 'warning',
+                                message: `History data: ${historyCount} indicators`
+                            });
+                            
+                        } catch (error) {
+                            results.push({
+                                type: 'error',
+                                message: `Processing failed: ${error.message}`
+                            });
+                            console.error('Processing error:', error);
+                        }
+                        
+                        return {
+                            status: results.some(r => r.type === 'error') ? 'error' : 
+                                   results.some(r => r.type === 'warning') ? 'warning' : 'success',
+                            results: results
+                        };
+                    }
+                },
+                
+                {
+                    name: "Percentile Calculation Test",
+                    description: "Test percentile calculations for each indicator",
+                    run: async function(data) {
+                        const results = [];
+                        
+                        if (!testSuite.processedData) {
+                            results.push({
+                                type: 'error',
+                                message: 'No processed data available. Run Data Processing Test first.'
+                            });
+                            return { status: 'error', results: results };
+                        }
+                        
+                        Object.entries(testSuite.processedData.indicators).forEach(([key, indicator]) => {
+                            if (indicator.percentiles) {
+                                const p = indicator.percentiles;
+                                const valid = p.min <= p.p25 && p.p25 <= p.p50 && 
+                                            p.p50 <= p.p75 && p.p75 <= p.max;
+                                
+                                results.push({
+                                    type: valid ? 'success' : 'error',
+                                    message: `${key}: Percentiles ${valid ? 'valid' : 'invalid'} (n=${p.count}, rank=${indicator.percentileRank?.toFixed(1)}%)`
+                                });
+                            } else {
+                                results.push({
+                                    type: 'warning',
+                                    message: `${key}: No percentiles calculated`
+                                });
+                            }
+                        });
+                        
+                        return {
+                            status: results.some(r => r.type === 'error') ? 'error' : 
+                                   results.some(r => r.type === 'warning') ? 'warning' : 'success',
+                            results: results
+                        };
+                    }
+                },
+                
+                {
+                    name: "Data Quality Assessment",
+                    description: "Assess data quality and completeness",
+                    run: async function(data) {
+                        const results = [];
+                        
+                        Object.entries(FileHandler.indicatorStructure).forEach(([theme, temporals]) => {
+                            Object.entries(temporals).forEach(([temporal, indicatorKey]) => {
+                                if (data.indicators?.[theme]?.[indicatorKey]) {
+                                    const ind = data.indicators[theme][indicatorKey];
+                                    
+                                    // Check data quality
+                                    const quality = ind.data_quality || 'unknown';
+                                    const points = ind.data_points || 0;
+                                    
+                                    results.push({
+                                        type: quality === 'real' ? 'success' : 
+                                              quality === 'proxy' ? 'warning' : 'error',
+                                        message: `${indicatorKey}: Quality=${quality}, Points=${points}`
+                                    });
+                                    
+                                    // Check for data issues
+                                    if (ind.current_value === null || ind.current_value === undefined) {
+                                        results.push({
+                                            type: 'error',
+                                            message: `${indicatorKey}: Missing current value`
+                                        });
+                                    }
+                                    
+                                    const history = ind.monthly_history || ind.quarterly_history || [];
+                                    const nullCount = history.filter(v => v === null).length;
+                                    if (nullCount > 0) {
+                                        results.push({
+                                            type: 'warning',
+                                            message: `${indicatorKey}: ${nullCount} null values in history`
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        
+                        return {
+                            status: results.some(r => r.type === 'error') ? 'error' : 
+                                   results.some(r => r.type === 'warning') ? 'warning' : 'success',
+                            results: results
+                        };
+                    }
+                }
+            ],
+            
+            runTest: async function(testIndex) {
+                if (!this.rawData) {
+                    alert('Please load a JSON file first');
+                    return;
+                }
+                
+                const test = this.tests[testIndex];
+                const container = document.getElementById(`test-${testIndex}`);
+                const statusEl = container.querySelector('.status');
+                const detailsEl = container.querySelector('.test-details');
+                
+                statusEl.textContent = 'Running';
+                statusEl.className = 'status running';
+                detailsEl.innerHTML = '';
+                
+                try {
+                    const result = await test.run(this.rawData);
+                    
+                    statusEl.textContent = result.status.charAt(0).toUpperCase() + result.status.slice(1);
+                    statusEl.className = `status ${result.status}`;
+                    
+                    result.results.forEach(r => {
+                        const div = document.createElement('div');
+                        div.className = `detail-item ${r.type}`;
+                        div.textContent = r.message;
+                        detailsEl.appendChild(div);
+                    });
+                    
+                } catch (error) {
+                    statusEl.textContent = 'Error';
+                    statusEl.className = 'status error';
+                    
+                    const div = document.createElement('div');
+                    div.className = 'detail-item error';
+                    div.textContent = `Test failed: ${error.message}`;
+                    detailsEl.appendChild(div);
+                }
+            }
+        };
+        
+        // UI Functions
+        function initializeTests() {
+            const container = document.getElementById('testResults');
+            container.innerHTML = '';
+            
+            testSuite.tests.forEach((test, index) => {
+                const section = document.createElement('div');
+                section.className = 'test-section';
+                section.id = `test-${index}`;
+                
+                section.innerHTML = `
+                    <div class="test-header">
+                        <div>
+                            <div class="test-title">${test.name}</div>
+                            <div style="color: #999; font-size: 0.9em; margin-top: 5px;">
+                                ${test.description}
+                            </div>
+                        </div>
+                        <div class="status pending">Pending</div>
+                    </div>
+                    <div class="test-details"></div>
+                `;
+                
+                container.appendChild(section);
+            });
+        }
+        
+        async function runAllTests() {
+            for (let i = 0; i < testSuite.tests.length; i++) {
+                await testSuite.runTest(i);
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        }
+        
+        async function runSelectedTest() {
+            const testIndex = prompt('Enter test index (0-' + (testSuite.tests.length - 1) + '):');
+            if (testIndex !== null && !isNaN(testIndex)) {
+                await testSuite.runTest(parseInt(testIndex));
+            }
+        }
+        
+        function clearResults() {
+            initializeTests();
+            testSuite.rawData = null;
+            testSuite.processedData = null;
+        }
+        
+        function loadSampleData() {
+            // Create minimal sample data for testing
+            testSuite.rawData = {
+                metadata: {
+                    version: "5.1.1",
+                    ips_version: "4.3.2",
+                    last_updated: new Date().toISOString()
+                },
+                indicators: {
+                    usd: {
+                        dxy_index: {
+                            current_value: 97.55,
+                            monthly_history: [95, 96, 97, 98, 97.55],
+                            monthly_dates: ["2025-05-01", "2025-06-01", "2025-07-01", "2025-08-01", "2025-09-01"],
+                            source: "Test",
+                            data_quality: "test",
+                            data_points: 5
+                        }
+                    }
+                }
+            };
+            
+            initializeTests();
+            alert('Sample data loaded. Click "Run All Tests" to begin.');
+        }
+        
+        // File input handler
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                try {
+                    const text = await file.text();
+                    testSuite.rawData = JSON.parse(text);
+                    initializeTests();
+                    alert('File loaded successfully. Click "Run All Tests" to begin diagnostic.');
+                } catch (error) {
+                    alert('Error loading file: ' + error.message);
+                }
+            }
+        });
+        
+        // Initialize on load
+        initializeTests();
+    </script>
+</body>
+</html>

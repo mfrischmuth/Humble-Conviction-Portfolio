@@ -1,0 +1,52 @@
+Here's a quick reference for the HCP Collector v5.0.1 update modes:
+The 5 Update Modes
+1. FULL - Complete Historical Collection
+
+Downloads entire history for all indicators
+Replaces existing data (with safety checks)
+Use when: Starting fresh or recovering from corruption
+
+bashpython hcp_collector_v5.0.1.py --mode full
+2. INCREMENTAL - Add New Data Only
+
+Adds only new data points to existing history
+Never overwrites existing data
+Use when: You want to fill gaps without touching existing data
+
+bashpython hcp_collector_v5.0.1.py --mode incremental
+3. MERGE (Default) - Smart Combination
+
+Intelligently combines old and new data
+Prefers new data for overlaps but preserves history
+Use when: Regular updates (this is the safest default)
+
+bashpython hcp_collector_v5.0.1.py --mode merge
+# or just:
+python hcp_collector_v5.0.1.py
+4. LATEST - Quick Current Values
+
+Updates only current values and most recent data point
+Fastest mode (minimal API calls)
+Use when: You just need today's values for trading
+
+bashpython hcp_collector_v5.0.1.py --mode latest
+5. MONTHLY - Monthly Indicators Only
+
+Updates only monthly-frequency indicators (skips quarterly)
+Good balance of speed and completeness
+Use when: Monthly rebalancing schedule
+
+bashpython hcp_collector_v5.0.1.py --mode monthly
+Additional Options
+Skip backup creation (faster but less safe):
+bashpython hcp_collector_v5.0.1.py --mode merge --no-backup
+Typical Usage Patterns
+Daily trading check:
+bashpython hcp_collector_v5.0.1.py --mode latest
+Weekly update:
+bashpython hcp_collector_v5.0.1.py --mode merge
+Monthly rebalance:
+bashpython hcp_collector_v5.0.1.py --mode monthly
+First run or recovery:
+bashpython hcp_collector_v5.0.1.py --mode full
+The default merge mode is recommended for most use cases as it safely combines existing and new data without risk of data loss.

@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Manual JSON Data Editor v1.1</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0f0f0f;
+            color: #e0e0e0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        h1 {
+            margin: 0;
+            color: white;
+            font-size: 2.2em;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .content {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .theme-section {
+            margin-bottom: 30px;
+        }
+        
+        .theme-header {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .theme-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .indicator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 15px;
+        }
+        
+        .indicator-card {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        
+        .indicator-card.missing {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .indicator-card.incomplete {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+        
+        .indicator-card.complete {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .indicator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .indicator-name {
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+        
+        .temporal-badge {
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .temporal-badge.leading {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .temporal-badge.concurrent {
+            background: #8b5cf6;
+            color: white;
+        }
+        
+        .temporal-badge.lagging {
+            background: #ec4899;
+            color: white;
+        }
+        
+        .field-group {
+            margin: 10px 0;
+        }
+        
+        .field-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 3px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            background: #0a0a0a;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-indicator.missing { background: #ef4444; }
+        .status-indicator.incomplete { background: #f59e0b; }
+        .status-indicator.complete { background: #10b981; }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button.small {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        button.secondary {
+            background: #444;
+        }
+        
+        button.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .nav-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-item:hover {
+            background: #2a2a2a;
+        }
+        
+        .nav-item.active {
+            background: #2a2a2a;
+            border-left: 3px solid #667eea;
+        }
+        
+        .file-controls {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .summary-box {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .summary-label {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .source-hint {
+            background: #0a0a0a;
+            border-left: 3px solid #3b82f6;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #93c5fd;
+        }
+        
+        .quick-fill {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .quick-fill button {
+            flex: 1;
+        }
+        
+        #json-preview {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow: auto;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 Manual JSON Data Editor</h1>
+        <div style="color: rgba(255,255,255,0.9); margin-top: 10px;">
+            Version 1.1 | Last Updated: 2025-09-09T13:00:00Z<br>
+            Manually edit and complete JSON data for File Handler v4.0 compatibility
+        </div>
+    </div>
+
+    <div class="file-controls">
+        <input type="file" id="fileInput" accept=".json" style="display: none;">
+        <button id="loadBtn">Load JSON File</button>
+        <button id="createBtn" class="secondary">Create New File</button>
+        <button id="exportBtn" class="success">Export JSON</button>
+    </div>
+
+    <div class="summary-box">
+        <h3>Data Completion Status</h3>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="summary-value" id="total-indicators">0/12</div>
+                <div class="summary-label">Total Indicators</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="complete-count" style="color: #10b981;">0</div>
+                <div class="summary-label">Complete</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="incomplete-count" style="color: #f59e0b;">0</div>
+                <div class="summary-label">Incomplete</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" id="missing-count" style="color: #ef4444;">12</div>
+                <div class="summary-label">Missing</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h3>Navigation</h3>
+            <div class="nav-item active" data-view="all">
+                <span class="status-indicator missing"></span>All Indicators
+            </div>
+            <div class="nav-item" data-view="usd">
+                <span class="status-indicator missing"></span>USD Theme
+            </div>
+            <div class="nav-item" data-view="innovation">
+                <span class="status-indicator missing"></span>Innovation Theme
+            </div>
+            <div class="nav-item" data-view="valuation">
+                <span class="status-indicator missing"></span>Valuation Theme
+            </div>
+            <div class="nav-item" data-view="usLeadership">
+                <span class="status-indicator missing"></span>US Leadership Theme
+            </div>
+            <hr style="border-color: #333; margin: 20px 0;">
+            <div class="nav-item" data-view="json">
+                📄 JSON Preview
+            </div>
+            <div class="nav-item" data-view="sources">
+                📊 Data Sources Guide
+            </div>
+        </div>
+
+        <div class="content" id="main-content">
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing editor...');
+            
+            // Global data storage
+            window.jsonData = {
+                metadata: {
+                    version: "1.0.0",
+                    ips_version: "4.3.2",
+                    last_updated: new Date().toISOString(),
+                    created_by: "Manual Data Editor v1.1"
+                },
+                indicators: {
+                    usd: {},
+                    innovation: {},
+                    valuation: {},
+                    usLeadership: {}
+                }
+            };
+
+            window.indicatorDefinitions = {
+                usd: {
+                    dxy_index: {
+                        name: 'DXY Index',
+                        temporal: 'leading',
+                        source: 'Yahoo Finance (DX-Y.NYB)',
+                        description: 'US Dollar Index',
+                        dataType: 'index',
+                        typical_range: [85, 105]
+                    },
+                    real_rate_differential: {
+                        name: 'Real Rate Differential',
+                        temporal: 'concurrent',
+                        source: 'FRED (DGS10 - DFII10)',
+                        description: 'US 10Y Real Rate minus G10 average',
+                        dataType: 'percentage',
+                        typical_range: [-2, 2]
+                    },
+                    cofer_usd: {
+                        name: 'IMF COFER USD %',
+                        temporal: 'lagging',
+                        source: 'IMF COFER (Quarterly)',
+                        description: 'USD share of global FX reserves',
+                        dataType: 'percentage',
+                        typical_range: [55, 65]
+                    }
+                },
+                innovation: {
+                    qqq_spy_ratio: {
+                        name: 'QQQ/SPY Ratio',
+                        temporal: 'leading',
+                        source: 'Yahoo Finance (QQQ/SPY)',
+                        description: 'Tech leadership ratio',
+                        dataType: 'ratio',
+                        typical_range: [0.7, 1.0]
+                    },
+                    productivity_growth: {
+                        name: 'Productivity Growth',
+                        temporal: 'concurrent',
+                        source: 'FRED (OPHNFB)',
+                        description: 'Nonfarm business sector YoY %',
+                        dataType: 'percentage',
+                        typical_range: [-2, 4]
+                    },
+                    tech_employment_pct: {
+                        name: 'Tech Employment %',
+                        temporal: 'lagging',
+                        source: 'FRED (USINFO/PAYEMS)',
+                        description: 'Information sector % of total employment',
+                        dataType: 'percentage',
+                        typical_range: [1.8, 2.2]
+                    }
+                },
+                valuation: {
+                    put_call_ratio: {
+                        name: 'Put/Call Ratio',
+                        temporal: 'leading',
+                        source: 'CBOE',
+                        description: 'Equity put/call ratio',
+                        dataType: 'ratio',
+                        typical_range: [0.6, 1.2]
+                    },
+                    trailing_pe: {
+                        name: 'S&P 500 Trailing P/E',
+                        temporal: 'concurrent',
+                        source: 'Yahoo Finance (SPY P/E)',
+                        description: 'S&P 500 trailing 12-month P/E',
+                        dataType: 'ratio',
+                        typical_range: [15, 30]
+                    },
+                    eps_delivery: {
+                        name: 'EPS Delivery Rate',
+                        temporal: 'lagging',
+                        source: 'Calculated from earnings data',
+                        description: 'Actual vs Expected EPS ratio',
+                        dataType: 'ratio',
+                        typical_range: [0.95, 1.10]
+                    }
+                },
+                usLeadership: {
+                    spy_efa_momentum: {
+                        name: 'SPY/EFA Momentum',
+                        temporal: 'leading',
+                        source: 'Yahoo Finance (SPY vs EFA)',
+                        description: '12M momentum differential',
+                        dataType: 'percentage',
+                        typical_range: [-10, 20]
+                    },
+                    us_market_pct: {
+                        name: 'US Market Cap %',
+                        temporal: 'concurrent',
+                        source: 'Calculated (SPY/(SPY+EFA))',
+                        description: 'US share of developed markets',
+                        dataType: 'percentage',
+                        typical_range: [85, 95]
+                    },
+                    etf_flow_differential: {
+                        name: 'ETF Flow Differential',
+                        temporal: 'lagging',
+                        source: 'ETF.com flow data',
+                        description: 'US vs International flows (billions)',
+                        dataType: 'billions',
+                        typical_range: [-50, 100]
+                    }
+                }
+            };
+
+            // Initialize the app
+            initializeApp();
+        });
+
+        function initializeApp() {
+            console.log('Initializing app...');
+            
+            // Set up file input handler
+            const fileInput = document.getElementById('fileInput');
+            const loadBtn = document.getElementById('loadBtn');
+            const createBtn = document.getElementById('createBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            
+            // File load button
+            loadBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // File input change handler
+            fileInput.addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    try {
+                        const text = await file.text();
+                        const loaded = JSON.parse(text);
+                        mergeLoadedData(loaded);
+                        showView('all');
+                        updateStatus();
+                        alert('File loaded successfully!');
+                    } catch (error) {
+                        alert('Error loading file: ' + error.message);
+                        console.error('Load error:', error);
+                    }
+                }
+            });
+            
+            // Create new file button
+            createBtn.addEventListener('click', function() {
+                if (confirm('This will reset all data. Continue?')) {
+                    window.jsonData = {
+                        metadata: {
+                            version: "1.0.0",
+                            ips_version: "4.3.2",
+                            last_updated: new Date().toISOString(),
+                            created_by: "Manual Data Editor v1.1"
+                        },
+                        indicators: {
+                            usd: {},
+                            innovation: {},
+                            valuation: {},
+                            usLeadership: {}
+                        }
+                    };
+                    showView('all');
+                    updateStatus();
+                }
+            });
+            
+            // Export button
+            exportBtn.addEventListener('click', exportJSON);
+            
+            // Set up navigation
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const view = this.getAttribute('data-view');
+                    showView(view);
+                });
+            });
+            
+            // Show initial view
+            showView('all');
+            updateStatus();
+        }
+
+        function mergeLoadedData(loaded) {
+            // Preserve metadata
+            if (loaded.metadata) {
+                window.jsonData.metadata = { ...window.jsonData.metadata, ...loaded.metadata };
+            }
+
+            // Merge indicators - handle both flat and nested structures
+            if (loaded.indicators) {
+                Object.entries(window.indicatorDefinitions).forEach(([theme, indicators]) => {
+                    Object.keys(indicators).forEach(indicatorKey => {
+                        // Check nested location first
+                        if (loaded.indicators[theme] && loaded.indicators[theme][indicatorKey]) {
+                            window.jsonData.indicators[theme][indicatorKey] = loaded.indicators[theme][indicatorKey];
+                        }
+                        // Check flat location
+                        else if (loaded.indicators[indicatorKey]) {
+                            window.jsonData.indicators[theme][indicatorKey] = loaded.indicators[indicatorKey];
+                        }
+                    });
+                });
+            }
+        }
+
+        function showView(view) {
+            const content = document.getElementById('main-content');
+            
+            // Update active nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-view') === view) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Clear content
+            content.innerHTML = '';
+            
+            // Show appropriate content
+            if (view === 'all') {
+                Object.entries(window.indicatorDefinitions).forEach(([themeName, indicators]) => {
+                    content.appendChild(createThemeSection(themeName, indicators));
+                });
+            } else if (view === 'json') {
+                showJSONPreview();
+            } else if (view === 'sources') {
+                showDataSources();
+            } else if (window.indicatorDefinitions[view]) {
+                content.appendChild(createThemeSection(view, window.indicatorDefinitions[view]));
+            }
+            
+            updateStatus();
+        }
+
+        function createThemeSection(themeName, indicators) {
+            const section = document.createElement('div');
+            section.className = 'theme-section';
+
+            const header = document.createElement('div');
+            header.className = 'theme-header';
+            header.innerHTML = `
+                <div class="theme-title">${themeName.toUpperCase()} Theme</div>
+                <div style="font-size: 12px; color: #999;">
+                    ${Object.keys(indicators).length} indicators
+                </div>
+            `;
+            section.appendChild(header);
+
+            const grid = document.createElement('div');
+            grid.className = 'indicator-grid';
+
+            Object.entries(indicators).forEach(([key, config]) => {
+                grid.appendChild(createIndicatorCard(themeName, key, config));
+            });
+
+            section.appendChild(grid);
+            return section;
+        }
+
+        function createIndicatorCard(theme, key, config) {
+            const data = window.jsonData.indicators[theme][key] || {};
+            const status = getIndicatorStatus(data);
+            const diagnostics = analyzeIndicatorData(data, key);
+
+            const card = document.createElement('div');
+            card.className = `indicator-card ${status}`;
+
+            // Build diagnostics HTML
+            let diagnosticsHTML = '';
+            if (diagnostics.issues.length > 0) {
+                diagnosticsHTML = '<div style="background: #1a1a1a; padding: 10px; border-radius: 6px; margin: 10px 0;">';
+                diagnosticsHTML += '<div style="font-size: 12px; color: #f59e0b; margin-bottom: 8px;"><strong>⚠️ Data Issues:</strong></div>';
+                diagnostics.issues.forEach(issue => {
+                    const color = issue.type === 'error' ? '#ef4444' : '#f59e0b';
+                    diagnosticsHTML += `<div style="font-size: 11px; color: ${color}; margin: 3px 0;">• ${issue.message}</div>`;
+                });
+                diagnosticsHTML += '</div>';
+            }
+
+            // Build statistics HTML
+            let statsHTML = '';
+            if (diagnostics.stats.totalPoints > 0) {
+                statsHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; font-size: 11px;">
+                        <div style="background: #1a1a1a; padding: 8px; border-radius: 4px;">
+                            <div style="color: #999;">Data Points</div>
+                            <div style="color: #e0e0e0; font-weight: bold;">${diagnostics.stats.totalPoints}</div>
+                        </div>
+                        <div style="background: #1a1a1a; padding: 8px; border-radius: 4px;">
+                            <div style="color: #999;">Coverage</div>
+                            <div style="color: ${diagnostics.stats.coverage > 80 ? '#10b981' : '#f59e0b'}; font-weight: bold;">
+                                ${diagnostics.stats.coverage.toFixed(0)}%
+                            </div>
+                        </div>
+                        ${diagnostics.stats.lastValue !== null ? `
+                        <div style="background: #1a1a1a; padding: 8px; border-radius: 4px;">
+                            <div style="color: #999;">Last Historical</div>
+                            <div style="color: #e0e0e0; font-weight: bold;">${diagnostics.stats.lastValue.toFixed(2)}</div>
+                        </div>
+                        ` : ''}
+                        ${diagnostics.stats.volatility !== null ? `
+                        <div style="background: #1a1a1a; padding: 8px; border-radius: 4px;">
+                            <div style="color: #999;">Volatility</div>
+                            <div style="color: #e0e0e0; font-weight: bold;">${(diagnostics.stats.volatility * 100).toFixed(1)}%</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="indicator-header">
+                    <div class="indicator-name">${config.name}</div>
+                    <span class="temporal-badge ${config.temporal}">${config.temporal}</span>
+                </div>
+                
+                <div class="source-hint">
+                    Source: ${config.source}<br>
+                    ${config.description}<br>
+                    Typical range: ${config.typical_range[0]} - ${config.typical_range[1]}
+                </div>
+
+                ${diagnosticsHTML}
+                ${statsHTML}
+
+                <div class="field-group">
+                    <div class="field-label">Current Value *</div>
+                    <input type="number" 
+                           value="${data.current_value || ''}"
+                           placeholder="Enter current value"
+                           onchange="window.updateIndicatorValue('${theme}', '${key}', 'current_value', this.value)"
+                           step="0.01">
+                </div>
+
+                <div class="field-group">
+                    <div class="field-label">Data Source</div>
+                    <select onchange="window.updateIndicatorValue('${theme}', '${key}', 'source', this.value)">
+                        <option value="">Select source...</option>
+                        <option value="Yahoo Finance" ${data.source === 'Yahoo Finance' ? 'selected' : ''}>Yahoo Finance</option>
+                        <option value="FRED" ${data.source === 'FRED' ? 'selected' : ''}>FRED</option>
+                        <option value="CBOE" ${data.source === 'CBOE' ? 'selected' : ''}>CBOE</option>
+                        <option value="IMF" ${data.source === 'IMF' ? 'selected' : ''}>IMF</option>
+                        <option value="Calculated" ${data.source === 'Calculated' ? 'selected' : ''}>Calculated</option>
+                        <option value="Manual" ${data.source === 'Manual' ? 'selected' : ''}>Manual Entry</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <div class="field-label">Data Quality</div>
+                    <select onchange="window.updateIndicatorValue('${theme}', '${key}', 'data_quality', this.value)">
+                        <option value="">Select quality...</option>
+                        <option value="real" ${data.data_quality === 'real' ? 'selected' : ''}>Real (Direct)</option>
+                        <option value="proxy" ${data.data_quality === 'proxy' ? 'selected' : ''}>Proxy</option>
+                        <option value="estimated" ${data.data_quality === 'estimated' ? 'selected' : ''}>Estimated</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <div class="field-label">Last Updated</div>
+                    <input type="date" 
+                           value="${data.last_updated ? data.last_updated.split('T')[0] : ''}"
+                           onchange="window.updateIndicatorDate('${theme}', '${key}', this.value)">
+                </div>
+
+                <div class="quick-fill">
+                    <button class="small secondary" onclick="window.lookupValue('${theme}', '${key}')">
+                        🔍 Lookup Guide
+                    </button>
+                    <button class="small" onclick="window.viewHistory('${theme}', '${key}')">
+                        📊 View History
+                    </button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function analyzeIndicatorData(data, indicatorName) {
+            const diagnostics = {
+                issues: [],
+                stats: {
+                    totalPoints: 0,
+                    nullCount: 0,
+                    coverage: 0,
+                    lastValue: null,
+                    volatility: null,
+                    outliers: []
+                }
+            };
+
+            // Get history array
+            const history = data.monthly_history || data.quarterly_history || data.history || [];
+            const dates = data.monthly_dates || data.quarterly_dates || data.dates || [];
+            
+            if (history.length === 0) {
+                diagnostics.issues.push({
+                    type: 'error',
+                    message: 'No historical data found'
+                });
+                return diagnostics;
+            }
+
+            // Basic stats
+            diagnostics.stats.totalPoints = history.length;
+            
+            // Count nulls and get valid values
+            const validValues = [];
+            const nullIndices = [];
+            history.forEach((value, index) => {
+                if (value === null || value === undefined || isNaN(value)) {
+                    diagnostics.stats.nullCount++;
+                    nullIndices.push(index);
+                } else {
+                    validValues.push(value);
+                }
+            });
+
+            // Coverage percentage
+            diagnostics.stats.coverage = (validValues.length / history.length) * 100;
+            
+            // Report null issues
+            if (diagnostics.stats.nullCount > 0) {
+                if (diagnostics.stats.nullCount > 5) {
+                    diagnostics.issues.push({
+                        type: 'error',
+                        message: `${diagnostics.stats.nullCount} missing values (indices: ${nullIndices.slice(0, 5).join(', ')}...)`
+                    });
+                } else if (diagnostics.stats.nullCount > 0) {
+                    diagnostics.issues.push({
+                        type: 'warning',
+                        message: `${diagnostics.stats.nullCount} missing values at indices: ${nullIndices.join(', ')}`
+                    });
+                }
+            }
+
+            // If we have valid values, calculate more stats
+            if (validValues.length > 0) {
+                // Last value
+                diagnostics.stats.lastValue = validValues[validValues.length - 1];
+                
+                // Check for stale data
+                if (dates.length > 0) {
+                    const lastDate = new Date(dates[dates.length - 1]);
+                    const daysSinceUpdate = (Date.now() - lastDate) / (1000 * 60 * 60 * 24);
+                    
+                    if (daysSinceUpdate > 90) {
+                        diagnostics.issues.push({
+                            type: 'warning',
+                            message: `Data is ${Math.floor(daysSinceUpdate)} days old`
+                        });
+                    }
+                }
+                
+                // Calculate statistics for outlier detection
+                if (validValues.length >= 10) {
+                    const mean = validValues.reduce((a, b) => a + b, 0) / validValues.length;
+                    const variance = validValues.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / validValues.length;
+                    const stdDev = Math.sqrt(variance);
+                    diagnostics.stats.volatility = stdDev / Math.abs(mean);
+                    
+                    // Find outliers (3-sigma rule)
+                    const outliers = [];
+                    history.forEach((value, index) => {
+                        if (value !== null && !isNaN(value)) {
+                            const zScore = Math.abs((value - mean) / stdDev);
+                            if (zScore > 3) {
+                                outliers.push({ index, value, zScore });
+                            }
+                        }
+                    });
+                    
+                    if (outliers.length > 0) {
+                        diagnostics.stats.outliers = outliers;
+                        diagnostics.issues.push({
+                            type: 'warning',
+                            message: `${outliers.length} potential outlier${outliers.length > 1 ? 's' : ''} detected (z-score > 3)`
+                        });
+                    }
+                    
+                    // Check for extreme volatility
+                    if (diagnostics.stats.volatility > 0.5) {
+                        diagnostics.issues.push({
+                            type: 'warning',
+                            message: `High volatility: ${(diagnostics.stats.volatility * 100).toFixed(1)}% coefficient of variation`
+                        });
+                    }
+                }
+                
+                // Check for data consistency with current value
+                if (data.current_value !== undefined && diagnostics.stats.lastValue !== null) {
+                    const diff = Math.abs((data.current_value - diagnostics.stats.lastValue) / diagnostics.stats.lastValue);
+                    if (diff > 0.5) {
+                        diagnostics.issues.push({
+                            type: 'warning',
+                            message: `Current value differs from last historical by ${(diff * 100).toFixed(0)}%`
+                        });
+                    }
+                }
+            }
+            
+            // Check minimum data requirements
+            if (history.length < 24) {
+                diagnostics.issues.push({
+                    type: 'warning',
+                    message: `Only ${history.length} months of history (24+ recommended)`
+                });
+            }
+            
+            return diagnostics;
+        }
+
+        window.viewHistory = function(theme, key) {
+            const data = window.jsonData.indicators[theme][key] || {};
+            const history = data.monthly_history || data.quarterly_history || data.history || [];
+            const dates = data.monthly_dates || data.quarterly_dates || data.dates || [];
+            const config = window.indicatorDefinitions[theme][key];
+            
+            const content = document.getElementById('main-content');
+            content.innerHTML = `
+                <h2>${config.name} - Historical Data</h2>
+                <button onclick="showView('${theme}')" class="secondary">← Back to ${theme.toUpperCase()}</button>
+                
+                <div style="margin-top: 20px; max-height: 500px; overflow-y: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #2a2a2a;">
+                                <th style="padding: 10px; text-align: left;">Index</th>
+                                <th style="padding: 10px; text-align: left;">Date</th>
+                                <th style="padding: 10px; text-align: left;">Value</th>
+                                <th style="padding: 10px; text-align: left;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${history.map((value, index) => `
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 10px;">${index}</td>
+                                    <td style="padding: 10px;">${dates[index] || 'No date'}</td>
+                                    <td style="padding: 10px;">
+                                        <input type="number" 
+                                               value="${value !== null ? value : ''}" 
+                                               placeholder="${value === null ? 'NULL' : ''}"
+                                               style="width: 100px; ${value === null ? 'border-color: #ef4444;' : ''}"
+                                               onchange="window.updateHistoryValue('${theme}', '${key}', ${index}, this.value)">
+                                    </td>
+                                    <td style="padding: 10px;">
+                                        ${value === null ? `
+                                            <button class="small" onclick="window.interpolateValue('${theme}', '${key}', ${index})">
+                                                Interpolate
+                                            </button>
+                                        ` : ''}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button onclick="window.fillAllNulls('${theme}', '${key}')">Fill All Nulls (Interpolation)</button>
+                    <button onclick="window.removeOutliers('${theme}', '${key}')" class="secondary">Remove Outliers</button>
+                </div>
+            `;
+        };
+
+        window.updateHistoryValue = function(theme, key, index, value) {
+            const history = window.jsonData.indicators[theme][key].monthly_history || 
+                          window.jsonData.indicators[theme][key].quarterly_history || 
+                          window.jsonData.indicators[theme][key].history;
+            
+            if (history) {
+                history[index] = value ? parseFloat(value) : null;
+                showView(theme);
+            }
+        };
+
+        window.interpolateValue = function(theme, key, index) {
+            const history = window.jsonData.indicators[theme][key].monthly_history || 
+                          window.jsonData.indicators[theme][key].quarterly_history || 
+                          window.jsonData.indicators[theme][key].history;
+            
+            if (history) {
+                // Find previous non-null value
+                let prevValue = null;
+                let prevIndex = -1;
+                for (let i = index - 1; i >= 0; i--) {
+                    if (history[i] !== null && !isNaN(history[i])) {
+                        prevValue = history[i];
+                        prevIndex = i;
+                        break;
+                    }
+                }
+                
+                // Find next non-null value
+                let nextValue = null;
+                let nextIndex = -1;
+                for (let i = index + 1; i < history.length; i++) {
+                    if (history[i] !== null && !isNaN(history[i])) {
+                        nextValue = history[i];
+                        nextIndex = i;
+                        break;
+                    }
+                }
+                
+                // Interpolate
+                if (prevValue !== null && nextValue !== null) {
+                    const weight = (index - prevIndex) / (nextIndex - prevIndex);
+                    history[index] = prevValue + (nextValue - prevValue) * weight;
+                } else if (prevValue !== null) {
+                    history[index] = prevValue; // Forward fill
+                } else if (nextValue !== null) {
+                    history[index] = nextValue; // Backward fill
+                }
+                
+                window.viewHistory(theme, key);
+            }
+        };
+
+        window.fillAllNulls = function(theme, key) {
+            const data = window.jsonData.indicators[theme][key];
+            const history = data.monthly_history || data.quarterly_history || data.history;
+            
+            if (history) {
+                for (let i = 0; i < history.length; i++) {
+                    if (history[i] === null || isNaN(history[i])) {
+                        window.interpolateValue(theme, key, i);
+                    }
+                }
+                alert('All null values have been interpolated');
+                window.viewHistory(theme, key);
+            }
+        };
+
+        window.removeOutliers = function(theme, key) {
+            const data = window.jsonData.indicators[theme][key];
+            const history = data.monthly_history || data.quarterly_history || data.history;
+            
+            if (history && history.length >= 10) {
+                const validValues = history.filter(v => v !== null && !isNaN(v));
+                const mean = validValues.reduce((a, b) => a + b, 0) / validValues.length;
+                const variance = validValues.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / validValues.length;
+                const stdDev = Math.sqrt(variance);
+                
+                let replaced = 0;
+                history.forEach((value, index) => {
+                    if (value !== null && !isNaN(value)) {
+                        const zScore = Math.abs((value - mean) / stdDev);
+                        if (zScore > 3) {
+                            // Replace outlier with interpolated value
+                            history[index] = null;
+                            window.interpolateValue(theme, key, index);
+                            replaced++;
+                        }
+                    }
+                });
+                
+                alert(`${replaced} outliers replaced with interpolated values`);
+                window.viewHistory(theme, key);
+            }
+        };
+
+        function getIndicatorStatus(data) {
+            if (!data || !data.current_value) return 'missing';
+            if (!data.source || !data.data_quality) return 'incomplete';
+            return 'complete';
+        }
+
+        window.updateIndicatorValue = function(theme, key, field, value) {
+            if (!window.jsonData.indicators[theme][key]) {
+                window.jsonData.indicators[theme][key] = {};
+            }
+            
+            if (field === 'current_value') {
+                window.jsonData.indicators[theme][key][field] = parseFloat(value);
+            } else {
+                window.jsonData.indicators[theme][key][field] = value;
+            }
+
+            // Add default fields if first edit
+            if (!window.jsonData.indicators[theme][key].monthly_history) {
+                window.jsonData.indicators[theme][key].monthly_history = [];
+                window.jsonData.indicators[theme][key].monthly_dates = [];
+                window.jsonData.indicators[theme][key].data_points = 0;
+            }
+
+            updateStatus();
+        };
+
+        window.updateIndicatorDate = function(theme, key, value) {
+            if (!window.jsonData.indicators[theme][key]) {
+                window.jsonData.indicators[theme][key] = {};
+            }
+            window.jsonData.indicators[theme][key].last_updated = new Date(value).toISOString();
+            updateStatus();
+        };
+
+        window.addPlaceholder = function(theme, key) {
+            const config = window.indicatorDefinitions[theme][key];
+            const midpoint = (config.typical_range[0] + config.typical_range[1]) / 2;
+            
+            window.jsonData.indicators[theme][key] = {
+                current_value: midpoint,
+                source: "Placeholder",
+                data_quality: "estimated",
+                last_updated: new Date().toISOString(),
+                monthly_history: [],
+                monthly_dates: [],
+                data_points: 0,
+                note: "Placeholder value - needs real data"
+            };
+
+            showView('all');
+        };
+
+        window.lookupValue = function(theme, key) {
+            const config = window.indicatorDefinitions[theme][key];
+            alert(`To find ${config.name}:\n\nSource: ${config.source}\nDescription: ${config.description}\n\nTypical range: ${config.typical_range[0]} to ${config.typical_range[1]}\n\nData type: ${config.dataType}`);
+        };
+
+        function updateStatus() {
+            let complete = 0;
+            let incomplete = 0;
+            let missing = 0;
+
+            Object.entries(window.indicatorDefinitions).forEach(([theme, indicators]) => {
+                let themeStatus = 'complete';
+                
+                Object.keys(indicators).forEach(key => {
+                    const data = window.jsonData.indicators[theme][key];
+                    const status = getIndicatorStatus(data);
+                    
+                    if (status === 'complete') complete++;
+                    else if (status === 'incomplete') incomplete++;
+                    else missing++;
+
+                    if (status !== 'complete') themeStatus = status;
+                });
+
+                // Update nav indicator
+                const navItem = document.querySelector(`[data-view="${theme}"]`);
+                if (navItem) {
+                    const indicator = navItem.querySelector('.status-indicator');
+                    if (indicator) {
+                        indicator.className = `status-indicator ${themeStatus}`;
+                    }
+                }
+            });
+
+            document.getElementById('total-indicators').textContent = `${complete}/12`;
+            document.getElementById('complete-count').textContent = complete;
+            document.getElementById('incomplete-count').textContent = incomplete;
+            document.getElementById('missing-count').textContent = missing;
+        }
+
+        function showJSONPreview() {
+            const content = document.getElementById('main-content');
+            content.innerHTML = `
+                <h2>JSON Preview</h2>
+                <p>Current data structure ready for export:</p>
+                <pre id="json-preview">${JSON.stringify(window.jsonData, null, 2)}</pre>
+                <button onclick="copyJSON()">📋 Copy to Clipboard</button>
+            `;
+        }
+
+        function showDataSources() {
+            const content = document.getElementById('main-content');
+            content.innerHTML = `
+                <h2>Data Sources Guide</h2>
+                <div style="background: #2a2a2a; padding: 20px; border-radius: 8px;">
+                    <h3>Primary Data Sources</h3>
+                    <ul>
+                        <li><strong>Yahoo Finance:</strong> DXY (DX-Y.NYB), SPY, QQQ, EFA - for market data and ratios</li>
+                        <li><strong>FRED:</strong> Real rates (DGS10, DFII10), Productivity (OPHNFB), Employment (USINFO, PAYEMS)</li>
+                        <li><strong>CBOE:</strong> Put/Call ratio data</li>
+                        <li><strong>IMF COFER:</strong> Quarterly reserve composition data</li>
+                    </ul>
+                    
+                    <h3>Calculation Methods</h3>
+                    <ul>
+                        <li><strong>Real Rate Differential:</strong> US 10Y Real - G10 Average</li>
+                        <li><strong>QQQ/SPY Ratio:</strong> QQQ Price / SPY Price</li>
+                        <li><strong>Tech Employment %:</strong> USINFO / PAYEMS * 100</li>
+                        <li><strong>US Market %:</strong> SPY Market Cap / (SPY + EFA Market Cap) * 100</li>
+                        <li><strong>EPS Delivery:</strong> Actual EPS / Expected EPS</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        window.copyJSON = function() {
+            navigator.clipboard.writeText(JSON.stringify(window.jsonData, null, 2));
+            alert('JSON copied to clipboard!');
+        };
+
+        function exportJSON() {
+            const blob = new Blob([JSON.stringify(window.jsonData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+            a.download = `hcp_data_manual_${timestamp}.json`;
+            
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

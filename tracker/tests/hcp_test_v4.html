@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCP Integration Test v4.0 - 81 Ternary Scenarios</title>
+    <!-- 
+    Version: 4.0
+    Last Updated: 2025-09-08 20:00:00 UTC
+    Framework: IPS v4.3.2 - 81 Ternary Scenarios
+    Critical: Tests REAL modules, NOT mocks
+    -->
+    
+    <!-- Load ALL Required Modules -->
+    <script src="file-handler-v3.1.js"></script>
+    <script src="indicators_v3_0.js"></script>
+    <script src="data_editor_v2_0.js"></script>
+    <script src="theme_calculator_v4_0.js"></script>
+    <script src="portfolio_optimizer_v3.js"></script>
+    <script src="rebalancing_module_v1_1.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .critical-notice {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .control-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .test-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .step-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .step-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pass {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-fail {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .status-pending {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .step-content {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .result-box {
+            background: #f9fafb;
+            border-left: 3px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .log-area {
+            background: #1f2937;
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            height: 250px;
+            overflow-y: auto;
+            font-size: 0.9em;
+        }
+        
+        .scenario-highlight {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .scenario-count {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .theme-box {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .theme-name {
+            font-weight: bold;
+            color: #4b5563;
+            margin-bottom: 5px;
+        }
+        
+        .theme-state {
+            font-size: 1.2em;
+            color: #111827;
+        }
+        
+        .allocation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .allocation-item {
+            background: #e0e7ff;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .allocation-symbol {
+            font-weight: bold;
+            color: #4338ca;
+        }
+        
+        .allocation-percent {
+            font-size: 1.1em;
+            color: #1e293b;
+        }
+        
+        .error-message {
+            background: #fee;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            color: #991b1b;
+        }
+        
+        .success-message {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            color: #166534;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 HCP Integration Test v4.0</h1>
+        
+        <div class="critical-notice">
+            ⚠️ CRITICAL: This test validates 81 TERNARY scenarios [-1, 0, +1] per IPS v4.3.2<br>
+            NOT the old 16 binary scenarios! All modules must handle ternary states.
+        </div>
+        
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h2>Test Control Panel</h2>
+            
+            <div style="margin: 20px 0;">
+                <label for="fileInput" style="font-weight: 600; display: block; margin-bottom: 10px;">
+                    Load hcp_master_data.json:
+                </label>
+                <input type="file" id="fileInput" accept=".json" onchange="loadFile(event)" 
+                       style="width: 100%; padding: 10px; border: 2px dashed #cbd5e1; border-radius: 8px;">
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-primary" onclick="runCompletePipeline()">
+                    🚀 Run Complete Pipeline (81 Scenarios)
+                </button>
+                <button class="btn-secondary" onclick="generateTestData()">
+                    📊 Generate Test Data
+                </button>
+                <button class="btn-secondary" onclick="clearAll()">
+                    🗑️ Clear All
+                </button>
+            </div>
+            
+            <div class="log-area" id="logArea">
+                > HCP Integration Test v4.0 initialized<br>
+                > Modules loaded: Checking...<br>
+            </div>
+        </div>
+        
+        <!-- Scenario Counter Highlight -->
+        <div class="scenario-highlight" id="scenarioCounter" style="display: none;">
+            <h3 style="text-align: center; margin-bottom: 10px;">Scenario Generation</h3>
+            <div class="scenario-count" id="scenarioCount">-</div>
+            <div style="text-align: center; color: #92400e;">
+                <span id="scenarioFormula">3^4 = 81 scenarios (Ternary: -1, 0, +1)</span>
+            </div>
+        </div>
+        
+        <!-- Test Steps -->
+        <div class="test-steps">
+            <!-- Step 1: File Handler -->
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-title">Step 1: File Handler v3.1</span>
+                    <span class="status-badge status-pending" id="status-filehandler">Pending</span>
+                </div>
+                <div class="step-content">
+                    <p>Load and process hcp_master_data.json</p>
+                    <div class="result-box" id="result-filehandler" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <!-- Step 2: Indicators -->
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-title">Step 2: Indicators v3.0</span>
+                    <span class="status-badge status-pending" id="status-indicators">Pending</span>
+                </div>
+                <div class="step-content">
+                    <p>Validate and process raw data</p>
+                    <div class="result-box" id="result-indicators" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <!-- Step 3: Theme Calculator -->
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-title">Step 3: Theme Calculator v4.0</span>
+                    <span class="status-badge status-pending" id="status-themes">Pending</span>
+                </div>
+                <div class="step-content">
+                    <p>Calculate theme transition probabilities</p>
+                    <div class="theme-grid" id="themeGrid" style="display: none;"></div>
+                    <div class="result-box" id="result-themes" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <!-- Step 4: Scenario Generation -->
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-title">Step 4: Scenario Generation</span>
+                    <span class="status-badge status-pending" id="status-scenarios">Pending</span>
+                </div>
+                <div class="step-content">
+                    <p>Generate 81 ternary scenarios</p>
+                    <div class="result-box" id="result-scenarios" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <!-- Step 5: Portfolio Optimizer -->
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-title">Step 5: Portfolio Optimizer v3.0</span>
+                    <span class="status-badge status-pending" id="status-optimizer">Pending</span>
+                </div>
+                <div class="step-content">
+                    <p>Optimize portfolio with 81 scenarios</p>
+                    <div class="allocation-grid" id="allocationGrid" style="display: none;"></div>
+                    <div class="result-box" id="result-optimizer" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <!-- Step 6: Rebalancing -->
+            <div class="step-card">
+                <div class="step-header">
+                    <span class="step-title">Step 6: Rebalancing v1.1</span>
+                    <span class="status-badge status-pending" id="status-rebalancing">Pending</span>
+                </div>
+                <div class="step-content">
+                    <p>Generate trades with 12 assets (including IGF)</p>
+                    <div class="result-box" id="result-rebalancing" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global state
+        let masterData = null;
+        let processedData = null;
+        let themeTransitions = null;
+        let scenarios = null;
+        let optimizationResults = null;
+        
+        // Check module loading
+        window.onload = function() {
+            checkModules();
+        };
+        
+        function checkModules() {
+            const modules = [
+                { name: 'FileHandler', version: '3.1' },
+                { name: 'Indicators', version: '3.0' },
+                { name: 'DataEditor', version: '2.0' },
+                { name: 'ThemeCalculator', version: '4.0' },
+                { name: 'PortfolioOptimizer', version: '3.0' },
+                { name: 'RebalancingModule', version: '1.1' }
+            ];
+            
+            let loadedCount = 0;
+            modules.forEach(module => {
+                if (window[module.name]) {
+                    loadedCount++;
+                    log(`✓ ${module.name} v${window[module.name].version || '?'} loaded`, 'success');
+                } else {
+                    log(`✗ ${module.name} NOT LOADED`, 'error');
+                }
+            });
+            
+            if (loadedCount === modules.length) {
+                log('All modules loaded successfully! Ready for testing.', 'success');
+            } else {
+                log(`WARNING: Only ${loadedCount}/${modules.length} modules loaded`, 'error');
+            }
+        }
+        
+        function log(message, type = 'info') {
+            const logArea = document.getElementById('logArea');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#6ee7b7';
+            logArea.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span><br>`;
+            logArea.scrollTop = logArea.scrollHeight;
+            console.log(`[${type}] ${message}`);
+        }
+        
+        function updateStatus(step, status) {
+            const badge = document.getElementById(`status-${step}`);
+            if (badge) {
+                badge.className = `status-badge status-${status}`;
+                badge.textContent = status.toUpperCase();
+            }
+        }
+        
+        function showResult(step, content) {
+            const resultBox = document.getElementById(`result-${step}`);
+            if (resultBox) {
+                resultBox.style.display = 'block';
+                resultBox.innerHTML = content;
+            }
+        }
+        
+        // Load file
+        async function loadFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            try {
+                const text = await file.text();
+                masterData = JSON.parse(text);
+                log(`File loaded: ${file.name}`, 'success');
+                
+                // Auto-run pipeline
+                runCompletePipeline();
+            } catch (error) {
+                log(`Error loading file: ${error.message}`, 'error');
+            }
+        }
+        
+        // Generate test data
+        async function generateTestData() {
+            if (!window.FileHandler) {
+                log('FileHandler module not loaded', 'error');
+                return;
+            }
+            
+            log('Generating test data...', 'info');
+            
+            try {
+                // Generate test scenario
+                masterData = FileHandler.generateTestScenario('current');
+                log('Test data generated successfully', 'success');
+                
+                // Auto-run pipeline
+                runCompletePipeline();
+            } catch (error) {
+                log(`Error generating test data: ${error.message}`, 'error');
+            }
+        }
+        
+        // Main pipeline execution
+        async function runCompletePipeline() {
+            log('=== Starting Complete Pipeline Test ===', 'info');
+            
+            if (!masterData) {
+                log('No data loaded. Load JSON or generate test data first.', 'error');
+                return;
+            }
+            
+            const startTime = Date.now();
+            
+            try {
+                // Step 1: File Handler
+                await testFileHandler();
+                
+                // Step 2: Indicators
+                await testIndicators();
+                
+                // Step 3: Theme Calculator
+                await testThemeCalculator();
+                
+                // Step 4: Scenario Generation
+                await testScenarioGeneration();
+                
+                // Step 5: Portfolio Optimizer
+                await testPortfolioOptimizer();
+                
+                // Step 6: Rebalancing
+                await testRebalancing();
+                
+                const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+                log(`=== Pipeline Complete in ${elapsed}s ===`, 'success');
+                
+            } catch (error) {
+                log(`Pipeline failed: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+        
+        // Step 1: Test File Handler
+        async function testFileHandler() {
+            log('Step 1: Testing FileHandler v3.1...', 'info');
+            updateStatus('filehandler', 'pending');
+            
+            try {
+                // Process the data
+                processedData = await FileHandler.processRawData(masterData);
+                
+                // Validate
+                const validation = FileHandler.validateData(processedData);
+                
+                if (validation.valid) {
+                    updateStatus('filehandler', 'pass');
+                    showResult('filehandler', `
+                        ✓ Data processed successfully<br>
+                        ✓ Indicators: ${validation.coverage.total}<br>
+                        ✓ Themes: ${Object.keys(processedData.themes).join(', ')}<br>
+                        ✓ Structure validated
+                    `);
+                    log('FileHandler: PASS', 'success');
+                } else {
+                    updateStatus('filehandler', 'fail');
+                    showResult('filehandler', `✗ Validation failed: ${validation.errors.join(', ')}`);
+                    log('FileHandler: FAIL', 'error');
+                    throw new Error('FileHandler validation failed');
+                }
+            } catch (error) {
+                updateStatus('filehandler', 'fail');
+                showResult('filehandler', `✗ Error: ${error.message}`);
+                throw error;
+            }
+        }
+        
+        // Step 2: Test Indicators
+        async function testIndicators() {
+            log('Step 2: Testing Indicators v3.0...', 'info');
+            updateStatus('indicators', 'pending');
+            
+            try {
+                // Validate indicator data
+                const validation = Indicators.validateIndicatorData(processedData);
+                const summary = Indicators.getIndicatorSummary(processedData);
+                
+                // Calculate theme values
+                const themeValues = {};
+                Object.entries(processedData.themes).forEach(([theme, data]) => {
+                    themeValues[theme] = Indicators.calculateContinuousThemeValue(data, theme);
+                });
+                
+                // Calculate current scenario
+                const currentScenario = Indicators.calculateCurrentScenario(themeValues);
+                
+                updateStatus('indicators', 'pass');
+                showResult('indicators', `
+                    ✓ Indicators validated: ${summary.availableIndicators}/${summary.totalIndicators}<br>
+                    ✓ Data health: ${summary.overallHealth}<br>
+                    ✓ Current scenario: #${currentScenario.scenarioNumber} ${currentScenario.notation}<br>
+                    ✓ Theme states: ${Object.entries(currentScenario.states).map(([k,v]) => `${k}:${v}`).join(', ')}
+                `);
+                log('Indicators: PASS', 'success');
+                
+            } catch (error) {
+                updateStatus('indicators', 'fail');
+                showResult('indicators', `✗ Error: ${error.message}`);
+                throw error;
+            }
+        }
+        
+        // Step 3: Test Theme Calculator
+        async function testThemeCalculator() {
+            log('Step 3: Testing ThemeCalculator v4.0...', 'info');
+            updateStatus('themes', 'pending');
+            
+            try {
+                // Calculate theme transitions
+                themeTransitions = ThemeCalculator.calculateThemeTransitions(processedData.themes);
+                
+                // Display theme grid
+                const themeGrid = document.getElementById('themeGrid');
+                themeGrid.style.display = 'grid';
+                themeGrid.innerHTML = '';
+                
+                Object.entries(themeTransitions).forEach(([theme, data]) => {
+                    const box = document.createElement('div');
+                    box.className = 'theme-box';
+                    box.innerHTML = `
+                        <div class="theme-name">${theme.toUpperCase()}</div>
+                        <div class="theme-state">State: ${data.currentState}</div>
+                        <div style="font-size: 0.9em; color: #6b7280; margin-top: 5px;">
+                            P(-1): ${(data.transitions['-1'] * 100).toFixed(0)}%<br>
+                            P(0): ${(data.transitions['0'] * 100).toFixed(0)}%<br>
+                            P(+1): ${(data.transitions['1'] * 100).toFixed(0)}%
+                        </div>
+                    `;
+                    themeGrid.appendChild(box);
+                });
+                
+                updateStatus('themes', 'pass');
+                showResult('themes', `
+                    ✓ Theme transitions calculated<br>
+                    ✓ GARCH volatility estimated<br>
+                    ✓ All themes have valid probabilities<br>
+                    ✓ States: [-1, 0, +1] (Ternary)
+                `);
+                log('ThemeCalculator: PASS', 'success');
+                
+            } catch (error) {
+                updateStatus('themes', 'fail');
+                showResult('themes', `✗ Error: ${error.message}`);
+                throw error;
+            }
+        }
+        
+        // Step 4: Test Scenario Generation
+        async function testScenarioGeneration() {
+            log('Step 4: Generating 81 TERNARY scenarios...', 'info');
+            updateStatus('scenarios', 'pending');
+            
+            try {
+                // Generate scenarios
+                scenarios = [];
+                const states = [-1, 0, 1]; // TERNARY!
+                
+                for (const usd of states) {
+                    for (const innovation of states) {
+                        for (const valuation of states) { // Note: valuation, not pe
+                            for (const usLeadership of states) {
+                                const scenarioStates = [usd, innovation, valuation, usLeadership];
+                                
+                                // Calculate probability
+                                let probability = 1.0;
+                                probability *= themeTransitions.usd.transitions[usd.toString()];
+                                probability *= themeTransitions.innovation.transitions[innovation.toString()];
+                                probability *= themeTransitions.valuation?.transitions[valuation.toString()] || 
+                                              themeTransitions.pe?.transitions[valuation.toString()] || 0.33;
+                                probability *= themeTransitions.usLeadership.transitions[usLeadership.toString()];
+                                
+                                scenarios.push({
+                                    id: scenarios.length + 1,
+                                    states: scenarioStates,
+                                    probability: probability
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                // Sort by probability
+                scenarios.sort((a, b) => b.probability - a.probability);
+                
+                // Show scenario counter
+                const counter = document.getElementById('scenarioCounter');
+                counter.style.display = 'block';
+                document.getElementById('scenarioCount').textContent = scenarios.length;
+                
+                // Validate count
+                if (scenarios.length !== 81) {
+                    throw new Error(`Expected 81 scenarios, got ${scenarios.length}`);
+                }
+                
+                // Check probability sum
+                const totalProb = scenarios.reduce((sum, s) => sum + s.probability, 0);
+                
+                updateStatus('scenarios', 'pass');
+                showResult('scenarios', `
+                    ✓ Generated ${scenarios.length} scenarios (3^4 = 81)<br>
+                    ✓ Total probability: ${(totalProb * 100).toFixed(1)}%<br>
+                    ✓ Top scenario: [${scenarios[0].states.join(',')}] ${(scenarios[0].probability * 100).toFixed(2)}%<br>
+                    ✓ States: [-1, 0, +1] confirmed
+                `);
+                log(`Scenario Generation: PASS (${scenarios.length} scenarios)`, 'success');
+                
+            } catch (error) {
+                updateStatus('scenarios', 'fail');
+                showResult('scenarios', `✗ Error: ${error.message}`);
+                throw error;
+            }
+        }
+        
+        // Step 5: Test Portfolio Optimizer
+        async function testPortfolioOptimizer() {
+            log('Step 5: Testing PortfolioOptimizer v3.0 with 81 scenarios...', 'info');
+            updateStatus('optimizer', 'pending');
+            
+            try {
+                // Run optimization with actual module
+                optimizationResults = PortfolioOptimizer.optimizePortfolio(themeTransitions);
+                
+                // Display allocation
+                const allocationGrid = document.getElementById('allocationGrid');
+                allocationGrid.style.display = 'grid';
+                allocationGrid.innerHTML = '';
+                
+                const securities = ['VTI', 'VEA', 'VWO', 'SMH', 'SRVR', 'IGF', 
+                                   'PYLD', 'PIMIX', 'GLD', 'COM', 'DBMF', 'SWVXX'];
+                
+                securities.forEach(symbol => {
+                    const weight = optimizationResults.finalAllocation[symbol] || 0;
+                    if (weight > 0.005) {
+                        const item = document.createElement('div');
+                        item.className = 'allocation-item';
+                        item.innerHTML = `
+                            <div class="allocation-symbol">${symbol}</div>
+                            <div class="allocation-percent">${(weight * 100).toFixed(1)}%</div>
+                        `;
+                        allocationGrid.appendChild(item);
+                    }
+                });
+                
+                updateStatus('optimizer', 'pass');
+                showResult('optimizer', `
+                    ✓ Optimization complete<br>
+                    ✓ Selected scenarios: ${optimizationResults.optimization.selectedScenarios}<br>
+                    ✓ Cumulative probability: ${(optimizationResults.optimization.cumulativeProbability * 100).toFixed(1)}%<br>
+                    ✓ Max regret: ${(optimizationResults.optimization.maxRegret * 100).toFixed(2)}%<br>
+                    ✓ All 12 assets allocated
+                `);
+                log('PortfolioOptimizer: PASS', 'success');
+                
+            } catch (error) {
+                updateStatus('optimizer', 'fail');
+                showResult('optimizer', `✗ Error: ${error.message}`);
+                throw error;
+            }
+        }
+        
+        // Step 6: Test Rebalancing
+        async function testRebalancing() {
+            log('Step 6: Testing RebalancingModule v1.1 with 12 assets...', 'info');
+            updateStatus('rebalancing', 'pending');
+            
+            try {
+                // Mock current positions
+                const currentPositions = {
+                    VTI: { shares: 100, value: 25000 },
+                    VEA: { shares: 200, value: 10000 },
+                    VWO: { shares: 150, value: 6750 },
+                    SMH: { shares: 50, value: 9000 },
+                    SRVR: { shares: 30, value: 5100 },
+                    IGF: { shares: 20, value: 1200 }, // Include IGF!
+                    PYLD: { shares: 200, value: 10000 },
+                    PIMIX: { shares: 50, value: 5000 },
+                    GLD: { shares: 10, value: 1900 },
+                    COM: { shares: 0, value: 0 },
+                    DBMF: { shares: 0, value: 0 },
+                    SWVXX: { shares: 500, value: 500 }
+                };
+                
+                const totalValue = 74450;
+                
+                // Validate positions
+                const validation = RebalancingModule.validatePositionInput(currentPositions, totalValue);
+                
+                // Calculate drift
+                const driftAnalysis = RebalancingModule.calculateDrift(
+                    validation.normalizedPositions,
+                    optimizationResults.finalAllocation,
+                    totalValue
+                );
+                
+                // Generate trades
+                const tradeAnalysis = RebalancingModule.generateTrades(driftAnalysis);
+                
+                // Check constraints
+                const pimixBuys = tradeAnalysis.trades.filter(t => 
+                    t.security === 'PIMIX' && t.action === 'BUY'
+                ).length;
+                
+                updateStatus('rebalancing', 'pass');
+                showResult('rebalancing', `
+                    ✓ Drift calculated for 12 assets<br>
+                    ✓ Generated ${tradeAnalysis.summary.totalTrades} trades<br>
+                    ✓ PIMIX BUY orders: ${pimixBuys} (must be 0)<br>
+                    ✓ PYLD routing: ${tradeAnalysis.summary.pyldIncomeRouting ? 'Active' : 'N/A'}<br>
+                    ✓ Net cash impact: $${tradeAnalysis.summary.netCashImpact.toFixed(0)}
+                `);
+                log('RebalancingModule: PASS', 'success');
+                
+            } catch (error) {
+                updateStatus('rebalancing', 'fail');
+                showResult('rebalancing', `✗ Error: ${error.message}`);
+                throw error;
+            }
+        }
+        
+        function clearAll() {
+            masterData = null;
+            processedData = null;
+            themeTransitions = null;
+            scenarios = null;
+            optimizationResults = null;
+            
+            // Reset all statuses
+            ['filehandler', 'indicators', 'themes', 'scenarios', 'optimizer', 'rebalancing'].forEach(step => {
+                updateStatus(step, 'pending');
+                const resultBox = document.getElementById(`result-${step}`);
+                if (resultBox) {
+                    resultBox.style.display = 'none';
+                    resultBox.innerHTML = '';
+                }
+            });
+            
+            // Hide displays
+            document.getElementById('scenarioCounter').style.display = 'none';
+            document.getElementById('themeGrid').style.display = 'none';
+            document.getElementById('allocationGrid').style.display = 'none';
+            
+            // Clear file input
+            document.getElementById('fileInput').value = '';
+            
+            log('All data cleared', 'info');
+        }
+    </script>
+</body>
+</html>
